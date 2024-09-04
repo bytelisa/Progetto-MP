@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             YahtzeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Valentina",
+                        name = "Elisa",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
