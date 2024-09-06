@@ -1,5 +1,6 @@
 package it.VES.yahtzee
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,23 +16,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,8 +55,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Home() {
+    val context = LocalContext.current
 
-        Column(
+    Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
@@ -105,7 +104,9 @@ fun Home() {
 
             // Third Button
             Button(
-                onClick = { /*TODO: Action*/ },
+                onClick = {
+                    val intent = Intent(context, SettingsActivity::class.java)
+                    context.startActivity(intent) },
                 modifier = Modifier
                     .width(200.dp)
                     .height(45.dp),
@@ -129,10 +130,6 @@ fun HomePreview() {
     }
 }
 
-@Composable
-fun SimpleTextDisplay(message: String) {
-    Text(text = message)
-}
 
 @Composable
 fun Play() {
@@ -176,7 +173,7 @@ fun BackgroundPicture(){
         modifier = Modifier.fillMaxSize()
     ){
         Image(
-            painter = painterResource(id = R.drawable.img),
+            painter = painterResource(id = R.drawable.home),
             contentDescription = "Home background",
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
