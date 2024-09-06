@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +46,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             YahtzeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    BackgroundPicture()
                     Home()
                 }
             }
@@ -62,15 +66,15 @@ fun Home() {
             verticalArrangement = Arrangement.Top
         ){
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             Text(
                 text = "Yahtzee!",
                 //fontStyle = FontStyle.Normal.,
-                fontSize = 40.sp, // Big font size
+                fontSize = 50.sp, // Big font size
                 fontWeight = FontWeight.Bold, // Bold text
                 textAlign = TextAlign.Center, // Center the text
-                color = Color(0xFF009688), // Custom color (purple)
+                color = Color(0xFF5221AA),
                 modifier = Modifier.padding(top = 24.dp) // Add some padding from the top
             )
             // Space between title and buttons
@@ -120,6 +124,7 @@ fun Home() {
 @Composable
 fun HomePreview() {
     YahtzeeTheme {
+        BackgroundPicture()
         Home()
     }
 }
@@ -141,8 +146,8 @@ fun UserNameInput() {
     var text by rememberSaveable { mutableStateOf("") }
     Column(
         modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ){
@@ -163,4 +168,18 @@ fun UserNameInput() {
         }
     }
 
+}
+
+@Composable
+fun BackgroundPicture(){
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Image(
+            painter = painterResource(id = R.drawable.img),
+            contentDescription = "Home background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize()
+            )
+    }
 }
