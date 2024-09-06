@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             YahtzeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
+                    Home()
                 }
             }
         }
@@ -62,6 +62,8 @@ fun Home() {
             verticalArrangement = Arrangement.Top
         ){
 
+            Spacer(modifier = Modifier.height(50.dp))
+
             Text(
                 text = "Yahtzee!",
                 //fontStyle = FontStyle.Normal.,
@@ -72,7 +74,7 @@ fun Home() {
                 modifier = Modifier.padding(top = 24.dp) // Add some padding from the top
             )
             // Space between title and buttons
-            Spacer(modifier = Modifier.height(200.dp))
+            Spacer(modifier = Modifier.height(150.dp))
 
             Button(
                 onClick = { /*TODO: Action*/ },
@@ -137,12 +139,28 @@ fun UserNameInput() {
 
     // Stato per memorizzare il testo inserito
     var text by rememberSaveable { mutableStateOf("") }
+    Column(
+        modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ){
+        TextField(
+            value = text,
+            onValueChange = { text = it },
+            label = { Text("Inserisci il tuo nome") },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = {Text("Nome")}
+        )
+        Spacer(modifier = Modifier.height(24.dp))
 
-    TextField(
-        value = text,
-        onValueChange = { text = it },
-        label = { Text("Inserisci il tuo nome") },
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = {Text("Nome")}
-    )
+        Button(
+            onClick = { /*TODO: Action*/ },
+
+        ) {
+            Text(text = "Conferma")
+        }
+    }
+
 }
