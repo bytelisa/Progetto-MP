@@ -1,7 +1,11 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    //alias(libs.plugins.android.application)
+    //alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.relay") version "0.3.12"
+
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -52,6 +56,19 @@ android {
 }
 
 dependencies {
+    val roomVersion = "2.5.1" // Versione di Room
+    val kotlinVersion = "1.9.10" // Versione di Kotlin
+
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -63,6 +80,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,8 +90,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("org.xerial:sqlite-jdbc:3.42.0.0") // Versione di sqlite-jdbc
-
-
 }
+
+

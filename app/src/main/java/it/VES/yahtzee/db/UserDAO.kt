@@ -11,17 +11,17 @@ import androidx.room.Query
 @Dao
 interface UserDAO {
 
-    @Query("SELECT * FROM user ORDER BY id ASC")
+    @Query("SELECT * FROM 'user_db' ORDER BY id ASC")
     fun getAllUserInfo(): LiveData<List<User>> // function to get the list of a user's dataset
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertUser(user: User?) // function to insert datasets into the database
+    fun insertUser(user: User) // function to insert datasets into the database
 
     @Delete
-    fun deleteUser(user: User?) // function to delete datasets from the database
+    fun deleteUser(user: User) // function to delete datasets from the database
 
-    @Query("SELECT * FROM User WHERE mod LIKE :search ORDER BY id ASC")
-    fun searchByMod(search: String): MutableList<User> // query to filter by game mode
+   // @Query("SELECT * FROM User WHERE mod LIKE :search ORDER BY id ASC")
+    //fun searchByMod(search: String): MutableList<User> // query to filter by game mode
 
 
 }

@@ -37,7 +37,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import it.VES.yahtzee.db.User
+import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +61,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Home() {
+
+    // Inizializza il UserViewModel
+    val userViewModel: UserViewModel = viewModel()
 
         Column(
             modifier = Modifier
@@ -114,7 +121,7 @@ fun Home() {
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            UserNameInput()
+            UserNameInput(userViewModel = userViewModel)
         }
 
     }
@@ -140,7 +147,8 @@ fun Play() {
 }
 
 @Composable
-fun UserNameInput() {
+fun UserNameInput(userViewModel: UserViewModel/* = viewModel()*/) {
+
 
     // Stato per memorizzare il testo inserito
     var text by rememberSaveable { mutableStateOf("") }
@@ -160,8 +168,15 @@ fun UserNameInput() {
         )
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Bottone per salvare il nome dell'utente nel database
         Button(
-            onClick = { /*TODO: Action*/ },
+            onClick = {
+                if (text.isNotEmpty()) {
+                    val user = User(player = text)
+                    userViewModel.addUser(user)
+                }
+                      },
+            modifier = Modifier.padding(top = 16.dp)
 
         ) {
             Text(text = "Conferma")
