@@ -30,6 +30,7 @@
             android:theme="@style/Theme.Yahtzee">
 
         </activity>
+        <activity android:name=".DiceRollActivity" />
 
 
     </application>
