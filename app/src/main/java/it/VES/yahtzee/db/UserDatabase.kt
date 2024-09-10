@@ -16,24 +16,28 @@ abstract class UserDatabase: RoomDatabase() {
 
     // "companion object" contiene gli oggetti che hanno visibilità pubblica, ovvero visibili da altre classi
     companion object {
-
+        @Volatile
         // rendere la connessione a DB come singleton
-        private var INSTANCE: UserDatabase?= null
+        private var INSTANCE: UserDatabase? = null
 
-        fun getDatabase(context: Context): UserDatabase? {
+        fun getDatabase(context: Context): UserDatabase {
 
             // se l'istanza già esiste, restituisce l'istanza
             // se l'istanza è null, allora lo crea
-            if(INSTANCE == null ) {
-
-                INSTANCE = Room.databaseBuilder(
-                    context.applicationContext, UserDatabase::class.java, "user_database"
-                ).build()
-
+            val tempInstance = INSTANCE
+            if (tempInstance != null) {
+                return tempInstance
             }
-            return INSTANCE
+            synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    UserDatabase::class.java,
+                    "user_db"
+                ).build()
+                INSTANCE = instance
+                return instance
+            }
         }
     }
-
 
 }
