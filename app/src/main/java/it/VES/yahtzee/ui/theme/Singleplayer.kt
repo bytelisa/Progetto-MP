@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -43,22 +44,34 @@ class Singleplayer : ComponentActivity() {
 }
 @Composable
 fun SinglePlayer() {
-    val userViewModel: UserViewModel = viewModel()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        Spacer(modifier = Modifier.height(150.dp))
-        Button(
-            onClick = {/*TODO:ACTION*/ },
-            modifier = Modifier
-                .width(200.dp)
-                .height(45.dp),
+    Box(
+        modifier=Modifier
+            .fillMaxSize()//Riempie tutta la schermata
+    ){
+        //Uso row per affiancare i due bottoni in basso
+        Row(
+            modifier=Modifier
+                .align(Alignment.BottomCenter)//Allinea i bottoni al centro in basso
+                .padding(16.dp)//distanzio i bottoni
         ) {
-            Text(text = "Roll")
+            Button(
+                onClick = {/*azione per il bottone roll*/ },
+                        modifier=Modifier
+                            .padding(end=8.dp)
+                            .width(200.dp)
+                            .height(45.dp),
+            ) {
+                Text(text = "Roll")
+            }
+            Button(
+                onClick = {/*azione per il bottone play*/ },
+                        modifier=Modifier
+                            .padding(end=8.dp)
+                            .width(100.dp)
+                            .height(45.dp),
+            ) {
+                Text(text = "Play")
+            }
         }
     }
 }
@@ -68,7 +81,7 @@ fun SinglePlayer() {
 fun SinglePlayerPreview(){
     YahtzeeTheme {
         BackgroundSingleplayer()
-        Singleplayer()
+        SinglePlayer()
     }
 
 }
