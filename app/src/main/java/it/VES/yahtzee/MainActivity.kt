@@ -64,66 +64,66 @@ fun Home() {
     // Inizializza il UserViewModel
     val userViewModel: UserViewModel = viewModel()
 
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ){
+
+        Spacer(modifier = Modifier.height(100.dp))
+
+        Text(
+            text = "Yahtzee!",
+            //fontStyle = FontStyle.Normal.,
+            fontSize = 50.sp, // Big font size
+            fontWeight = FontWeight.Bold, // Bold text
+            textAlign = TextAlign.Center, // Center the text
+            color = Color(0xFF5221AA),
+            modifier = Modifier.padding(top = 24.dp) // Add some padding from the top
+        )
+        // Space between title and buttons
+        Spacer(modifier = Modifier.height(150.dp))
+
+        Button(
+            onClick = { /*TODO: Action*/ },
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ){
-
-            Spacer(modifier = Modifier.height(100.dp))
-
-            Text(
-                text = "Yahtzee!",
-                //fontStyle = FontStyle.Normal.,
-                fontSize = 50.sp, // Big font size
-                fontWeight = FontWeight.Bold, // Bold text
-                textAlign = TextAlign.Center, // Center the text
-                color = Color(0xFF5221AA),
-                modifier = Modifier.padding(top = 24.dp) // Add some padding from the top
-            )
-            // Space between title and buttons
-            Spacer(modifier = Modifier.height(150.dp))
-
-            Button(
-                onClick = { /*TODO: Action*/ },
-                modifier = Modifier
-                    .width(200.dp) // Set width for all buttons
-                    .height(45.dp), // Set height for all buttons)
-            ) {
-                Text(text = "Play")
-            }
-            // Space between title and buttons
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Second Button
-            Button(
-                onClick = { /*TODO: Action*/ },
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(45.dp),
-                ) {
-                Text(text = "How to Play")
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Third Button
-            Button(
-                onClick = {
-                    val intent = Intent(context, SettingsActivity::class.java)
-                    context.startActivity(intent) },
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(45.dp),
-            ) {
-                Text(text = "Settings")
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
-            UserNameInput(userViewModel = userViewModel)
+                .width(200.dp) // Set width for all buttons
+                .height(45.dp), // Set height for all buttons)
+        ) {
+            Text(text = "Play")
         }
+        // Space between title and buttons
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Second Button
+        Button(
+            onClick = { /*TODO: Action*/ },
+            modifier = Modifier
+                .width(200.dp)
+                .height(45.dp),
+            ) {
+            Text(text = "How to Play")
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Third Button
+        Button(
+            onClick = {
+                val intent = Intent(context, SettingsActivity::class.java)
+                context.startActivity(intent) },
+            modifier = Modifier
+                .width(200.dp)
+                .height(45.dp),
+        ) {
+            Text(text = "Settings")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        UserNameInput(userViewModel = userViewModel)
+    }
 
     }
 

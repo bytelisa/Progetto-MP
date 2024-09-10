@@ -1,11 +1,11 @@
 plugins {
     //alias(libs.plugins.android.application)
     //alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
     id("com.google.relay") version "0.3.12"
 
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-kapt")
 }
 
 android {

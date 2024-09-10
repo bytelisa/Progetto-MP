@@ -35,7 +35,5 @@ fun SettingsPreview(){
 
 @Composable
 fun Settings(){
-    (){
 
-    }
 }
