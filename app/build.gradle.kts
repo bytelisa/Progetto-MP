@@ -1,12 +1,13 @@
 plugins {
     //alias(libs.plugins.android.application)
     //alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")
-    id("com.google.relay") version "0.3.12"
-    id("kotlin-kapt")
-
     id("com.android.application")
     id("kotlin-android")
+    id("kotlin-kapt")
+    id("com.google.relay") version "0.3.12"
+
+
+
 }
 
 android {
@@ -57,6 +58,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.ui.test.android)
     val roomVersion = "2.5.1" // Versione di Room
     val kotlinVersion = "1.9.10" // Versione di Kotlin
 
@@ -69,7 +71,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
-
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

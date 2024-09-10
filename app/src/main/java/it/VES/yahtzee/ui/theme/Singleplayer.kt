@@ -5,12 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -24,9 +23,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
+import androidx.constraintlayout.compose.ConstraintLayout
 import it.VES.yahtzee.R
-import it.VES.yahtzee.db.UserViewModel
 
 class Singleplayer : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +35,7 @@ class Singleplayer : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BackgroundSingleplayer()
                     SinglePlayer()
+                    ScoreTable()
                 }
             }
         }
@@ -44,6 +43,7 @@ class Singleplayer : ComponentActivity() {
 }
 @Composable
 fun SinglePlayer() {
+
     Box(
         modifier=Modifier
             .fillMaxSize()//Riempie tutta la schermata
@@ -76,12 +76,62 @@ fun SinglePlayer() {
     }
 }
 
+
+
+@Composable
+fun ScoreTable() {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        val (buttons) = createRefs()
+        val buttonRefs = List(14) { createRef() }
+
+        // Bottoni disposti lungo il lato sinistro
+        Column(
+            modifier = Modifier
+                .constrainAs(buttons) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                }
+                .padding(start = 16.dp)
+        ) {
+            buttonRefs.forEachIndexed { index, ref ->
+                Button(
+                    onClick = { /* Handle click */ },
+                    modifier = Modifier
+                        .constrainAs(ref) {
+                            if (index == 0) {
+                                top.linkTo(parent.top, margin = 16.dp)
+                            } else {
+                                top.linkTo(buttonRefs[index - 1].bottom, margin = 8.dp)
+                            }
+                        }
+                            .width(200.dp) // Set width for all buttons
+                            .height(45.dp), // Set height for all buttons)
+                ) {
+                    Text("")
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
 @Preview(showBackground=true)
 @Composable
 fun SinglePlayerPreview(){
     YahtzeeTheme {
         BackgroundSingleplayer()
         SinglePlayer()
+        ScoreTable()
     }
 
 }
