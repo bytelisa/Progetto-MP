@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import it.VES.yahtzee.db.User
 import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -87,7 +88,13 @@ fun Home() {
             Spacer(modifier = Modifier.height(150.dp))
 
             Button(
-                onClick = { /*TODO: Action*/ },
+                onClick = { /*TODO: Action*/
+
+                    // Avvia la nuova Activity per il lancio dei dadi
+                    val intent = Intent(context, DiceRollActivity::class.java)
+                    context.startActivity(intent)
+
+                },
                 modifier = Modifier
                     .width(200.dp) // Set width for all buttons
                     .height(45.dp), // Set height for all buttons)
@@ -122,6 +129,7 @@ fun Home() {
             }
             Spacer(modifier = Modifier.height(24.dp))
 
+            // funzione di prova per DB (da cancellare)
             UserNameInput(userViewModel = userViewModel)
         }
 
@@ -147,6 +155,7 @@ fun Play() {
 
 }
 
+// funzione di prova per DB (da cancellare)
 @Composable
 fun UserNameInput(userViewModel: UserViewModel/* = viewModel()*/) {
 
