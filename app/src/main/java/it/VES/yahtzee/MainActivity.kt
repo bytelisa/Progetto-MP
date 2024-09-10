@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import it.VES.yahtzee.db.User
 import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -90,10 +89,10 @@ fun Home() {
         // Space between title and buttons
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { /*TODO: Action*/
+            onClick = {
 
                 // Avvia la nuova Activity per il lancio dei dadi
-                val intent = Intent(context, DiceRollActivity::class.java)
+                val intent = Intent(context, SingleplayerActivity::class.java)
                 context.startActivity(intent)
 
             },
