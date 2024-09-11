@@ -25,7 +25,7 @@
         </activity>
         <activity android:name=".SettingsActivity"></activity>
         <activity
-            android:name=".ui.theme.Singleplayer"
+            android:name=".SingleplayerActivity"
             android:exported="true"
             android:theme="@style/Theme.Yahtzee">
 

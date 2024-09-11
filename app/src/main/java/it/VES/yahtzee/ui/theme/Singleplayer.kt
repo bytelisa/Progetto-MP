@@ -134,19 +134,3 @@ fun BackgroundSingleplayer(){
     }
 
 }
-
-
-@Preview(showBackground=true)
-@Composable
-fun SinglePlayerPreview(){
-    YahtzeeTheme {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            BackgroundSingleplayer()
-            SinglePlayer()
-            ScoreTable()
-        }
-    }
-}
-
