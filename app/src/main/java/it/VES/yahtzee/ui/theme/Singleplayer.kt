@@ -5,14 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,8 +16,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import it.VES.yahtzee.R
+import androidx.constraintlayout.compose.ConstraintLayout
 
 class Singleplayer : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,15 +26,27 @@ class Singleplayer : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             YahtzeeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    BackgroundSingleplayer()
-                    SinglePlayer()
-                    ScoreTable()
-                }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    content= { innerPadding ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            BackgroundSingleplayer()
+                            //per i bottoni roll and play
+                            SinglePlayer()
+                            //posiziono la tabella dei punteggi a destra
+                            ScoreTable()
+                        }
+                    }
+                )
             }
         }
     }
 }
+
 @Composable
 fun SinglePlayer() {
 
@@ -48,6 +54,7 @@ fun SinglePlayer() {
         modifier=Modifier
             .fillMaxSize()//Riempie tutta la schermata
     ){
+
         //Uso row per affiancare i due bottoni in basso
         Row(
             modifier=Modifier
@@ -76,64 +83,43 @@ fun SinglePlayer() {
     }
 }
 
-
-
 @Composable
-fun ScoreTable() {
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        val (buttons) = createRefs()
-        val buttonRefs = List(14) { createRef() }
 
-        // Bottoni disposti lungo il lato sinistro
-        Column(
+fun ScoreTable() {
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        ConstraintLayout(
             modifier = Modifier
-                .constrainAs(buttons) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                }
-                .padding(start = 16.dp)
+                .fillMaxSize()
+                .padding(32.dp)
         ) {
+            // Creazione riferimenti per i bottoni
+            val (button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14) = createRefs()
+
+            // Array di riferimenti per facilitare l'accesso
+            val buttonRefs = listOf(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14)
+
+            // Crea 14 bottoni uno sotto l'altro
             buttonRefs.forEachIndexed { index, ref ->
                 Button(
-                    onClick = { /* Handle click */ },
+                    onClick = { /* Azione per il bottone */ },
                     modifier = Modifier
                         .constrainAs(ref) {
                             if (index == 0) {
-                                top.linkTo(parent.top, margin = 16.dp)
+                                top.linkTo(parent.top, margin = 35.dp) // Il primo bottone è ancorato al top
                             } else {
-                                top.linkTo(buttonRefs[index - 1].bottom, margin = 8.dp)
+                                top.linkTo(buttonRefs[index - 1].bottom, margin = 16.dp) // I successivi bottoni sono ancorati sotto il precedente
                             }
+                            end.linkTo(parent.end) // Allineati a sinistra
                         }
-                            .width(200.dp) // Set width for all buttons
-                            .height(45.dp), // Set height for all buttons)
+                        .width(90.dp)
+                        .height(30.dp)
                 ) {
-                    Text("")
+                    Text(text = "Button ${index + 1}")
                 }
             }
         }
     }
-}
-
-
-
-
-
-
-
-@Preview(showBackground=true)
-@Composable
-fun SinglePlayerPreview(){
-    YahtzeeTheme {
-        BackgroundSingleplayer()
-        SinglePlayer()
-        ScoreTable()
-    }
-
 }
 @Composable
 fun BackgroundSingleplayer(){
@@ -149,3 +135,19 @@ fun BackgroundSingleplayer(){
     }
 
 }
+
+
+@Preview(showBackground=true)
+@Composable
+fun SinglePlayerPreview(){
+    YahtzeeTheme {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            BackgroundSingleplayer()
+            SinglePlayer()
+            ScoreTable()
+        }
+    }
+}
+
