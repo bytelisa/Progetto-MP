@@ -114,7 +114,7 @@ fun ScoreTable() {
                         .width(90.dp)
                         .height(30.dp)
                 ) {
-                    Text(text = "Button ${index + 1}")
+                    Text(text = "")
                 }
             }
         }
