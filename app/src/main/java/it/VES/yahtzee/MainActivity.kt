@@ -62,7 +62,8 @@ fun Home() {
     val context = LocalContext.current
 
     // Inizializza il UserViewModel
-    val userViewModel: UserViewModel = viewModel()
+    val userViewModel: UserViewModel
+    userViewModel = viewModel()
 
     Column(
         modifier = Modifier

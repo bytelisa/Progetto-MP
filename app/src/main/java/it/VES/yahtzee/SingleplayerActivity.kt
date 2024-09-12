@@ -29,7 +29,7 @@ import it.VES.yahtzee.R
 
 
 
-class Singleplayer : ComponentActivity() {
+class SingleplayerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

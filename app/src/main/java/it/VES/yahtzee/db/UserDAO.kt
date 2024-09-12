@@ -20,8 +20,8 @@ interface UserDAO {
     @Delete
     fun deleteUser(user: User) // function to delete datasets from the database
 
-   // @Query("SELECT * FROM User WHERE mod LIKE :search ORDER BY id ASC")
-    //fun searchByMod(search: String): MutableList<User> // query to filter by game mode
+    @Query("SELECT * FROM 'user_db' WHERE mod LIKE :search ORDER BY id ASC")
+    fun searchByMod(search: String): MutableList<User> // query to filter by game mode
 
 
 }

@@ -24,7 +24,7 @@ import it.VES.yahtzee.R
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
-class Multiplayer : ComponentActivity() {
+class MultiplayerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
