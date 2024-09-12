@@ -95,7 +95,7 @@ fun ScoreTable() {
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
-            .padding(16.dp) // Aggiungi margine se necessario
+            .padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 100.dp) // necessario a spostare i bottoni
     ) {
         // Usa una Column per allineare i bottoni verticalmente
         Column(
@@ -107,8 +107,8 @@ fun ScoreTable() {
                     onClick = {/*azione per il bottone*/},
                     modifier = Modifier
                         .padding(bottom = 8.dp) // Margine tra i bottoni
-                        .width(150.dp) // Larghezza dei bottoni
-                        .height(45.dp) // Altezza dei bottoni
+                        .width(85.dp) // Larghezza dei bottoni
+                        .height(37.dp) // Altezza dei bottoni
                 ) {
                     Text(text = "Button $i")
                 }

@@ -91,11 +91,11 @@ fun BackgroundPicturepm(){
         )
     }
 }
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun Preview() {
     YahtzeeTheme {
         BackgroundPicturepm()
         Choose()
     }
-}
+}*/
