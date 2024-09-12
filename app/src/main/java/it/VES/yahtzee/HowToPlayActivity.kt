@@ -1,4 +1,8 @@
-package it.VES.yahtzee.ui.theme
+package it.VES.yahtzee
+
+import it.VES.yahtzee.ui.theme.YahtzeeTheme
+
+
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

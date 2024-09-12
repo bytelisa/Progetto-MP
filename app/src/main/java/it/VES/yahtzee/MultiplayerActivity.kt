@@ -1,9 +1,5 @@
 package it.VES.yahtzee
 
-import it.VES.yahtzee.ui.theme.YahtzeeTheme
-
-
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,17 +15,16 @@ import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+
 
 
 import androidx.compose.ui.unit.dp
 
 import it.VES.yahtzee.R
+import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
-
-
-class Singleplayer : ComponentActivity() {
+class Multiplayer : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -43,11 +38,11 @@ class Singleplayer : ComponentActivity() {
                                 .fillMaxSize()
                                 .padding(innerPadding)
                         ) {
-                            BackgroundSingleplayer()
+                            BackgroundMultiplayer()
                             //per i bottoni roll and play
-                            SinglePlayer()
+                            MultiPlayer()
                             //posiziono la tabella dei punteggi a destra
-                            ScoreTable()
+                            ScoreTableM()
                         }
                     }
                 )
@@ -57,7 +52,7 @@ class Singleplayer : ComponentActivity() {
 }
 
 @Composable
-fun SinglePlayer() {
+fun MultiPlayer() {
 
     Box(
         modifier=Modifier
@@ -94,27 +89,42 @@ fun SinglePlayer() {
 
 @Composable
 
-fun ScoreTable() {
+fun ScoreTableM() {
     Box(
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 100.dp) // necessario a spostare i bottoni
+            .padding(start = 16.dp, end = 30.dp, top = 1.dp, bottom = 100.dp)//serve per spostare i bottoni
     ) {
-        // Usa una Column per allineare i bottoni verticalmente
+        // Usa una Column per allineare le righe di bottoni verticalmente
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd) // Allinea la colonna a destra
         ) {
             for (i in 1..14) {
-                Button(
-                    onClick = {/*azione per il bottone*/},
+                // Usa una Row per posizionare i due bottoni orizzontalmente
+                Row(
                     modifier = Modifier
-                        .padding(bottom = 8.dp) // Margine tra i bottoni
-                        .width(85.dp) // Larghezza dei bottoni
-                        .height(37.dp) // Altezza dei bottoni
+                        .padding(bottom = 8.dp) // Margine tra le righe
                 ) {
-                    Text(text = "Button $i")
+                    Button(
+                        onClick = {/*azione per il bottone a sinistra*/ },
+                        modifier = Modifier
+                            .padding(end = 16.dp) // Margine tra i bottoni
+                            .width(85.dp) // Larghezza dei bottoni
+                            .height(37.dp) // Altezza dei bottoni
+                    ) {
+                        Text(text = "Left $i")
+                    }
+
+                    Button(
+                        onClick = {/*azione per il bottone a destra*/ },
+                        modifier = Modifier
+                            .width(85.dp) // Larghezza dei bottoni
+                            .height(37.dp) // Altezza dei bottoni
+                    ) {
+                        Text(text = "Right $i")
+                    }
                 }
             }
         }
@@ -124,12 +134,12 @@ fun ScoreTable() {
 
 
 @Composable
-fun BackgroundSingleplayer(){
+fun BackgroundMultiplayer(){
     Box(
         modifier=Modifier.fillMaxSize()
     ){
         Image(
-            painter=painterResource(id= R.drawable.singleplayer),
+            painter=painterResource(id= R.drawable.multiplayer),
             contentDescription="Single player background",
             contentScale= ContentScale.Crop,
             modifier=Modifier.matchParentSize()
@@ -141,8 +151,8 @@ fun BackgroundSingleplayer(){
 @Composable
 fun Preview() {
     YahtzeeTheme {
-        BackgroundSingleplayer()
-        ScoreTable()
-        SinglePlayer()
+        BackgroundMultiplayer()
+        ScoreTableM()
+        MultiPlayer()
     }
 }*/
