@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import it.VES.yahtzee.R
 
 class HowToPlayActivity: ComponentActivity(){
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,6 +46,7 @@ class HowToPlayActivity: ComponentActivity(){
         }
     }
 }
+
 @Composable
 fun Back() {
     Column(
