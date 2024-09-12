@@ -12,11 +12,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+
+
 import androidx.compose.ui.unit.dp
+
 import it.VES.yahtzee.R
-import androidx.constraintlayout.compose.ConstraintLayout
+
+
+
 
 class Singleplayer : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,41 +91,34 @@ fun SinglePlayer() {
 @Composable
 
 fun ScoreTable() {
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        ConstraintLayout(
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .padding(16.dp) // Aggiungi margine se necessario
+    ) {
+        // Usa una Column per allineare i bottoni verticalmente
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp)
+                .align(Alignment.CenterEnd) // Allinea la colonna a destra
         ) {
-            // Creazione riferimenti per i bottoni
-            val (button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14) = createRefs()
-
-            // Array di riferimenti per facilitare l'accesso
-            val buttonRefs = listOf(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14)
-
-            // Crea 14 bottoni uno sotto l'altro
-            buttonRefs.forEachIndexed { index, ref ->
+            for (i in 1..14) {
                 Button(
-                    onClick = { /* Azione per il bottone */ },
+                    onClick = {/*azione per il bottone*/},
                     modifier = Modifier
-                        .constrainAs(ref) {
-                            if (index == 0) {
-                                top.linkTo(parent.top, margin = 35.dp) // Il primo bottone è ancorato al top
-                            } else {
-                                top.linkTo(buttonRefs[index - 1].bottom, margin = 16.dp) // I successivi bottoni sono ancorati sotto il precedente
-                            }
-                            end.linkTo(parent.end) // Allineati a sinistra
-                        }
-                        .width(90.dp)
-                        .height(30.dp)
+                        .padding(bottom = 8.dp) // Margine tra i bottoni
+                        .width(150.dp) // Larghezza dei bottoni
+                        .height(45.dp) // Altezza dei bottoni
                 ) {
-                    Text(text = "")
+                    Text(text = "Button $i")
                 }
             }
         }
     }
 }
+
+
+
 @Composable
 fun BackgroundSingleplayer(){
     Box(
@@ -133,3 +133,12 @@ fun BackgroundSingleplayer(){
     }
 
 }
+/*@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    YahtzeeTheme {
+        BackgroundSingleplayer()
+        ScoreTable()
+        SinglePlayer()
+    }
+}*/

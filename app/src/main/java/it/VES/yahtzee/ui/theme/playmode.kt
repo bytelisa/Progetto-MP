@@ -1,14 +1,14 @@
 package it.VES.yahtzee.ui.theme
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+
+import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,61 +27,75 @@ import androidx.compose.ui.unit.dp
 
 import it.VES.yahtzee.R
 
-class HowToPlayActivity: ComponentActivity(){
+
+class PlaymodeActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             YahtzeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    BackgroundPictureHTP()
-                    Back()
+                    BackgroundPicturepm()
+                    Choose()
                 }
             }
         }
     }
 }
 @Composable
-fun Back() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        Spacer(modifier = Modifier.height(100.dp))
-        Button(
-            onClick = {/*Bottone Back*/ },
-            modifier = Modifier
-                .width(200.dp)
-                .height(45.dp),
+fun Choose(){
+    Box(
+        modifier=Modifier
+            .fillMaxSize()//Riempie tutta la schermata
+    ){
+
+        //Uso row per affiancare i due bottoni in basso
+        Row(
+            modifier=Modifier
+                .align(Alignment.Center)//Allinea i bottoni al centro in basso
+                .padding(16.dp)//distanzio i bottoni
         ) {
-            Text(text = "GoBack")
+            Button(
+                onClick = {/*azione per il bottone singleplayer*/ },
+                modifier=Modifier
+                    .padding(end=8.dp)
+                    .width(150.dp)
+                    .height(45.dp),
+            ) {
+                Text(text = "Singleplayer")
+            }
+            Button(
+                onClick = {/*azione per il bottone multiplayer*/ },
+                modifier=Modifier
+                    .padding(end=8.dp)
+                    .width(150.dp)
+                    .height(45.dp),
+            ) {
+                Text(text = "Multiplayer")
+            }
         }
     }
 }
 
 
-
 @Composable
-fun BackgroundPictureHTP(){
+fun BackgroundPicturepm(){
     Box(
         modifier=Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.howtoplay),
-            contentDescription = "How to play background",
+            painter = painterResource(id = R.drawable.playmode),
+            contentDescription = "play mode",
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )
     }
 }
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun HTPreview() {
+fun Preview() {
     YahtzeeTheme {
-        BackgroundPictureHTP()
-        Back()
+        BackgroundPicturepm()
+        Choose()
     }
-}*/
+}
