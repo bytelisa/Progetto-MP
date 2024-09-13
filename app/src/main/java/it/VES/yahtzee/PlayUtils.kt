@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -41,7 +43,7 @@ class PlayUtils {
         context: Context
     ) {
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
-
+        var oldImageIds = rememberSaveable { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
         var imageIds: List<Int> = PlayUtils().getImageResourceIds(rolledDice, context, clickedStates)
 
 
@@ -63,11 +65,18 @@ class PlayUtils {
                 val imageSize = calculateImageSize(imageIds.size)
 
                 for (i in imageIds.indices) {
+                    oldImageIds[i]= imageIds[i]
 
                     val isClicked = clickedStates[i]
                     Image(
 
-                        painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
+                        painter = painterResource(
+                            id = if (imageIds[i] == 999) {
+                                oldImageIds[i]
+                            } else{
+                            imageIds[i]
+                        }
+                        ),  // Carica l'immagine con il suo ID
                         contentDescription = null,
                         modifier = Modifier
                             .size(imageSize)
@@ -108,16 +117,22 @@ class PlayUtils {
             if (!clickedStates[index]) {
                 val resourceName = "dice$currentValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
                 getDrawableResourceByName(resourceName, context)
-                 // Se non è cliccata, aggiorna con il nuovo ID
+                // Se non è cliccata, aggiorna con il nuovo ID
             } else {
-                getDrawableResourceByName("dice$currentValue", context)
+                getDrawableResourceByName("default", context)
                 // Mantieni l'ID corrente se l'immagine è cliccata
+
             }
         }
 
     }
 
     private fun getDrawableResourceByName(name: String, context: Context): Int {
+
+        if (name == "default"){
+            return 999
+        }
+
         val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
         if (resourceId == 0) {
             throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")

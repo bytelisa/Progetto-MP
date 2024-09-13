@@ -62,7 +62,6 @@ fun SinglePlayer() {
 
     //queste mi servono per mostrare i dadi quando viene premuto roll
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
-    var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) } //tiene traccia di quali dati sono stati cliccati (ovvero non vanno rilanciati)
 
     val context = LocalContext.current
 
