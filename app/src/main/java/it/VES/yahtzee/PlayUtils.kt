@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,7 +35,7 @@ import androidx.compose.ui.unit.dp
 //questa classe contiene funzioni extra condivise dalle due modalità di gioco (singleplayer e multiplayer), ad es blocco dadi
 
 class PlayUtils {
-
+    var giro = mutableIntStateOf(0);
 
     @Composable
     fun ImageSequence(
@@ -43,8 +44,10 @@ class PlayUtils {
         context: Context
     ) {
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
-        var oldImageIds = rememberSaveable { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
-        var imageIds: List<Int> = PlayUtils().getImageResourceIds(rolledDice, context, clickedStates)
+        val oldImageIds = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
+        val imageIds by remember(rolledDice, clickedStates) {
+            mutableStateOf(PlayUtils().getImageResourceIds(rolledDice, context, clickedStates))
+        }
 
 
         Column(
@@ -62,7 +65,7 @@ class PlayUtils {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                val imageSize = calculateImageSize(imageIds.size)
+                val imageSize = calculateImageSize(5)
 
                 for (i in imageIds.indices) {
                     oldImageIds[i]= imageIds[i]
@@ -94,7 +97,6 @@ class PlayUtils {
                                     .also {
                                         it[i] = !isClicked
                                     }
-                                imageIds = getImageResourceIds(rolledDice, context, clickedStates)
                             },
                         contentScale = ContentScale.Crop,
                     )
@@ -119,7 +121,7 @@ class PlayUtils {
                 getDrawableResourceByName(resourceName, context)
                 // Se non è cliccata, aggiorna con il nuovo ID
             } else {
-                getDrawableResourceByName("default", context)
+                getDrawableResourceByName("home", context)
                 // Mantieni l'ID corrente se l'immagine è cliccata
 
             }
@@ -129,15 +131,15 @@ class PlayUtils {
 
     private fun getDrawableResourceByName(name: String, context: Context): Int {
 
-        if (name == "default"){
-            return 999
+
+            val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
+            if (resourceId == 0) {
+                throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")
+            }
+            return resourceId
         }
 
-        val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
-        if (resourceId == 0) {
-            throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")
-        }
-        return resourceId
-    }
+
+
 
 }
