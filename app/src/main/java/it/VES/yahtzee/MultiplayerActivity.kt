@@ -96,16 +96,17 @@ fun MultiPlayer() {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
             PlayUtils().ImageSequence(
-                imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
-                rotationValues = rotationValues
+                rolledDice,
+                rotationValues = rotationValues,
+                context
             )
         }
 
     }
 }
 
-@Composable
 
+@Composable
 fun ScoreTableM() {
     Box(
         modifier = Modifier

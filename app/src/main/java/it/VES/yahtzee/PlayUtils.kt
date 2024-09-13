@@ -21,9 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -36,16 +33,18 @@ import androidx.compose.ui.unit.dp
 
 class PlayUtils {
 
-    fun DiceBlock(){
-        //funzione che blocca un dado quando viene selezionato, ci applichiamo un filtro grigio scuro e impediamo che venga rilanciato
-    }
-
 
     @Composable
     fun ImageSequence(
-        imageIds: List<Int>,  // Lista di ID delle immagini da visualizzare
-        rotationValues: List<Float>
+        rolledDice: List<Int>,  // Lista dei dadi
+        rotationValues: List<Float>,
+        context: Context
     ) {
+        var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
+
+        var imageIds: List<Int> = PlayUtils().getImageResourceIds(rolledDice, context, clickedStates)
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -63,11 +62,11 @@ class PlayUtils {
 
                 val imageSize = calculateImageSize(imageIds.size)
 
-                var clickedStates by rememberSaveable { mutableStateOf(List(imageIds.size) { false }) }
-
                 for (i in imageIds.indices) {
+
                     val isClicked = clickedStates[i]
                     Image(
+
                         painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
                         contentDescription = null,
                         modifier = Modifier
@@ -81,27 +80,21 @@ class PlayUtils {
                             }
                             .clickable {
                                 // Cambia lo stato dell'immagine quando viene cliccata
-                                clickedStates = clickedStates.toMutableList().also {
-                                    it[i] = !isClicked
-                                }
+                                clickedStates = clickedStates
+                                    .toMutableList()
+                                    .also {
+                                        it[i] = !isClicked
+                                    }
+                                imageIds = getImageResourceIds(rolledDice, context, clickedStates)
                             },
                         contentScale = ContentScale.Crop,
-
                     )
                 }
             }
         }
     }
-    /*
-    @Composable
-    fun blockDice(i: Int): () -> Unit {
-        //blocca il dado cambiandone il colore e modificandone lo stato
-        return
-    }
 
 
-
-     */
     // Funzione per calcolare la dimensione massima delle immagini
     @Composable
     fun calculateImageSize(imageCount: Int): Dp {
@@ -110,12 +103,18 @@ class PlayUtils {
     }
 
 
-    fun getImageResourceIds(diceValues: List<Int>, context: Context): List<Int> {
-        return diceValues.map { diceValue ->
-            val resourceName = "dice$diceValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
-            val resourceId = getDrawableResourceByName(resourceName, context)
-            resourceId
+    fun getImageResourceIds(diceValues: List<Int>, context: Context, clickedStates: List<Boolean>): List<Int> {
+        return diceValues.mapIndexed { index, currentValue ->
+            if (!clickedStates[index]) {
+                val resourceName = "dice$currentValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
+                getDrawableResourceByName(resourceName, context)
+                 // Se non è cliccata, aggiorna con il nuovo ID
+            } else {
+                getDrawableResourceByName("dice$currentValue", context)
+                // Mantieni l'ID corrente se l'immagine è cliccata
+            }
         }
+
     }
 
     private fun getDrawableResourceByName(name: String, context: Context): Int {

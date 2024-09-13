@@ -62,6 +62,8 @@ fun SinglePlayer() {
 
     //queste mi servono per mostrare i dadi quando viene premuto roll
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+    var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) } //tiene traccia di quali dati sono stati cliccati (ovvero non vanno rilanciati)
+
     val context = LocalContext.current
 
     Box(
@@ -102,11 +104,11 @@ fun SinglePlayer() {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
             PlayUtils().ImageSequence(
-                imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
-                rotationValues = rotationValues
+                rolledDice,
+                rotationValues = rotationValues,
+                context
             )
         }
-
     }
 }
 
