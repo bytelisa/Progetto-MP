@@ -138,7 +138,7 @@ fun Home() {
         UserNameInput(userViewModel = userViewModel)
     }
 
-    }
+}
 
 
 @Preview(showBackground = true)

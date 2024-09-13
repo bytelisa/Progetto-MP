@@ -68,6 +68,8 @@ fun SinglePlayer() {
         modifier=Modifier
             .fillMaxSize()//Riempie tutta la schermata
     ){
+
+        //Uso row per affiancare i due bottoni in basso
         Row(
             modifier= Modifier
                 .align(Alignment.BottomCenter)//Allinea i bottoni al centro in basso
@@ -110,6 +112,7 @@ fun SinglePlayer() {
 
 
 @Composable
+
 fun ScoreTable() {
     Box(
         modifier = Modifier
