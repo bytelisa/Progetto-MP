@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -18,7 +19,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = Color(0xFF7E8ACE),
     secondary = PurpleGrey40,
     tertiary = Pink40
 
@@ -40,6 +41,12 @@ fun YahtzeeTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+
+    val context = LocalContext.current
+
+    val colorScheme = LightColorScheme
+
+    /*
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -49,6 +56,8 @@ fun YahtzeeTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+     */
 
     MaterialTheme(
         colorScheme = colorScheme,
