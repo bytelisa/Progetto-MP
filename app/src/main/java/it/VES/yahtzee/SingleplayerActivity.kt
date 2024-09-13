@@ -179,28 +179,6 @@ fun calculateImageSize(imageCount: Int): Dp {
 }
 
 
-@Composable
-fun PreviewImageSequence() {
-    // Lista di ID delle immagini da visualizzare
-    val imageIds = listOf(
-        R.drawable.dice1,
-        R.drawable.dice2,
-        R.drawable.dice3,
-        R.drawable.dice4,
-        R.drawable.dice5,
-        R.drawable.dice6
-    )
-
-    val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
-
-    // Chiamata alla funzione con i valori definiti
-    ImageSequence(
-        imageIds = imageIds,
-        rotationValues = rotationValues
-    )
-}
-
-// Funzione che ottiene gli ID delle immagini dato un elenco di numeri
 fun getImageResourceIds(diceValues: List<Int>, context: Context): List<Int> {
     return diceValues.map { diceValue ->
         val resourceName = "dice$diceValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
@@ -209,7 +187,6 @@ fun getImageResourceIds(diceValues: List<Int>, context: Context): List<Int> {
     }
 }
 
-// Funzione che ottiene l'ID di una risorsa drawable dato il nome
 fun getDrawableResourceByName(name: String, context: Context): Int {
     val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
     if (resourceId == 0) {
@@ -262,12 +239,3 @@ fun BackgroundSingleplayer(){
     }
 
 }
-/*@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    YahtzeeTheme {
-        BackgroundSingleplayer()
-        ScoreTable()
-        SinglePlayer()
-    }
-}*/

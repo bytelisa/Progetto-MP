@@ -1,14 +1,13 @@
 package it.VES.yahtzee
+
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-
 import androidx.compose.foundation.layout.Box
-
 import androidx.compose.foundation.layout.Row
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,16 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
-import it.VES.yahtzee.R
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
-class PlaymodeActivity: ComponentActivity(){
+class PlayModeActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -43,21 +40,26 @@ class PlaymodeActivity: ComponentActivity(){
         }
     }
 }
+
 @Composable
 fun Choose(){
+
+    val context = LocalContext.current
+
     Box(
         modifier=Modifier
-            .fillMaxSize()//Riempie tutta la schermata
+            .fillMaxSize()
     ){
-
-        //Uso row per affiancare i due bottoni in basso
         Row(
             modifier=Modifier
-                .align(Alignment.Center)//Allinea i bottoni al centro in basso
-                .padding(16.dp)//distanzio i bottoni
+                .align(Alignment.Center)
+                .padding(16.dp)
         ) {
             Button(
-                onClick = {/*azione per il bottone singleplayer*/ },
+                onClick = {
+                    val intent = Intent(context, SingleplayerActivity::class.java)
+                    context.startActivity(intent)
+                },
                 modifier=Modifier
                     .padding(end=8.dp)
                     .width(150.dp)
@@ -66,7 +68,10 @@ fun Choose(){
                 Text(text = "Singleplayer")
             }
             Button(
-                onClick = {/*azione per il bottone multiplayer*/ },
+                onClick = {
+                    val intent = Intent(context, MultiplayerActivity::class.java)
+                    context.startActivity(intent)
+                          },
                 modifier=Modifier
                     .padding(end=8.dp)
                     .width(150.dp)
@@ -92,11 +97,12 @@ fun BackgroundPicturepm(){
         )
     }
 }
-/*@Preview(showBackground = true)
+
+@Preview(showBackground = true)
 @Composable
-fun Preview() {
+fun PreviewPage() {
     YahtzeeTheme {
         BackgroundPicturepm()
         Choose()
     }
-}*/
+}
