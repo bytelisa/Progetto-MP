@@ -1,6 +1,7 @@
 package it.VES.yahtzee
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,18 +12,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
+
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,14 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import it.VES.yahtzee.db.UserViewModel
+import androidx.compose.ui.text.AnnotatedString
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 
 class MainActivity : ComponentActivity() {
@@ -59,10 +64,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Home() {
     val context = LocalContext.current
+    var showDialog  by remember {mutableStateOf(false)}
 
-    // Inizializza il UserViewModel
-    val userViewModel: UserViewModel
-    userViewModel = viewModel()
 
     Column(
         modifier = Modifier
@@ -133,11 +136,48 @@ fun Home() {
             Text(text = "Settings")
         }
         Spacer(modifier = Modifier.height(24.dp))
-
-        // funzione di prova per DB (da cancellare)
-        UserNameInput(userViewModel = userViewModel)
+        //fourth button
+        Button(
+            onClick={showDialog=true},
+            modifier=Modifier
+                .width(200.dp)
+                .height(45.dp),
+        ){
+            Text(text="About Us")
+        }
+        if(showDialog){
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text(text = "About Us") },
+                text = {
+                    Column {
+                        Text("Name 1: Elisa Marzioli")
+                        Text("Name 2: Sofia Tosti")
+                        Text("Name 3: Valentina Jin")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        ClickableText(
+                            text = AnnotatedString("Learn more on Wikipedia"),
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/Yahtzee"))
+                                context.startActivity(intent)
+                            },
+                            style = TextStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showDialog = false }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
     }
-
 }
 
 
@@ -152,46 +192,7 @@ fun HomePreview() {
 
 
 
-@Composable
-fun UserNameInput(
 
-    userViewModel: UserViewModel = viewModel()) {
-
-
-    // Stato per memorizzare il testo inserito
-    var text by rememberSaveable { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ){
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            label = { Text("Inserisci il tuo nome") },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {Text("Nome")}
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Bottone per salvare il nome dell'utente nel database
-        Button(
-            onClick = {
-              /*  if (text.isNotEmpty()) {
-                    val user = User(player = text)
-                    userViewModel.addUser(user)
-                }*/
-                      },
-            modifier = Modifier.padding(top = 16.dp)
-
-        ) {
-            Text(text = "Conferma")
-        }
-    }
-
-}
 
 @Composable
 fun BackgroundPicture(){
