@@ -141,7 +141,7 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 
-    private fun rollDice(): List<Int> {
+    public fun rollDice(): List<Int> {
         val results = List(5) { (1..6).random() }
         Log.d("DiceRollActivity", "New Dice Results: $results")
         return results

@@ -14,6 +14,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -30,6 +35,10 @@ import it.VES.yahtzee.R
 
 
 class SingleplayerActivity : ComponentActivity() {
+
+    //var rolledDice = listOf(0,0,0,0,0,0)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -56,8 +65,17 @@ class SingleplayerActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun SinglePlayer() {
+
+    //queste mi servono per mostrare i dadi quando viene premuto roll
+    var showDice1: Int by rememberSaveable { mutableIntStateOf(0) }
+    var showDice2 by rememberSaveable { mutableIntStateOf(0) }
+    var showDice3 by rememberSaveable { mutableIntStateOf(0) }
+    var showDice4 by rememberSaveable { mutableIntStateOf(0) }
+    var showDice5 by rememberSaveable { mutableIntStateOf(0) }
+    var rolledDice: List<Int>
 
     Box(
         modifier=Modifier
@@ -66,14 +84,18 @@ fun SinglePlayer() {
 
         //Uso row per affiancare i due bottoni in basso
         Row(
-            modifier=Modifier
+            modifier= Modifier
                 .align(Alignment.BottomCenter)//Allinea i bottoni al centro in basso
                 .padding(16.dp)//distanzio i bottoni
         ) {
             Button(
-                onClick = {/*azione per il bottone roll*/ },
-                modifier=Modifier
-                    .padding(end=8.dp)
+                onClick = {
+                    //bottone che lancia i dadi
+                    rolledDice = DiceRollActivity().rollDice()
+                    DiceRoll(rolledDice)
+                },
+                modifier= Modifier
+                    .padding(end = 8.dp)
                     .width(200.dp)
                     .height(45.dp),
             ) {
@@ -81,16 +103,40 @@ fun SinglePlayer() {
             }
             Button(
                 onClick = {/*azione per il bottone play*/ },
-                modifier=Modifier
-                    .padding(end=8.dp)
+                modifier= Modifier
+                    .padding(end = 8.dp)
                     .width(100.dp)
                     .height(45.dp),
             ) {
                 Text(text = "Play")
             }
+
+        }
+
+        for (i in 0..5){
+            Row(){
+                Image(
+                    //first dice
+                    //var diceNumber: String = qui costruisco il nome del dado da chiamare in base all'elemento i-esimo della lista ottenuta
+                    painter = painterResource(id = R.drawable.dice1),
+                    contentDescription = "Immagine di esempio",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
         }
     }
 }
+
+
+
+fun DiceRoll(rolledDice: List<Int>){
+    //funzione che carica le immagini dei dadi secondo i numeri prodotti dalla funzione DiceRoll
+}
+
 
 @Composable
 

@@ -62,7 +62,8 @@ fun Home() {
     val context = LocalContext.current
 
     // Inizializza il UserViewModel
-    val userViewModel: UserViewModel = viewModel()
+    val userViewModel: UserViewModel
+    userViewModel = viewModel()
 
     Column(
         modifier = Modifier
@@ -107,7 +108,13 @@ fun Home() {
 
         // Second Button
         Button(
-            onClick = { /*TODO: Action*/ },
+
+            onClick = {
+                // Avvia la nuova Activity per le regole di gioco
+                val intent = Intent(context, HowToPlayActivity::class.java)
+                context.startActivity(intent)
+            },
+
             modifier = Modifier
                 .width(200.dp)
                 .height(45.dp),
@@ -146,15 +153,7 @@ fun HomePreview() {
     }
 }
 
-@Composable
-fun SimpleTextDisplay(message: String) {
-    Text(text = message)
-}
 
-@Composable
-fun Play() {
-
-}
 
 @Composable
 fun UserNameInput(userViewModel: UserViewModel/* = viewModel()*/) {
@@ -181,10 +180,10 @@ fun UserNameInput(userViewModel: UserViewModel/* = viewModel()*/) {
         // Bottone per salvare il nome dell'utente nel database
         Button(
             onClick = {
-                if (text.isNotEmpty()) {
+              /*  if (text.isNotEmpty()) {
                     val user = User(player = text)
                     userViewModel.addUser(user)
-                }
+                }*/
                       },
             modifier = Modifier.padding(top = 16.dp)
 
