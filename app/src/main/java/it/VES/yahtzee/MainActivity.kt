@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import it.VES.yahtzee.db.User
 import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -154,7 +153,9 @@ fun HomePreview() {
 
 
 @Composable
-fun UserNameInput(userViewModel: UserViewModel/* = viewModel()*/) {
+fun UserNameInput(
+
+    userViewModel: UserViewModel = viewModel()) {
 
 
     // Stato per memorizzare il testo inserito
