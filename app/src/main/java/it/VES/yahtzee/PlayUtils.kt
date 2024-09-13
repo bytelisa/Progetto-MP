@@ -77,7 +77,7 @@ class PlayUtils {
                             .padding(1.dp)
                             .graphicsLayer {
                                 // Cambia la luminosità in base al click
-                                //alpha = if (isClicked) 0.3f else 1.0f
+                                alpha = if (isClicked) 0.3f else 1.0f
                             }
                             .clickable {
                                 // Cambia lo stato dell'immagine quando viene cliccata
@@ -86,14 +86,7 @@ class PlayUtils {
                                 }
                             },
                         contentScale = ContentScale.Crop,
-                        colorFilter = if (isClicked) {
-                            ColorFilter.tint(
-                                color = Color.Black.copy(alpha = 0.5f),  // Applica un'ombra nera semi-trasparente
-                                blendMode = BlendMode.Multiply
-                            )
-                        } else {
-                            null  // Nessun filtro quando non è cliccata
-                        }
+
                     )
                 }
             }
