@@ -10,10 +10,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,6 +26,7 @@ import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
 class MultiplayerActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,6 +56,9 @@ class MultiplayerActivity : ComponentActivity() {
 @Composable
 fun MultiPlayer() {
 
+    var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+    val context = LocalContext.current
+
     Box(
         modifier=Modifier
             .fillMaxSize()
@@ -61,7 +70,9 @@ fun MultiPlayer() {
                 .padding(16.dp)
         ) {
             Button(
-                onClick = {/*azione per il bottone roll*/ },
+                onClick = {
+                    rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
+                },
                 modifier=Modifier
                     .padding(end=8.dp)
                     .width(200.dp)
@@ -79,6 +90,16 @@ fun MultiPlayer() {
                 Text(text = "Play")
             }
         }
+
+        if (rolledDice.isNotEmpty()) {
+            val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
+
+            ImageSequence(
+                imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
+                rotationValues = rotationValues
+            )
+        }
+
     }
 }
 

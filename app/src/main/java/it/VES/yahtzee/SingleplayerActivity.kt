@@ -2,9 +2,6 @@ package it.VES.yahtzee
 
 import android.content.Context
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
-
-
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,14 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-
-
 import androidx.compose.ui.unit.dp
 
 
@@ -81,10 +75,7 @@ fun SinglePlayer() {
         ) {
             Button(
                 onClick = {
-
-                    //bottone che lancia i dadi
-                    rolledDice = DiceRollActivity().rollDice() //genera soltanto numeri casuali
-
+                    rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
                 },
                 modifier= Modifier
                     .padding(end = 8.dp)
@@ -106,11 +97,10 @@ fun SinglePlayer() {
         }
 
         if (rolledDice.isNotEmpty()) {
-            // Puoi fornire valori di rotazione predefiniti
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
             ImageSequence(
-                imageIds = getImageResourceIds(rolledDice, context), //qua dovrei mettere gli id delle immagini
+                imageIds = getImageResourceIds(rolledDice, context),
                 rotationValues = rotationValues
             )
         }
@@ -122,7 +112,7 @@ fun SinglePlayer() {
 @Composable
 fun ImageSequence(
     imageIds: List<Int>,  // Lista di ID delle immagini da visualizzare
-    rotationValues: List<Float>  // Valori di rotazione da applicare
+    rotationValues: List<Float>
 ) {
     Column(
         modifier=Modifier
@@ -142,11 +132,10 @@ fun ImageSequence(
 
             val imageSize = calculateImageSize(imageIds.size)
 
-            // Itera su ciascun ID immagine
             for (i in imageIds.indices) {
 
                 Image(
-                    painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
+                    painter = painterResource(id = imageIds[i]),
                     contentDescription = null,
                     modifier = Modifier
                         .size(imageSize)
@@ -166,11 +155,8 @@ fun ImageSequence(
 // Funzione per calcolare la dimensione massima delle immagini
 @Composable
 fun calculateImageSize(imageCount: Int): Dp {
-    // Ottiene la larghezza dello schermo in dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
-    // Calcola la larghezza massima disponibile per ogni immagine, includendo un piccolo padding
-    return (screenWidth / imageCount) - 8.dp // Sottrai un padding di 4.dp su ogni lato
+    return (screenWidth / imageCount) - 8.dp
 }
 
 
