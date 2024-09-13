@@ -26,9 +26,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 
 
 import androidx.compose.ui.unit.dp
@@ -131,16 +133,20 @@ fun ImageSequence(
         modifier=Modifier
             .fillMaxSize()
     ){
-        Spacer(modifier = Modifier.height(700.dp))
+        Spacer(modifier = Modifier.height(720.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(8.dp)
+                ,
 
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            val imageSize = calculateImageSize(imageIds.size)
+
             // Itera su ciascun ID immagine
             for (i in imageIds.indices) {
 
@@ -148,10 +154,10 @@ fun ImageSequence(
                     painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
                     contentDescription = null,
                     modifier = Modifier
-                        .size(100.dp)
-                        .scale(0.5f)
+                        .size(imageSize)
+                        .scale(0.7f)
                         .rotate(rotationValues[i])
-                        .padding(8.dp),
+                        .padding(1.dp),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -161,6 +167,16 @@ fun ImageSequence(
 
 }
 
+
+// Funzione per calcolare la dimensione massima delle immagini
+@Composable
+fun calculateImageSize(imageCount: Int): Dp {
+    // Ottiene la larghezza dello schermo in dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    // Calcola la larghezza massima disponibile per ogni immagine, includendo un piccolo padding
+    return (screenWidth / imageCount) - 8.dp // Sottrai un padding di 4.dp su ogni lato
+}
 
 
 @Composable
