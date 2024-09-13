@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 class PlayUtils {
 
     fun DiceBlock(){
-        //funzione che blocca un dado quando viene selezionato
+        //funzione che blocca un dado quando viene selezionato, ci applichiamo un filtro grigio scuro e impediamo che venga rilanciato
     }
 
 
