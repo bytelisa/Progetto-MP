@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 
 
 //questa classe contiene funzioni extra condivise dalle due modalità di gioco (singleplayer e multiplayer), ad es blocco dadi
-//TODO: spostare qui le funzioni del lancio dadi presenti in singleplayer
 
 class PlayUtils {
 
@@ -92,7 +91,7 @@ class PlayUtils {
         }
     }
 
-    fun getDrawableResourceByName(name: String, context: Context): Int {
+    private fun getDrawableResourceByName(name: String, context: Context): Int {
         val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
         if (resourceId == 0) {
             throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")

@@ -99,8 +99,8 @@ fun SinglePlayer() {
         if (rolledDice.isNotEmpty()) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            ImageSequence(
-                imageIds = getImageResourceIds(rolledDice, context),
+            PlayUtils().ImageSequence(
+                imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
                 rotationValues = rotationValues
             )
         }
@@ -108,73 +108,6 @@ fun SinglePlayer() {
     }
 }
 
-
-@Composable
-fun ImageSequence(
-    imageIds: List<Int>,  // Lista di ID delle immagini da visualizzare
-    rotationValues: List<Float>
-) {
-    Column(
-        modifier=Modifier
-            .fillMaxSize()
-    ){
-        Spacer(modifier = Modifier.height(720.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                ,
-
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            val imageSize = calculateImageSize(imageIds.size)
-
-            for (i in imageIds.indices) {
-
-                Image(
-                    painter = painterResource(id = imageIds[i]),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(imageSize)
-                        .scale(0.7f)
-                        .rotate(rotationValues[i])
-                        .padding(1.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-
-    }
-
-}
-
-
-// Funzione per calcolare la dimensione massima delle immagini
-@Composable
-fun calculateImageSize(imageCount: Int): Dp {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    return (screenWidth / imageCount) - 8.dp
-}
-
-
-fun getImageResourceIds(diceValues: List<Int>, context: Context): List<Int> {
-    return diceValues.map { diceValue ->
-        val resourceName = "dice$diceValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
-        val resourceId = getDrawableResourceByName(resourceName, context)
-        resourceId
-    }
-}
-
-fun getDrawableResourceByName(name: String, context: Context): Int {
-    val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
-    if (resourceId == 0) {
-        throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")
-    }
-    return resourceId
-}
 
 @Composable
 fun ScoreTable() {

@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
+import it.VES.yahtzee.PlayUtils
 
 
 class MultiplayerActivity : ComponentActivity() {
@@ -94,7 +95,7 @@ fun MultiPlayer() {
         if (rolledDice.isNotEmpty()) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            ImageSequence(
+            PlayUtils().ImageSequence(
                 imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
                 rotationValues = rotationValues
             )
