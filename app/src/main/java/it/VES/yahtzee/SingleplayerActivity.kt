@@ -1,9 +1,7 @@
 package it.VES.yahtzee
 
+import android.content.Context
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
-
-
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,29 +13,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-
-
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-import it.VES.yahtzee.R
-
-
 
 
 class SingleplayerActivity : ComponentActivity() {
-
-    //var rolledDice = listOf(0,0,0,0,0,0)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,12 +61,8 @@ class SingleplayerActivity : ComponentActivity() {
 fun SinglePlayer() {
 
     //queste mi servono per mostrare i dadi quando viene premuto roll
-    var showDice1: Int by rememberSaveable { mutableIntStateOf(0) }
-    var showDice2 by rememberSaveable { mutableIntStateOf(0) }
-    var showDice3 by rememberSaveable { mutableIntStateOf(0) }
-    var showDice4 by rememberSaveable { mutableIntStateOf(0) }
-    var showDice5 by rememberSaveable { mutableIntStateOf(0) }
-    var rolledDice: List<Int>
+    var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+    val context = LocalContext.current
 
     Box(
         modifier=Modifier
@@ -90,9 +77,7 @@ fun SinglePlayer() {
         ) {
             Button(
                 onClick = {
-                    //bottone che lancia i dadi
-                    rolledDice = DiceRollActivity().rollDice()
-                    DiceRoll(rolledDice)
+                    rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
                 },
                 modifier= Modifier
                     .padding(end = 8.dp)
@@ -113,28 +98,16 @@ fun SinglePlayer() {
 
         }
 
-        for (i in 0..5){
-            Row(){
-                Image(
-                    //first dice
-                    //var diceNumber: String = qui costruisco il nome del dado da chiamare in base all'elemento i-esimo della lista ottenuta
-                    painter = painterResource(id = R.drawable.dice1),
-                    contentDescription = "Immagine di esempio",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
+        if (rolledDice.isNotEmpty()) {
+            val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
+            PlayUtils().ImageSequence(
+                imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
+                rotationValues = rotationValues
+            )
         }
+
     }
-}
-
-
-
-fun DiceRoll(rolledDice: List<Int>){
-    //funzione che carica le immagini dei dadi secondo i numeri prodotti dalla funzione DiceRoll
 }
 
 
@@ -183,12 +156,3 @@ fun BackgroundSingleplayer(){
     }
 
 }
-/*@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    YahtzeeTheme {
-        BackgroundSingleplayer()
-        ScoreTable()
-        SinglePlayer()
-    }
-}*/

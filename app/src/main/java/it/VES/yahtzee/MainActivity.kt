@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import it.VES.yahtzee.db.User
 import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,23 +76,21 @@ fun Home() {
 
         Text(
             text = "Yahtzee!",
-            //fontStyle = FontStyle.Normal.,
-            fontSize = 50.sp, // Big font size
-            fontWeight = FontWeight.Bold, // Bold text
-            textAlign = TextAlign.Center, // Center the text
+            fontSize = 50.sp, // Big
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
             color = Color(0xFF5221AA),
-            modifier = Modifier.padding(top = 24.dp) // Add some padding from the top
+            modifier = Modifier.padding(top = 24.dp)
         )
-        // Space between title and buttons
+
         Spacer(modifier = Modifier.height(150.dp))
 
-        // Space between title and buttons
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
 
                 // Avvia la nuova Activity per il lancio dei dadi
-                val intent = Intent(context, SingleplayerActivity::class.java)
+                val intent = Intent(context, PlayModeActivity::class.java)
                 context.startActivity(intent)
 
             },
@@ -103,7 +100,7 @@ fun Home() {
         ) {
             Text(text = "Play")
         }
-        // Space between title and buttons
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Second Button
@@ -156,7 +153,9 @@ fun HomePreview() {
 
 
 @Composable
-fun UserNameInput(userViewModel: UserViewModel/* = viewModel()*/) {
+fun UserNameInput(
+
+    userViewModel: UserViewModel = viewModel()) {
 
 
     // Stato per memorizzare il testo inserito

@@ -10,21 +10,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-
-
-
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
-import it.VES.yahtzee.R
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
+import it.VES.yahtzee.PlayUtils
 
 
 class MultiplayerActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -54,19 +57,23 @@ class MultiplayerActivity : ComponentActivity() {
 @Composable
 fun MultiPlayer() {
 
+    var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+    val context = LocalContext.current
+
     Box(
         modifier=Modifier
-            .fillMaxSize()//Riempie tutta la schermata
+            .fillMaxSize()
     ){
 
-        //Uso row per affiancare i due bottoni in basso
         Row(
             modifier=Modifier
-                .align(Alignment.BottomCenter)//Allinea i bottoni al centro in basso
-                .padding(16.dp)//distanzio i bottoni
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
         ) {
             Button(
-                onClick = {/*azione per il bottone roll*/ },
+                onClick = {
+                    rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
+                },
                 modifier=Modifier
                     .padding(end=8.dp)
                     .width(200.dp)
@@ -84,6 +91,16 @@ fun MultiPlayer() {
                 Text(text = "Play")
             }
         }
+
+        if (rolledDice.isNotEmpty()) {
+            val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
+
+            PlayUtils().ImageSequence(
+                imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
+                rotationValues = rotationValues
+            )
+        }
+
     }
 }
 
@@ -96,23 +113,22 @@ fun ScoreTableM() {
             .fillMaxWidth()
             .padding(start = 16.dp, end = 30.dp, top = 1.dp, bottom = 100.dp)//serve per spostare i bottoni
     ) {
-        // Usa una Column per allineare le righe di bottoni verticalmente
         Column(
             modifier = Modifier
-                .align(Alignment.CenterEnd) // Allinea la colonna a destra
+                .align(Alignment.CenterEnd)
         ) {
             for (i in 1..14) {
-                // Usa una Row per posizionare i due bottoni orizzontalmente
+
                 Row(
                     modifier = Modifier
-                        .padding(bottom = 8.dp) // Margine tra le righe
+                        .padding(bottom = 8.dp)
                 ) {
                     Button(
                         onClick = {/*azione per il bottone a sinistra*/ },
                         modifier = Modifier
-                            .padding(end = 16.dp) // Margine tra i bottoni
-                            .width(85.dp) // Larghezza dei bottoni
-                            .height(37.dp) // Altezza dei bottoni
+                            .padding(end = 16.dp)
+                            .width(85.dp)
+                            .height(37.dp)
                     ) {
                         Text(text = "Left $i")
                     }
@@ -120,8 +136,8 @@ fun ScoreTableM() {
                     Button(
                         onClick = {/*azione per il bottone a destra*/ },
                         modifier = Modifier
-                            .width(85.dp) // Larghezza dei bottoni
-                            .height(37.dp) // Altezza dei bottoni
+                            .width(85.dp)
+                            .height(37.dp)
                     ) {
                         Text(text = "Right $i")
                     }
@@ -147,7 +163,8 @@ fun BackgroundMultiplayer(){
     }
 
 }
-/*@Preview(showBackground = true)
+
+@Preview(showBackground = true)
 @Composable
 fun Preview() {
     YahtzeeTheme {
@@ -155,4 +172,4 @@ fun Preview() {
         ScoreTableM()
         MultiPlayer()
     }
-}*/
+}
