@@ -2,6 +2,7 @@ package it.VES.yahtzee
 
 import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -38,16 +44,15 @@ class PlayUtils {
         rotationValues: List<Float>
     ) {
         Column(
-            modifier= Modifier
+            modifier = Modifier
                 .fillMaxSize()
-        ){
+        ) {
             Spacer(modifier = Modifier.height(720.dp))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
-                ,
+                    .padding(8.dp),
 
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -55,8 +60,10 @@ class PlayUtils {
 
                 val imageSize = calculateImageSize(imageIds.size)
 
-                for (i in imageIds.indices) {
+                var clickedStates by rememberSaveable { mutableStateOf(List(imageIds.size) { false }) }
 
+                for (i in imageIds.indices) {
+                    val isClicked = clickedStates[i]
                     Image(
                         painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
                         contentDescription = null,
@@ -64,17 +71,34 @@ class PlayUtils {
                             .size(imageSize)
                             .scale(0.7f)
                             .rotate(rotationValues[i])
-                            .padding(1.dp),
+                            .padding(1.dp)
+                            .graphicsLayer {
+                                // Cambia la luminosità in base al click
+                                alpha = if (isClicked) 0.3f else 1.0f
+
+                            }
+                            .clickable {
+                                // Cambia lo stato dell'immagine quando viene cliccata
+                                clickedStates = clickedStates.toMutableList().also {
+                                    it[i] = !isClicked
+                                }
+                            },
                         contentScale = ContentScale.Crop
                     )
                 }
             }
-
         }
-
+    }
+    /*
+    @Composable
+    fun blockDice(i: Int): () -> Unit {
+        //blocca il dado cambiandone il colore e modificandone lo stato
+        return
     }
 
 
+
+     */
     // Funzione per calcolare la dimensione massima delle immagini
     @Composable
     fun calculateImageSize(imageCount: Int): Dp {

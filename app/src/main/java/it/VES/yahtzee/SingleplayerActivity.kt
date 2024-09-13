@@ -112,7 +112,6 @@ fun SinglePlayer() {
 
 
 @Composable
-
 fun ScoreTable() {
     Box(
         modifier = Modifier
@@ -127,12 +126,17 @@ fun ScoreTable() {
         ) {
             for (i in 1..14) {
                 Button(
-                    onClick = {/*azione per il bottone*/},
+                    onClick = {
+                        //seleziona preview del punteggio
+                        //quando poi viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
+                        //TODO gestione del click su bottoni punteggio
+                    },
                     modifier = Modifier
-                        .padding(bottom = 8.dp) // Margine tra i bottoni
-                        .width(85.dp) // Larghezza dei bottoni
-                        .height(37.dp) // Altezza dei bottoni
+                        .padding(bottom = 8.dp)
+                        .width(85.dp)
+                        .height(37.dp)
                 ) {
+                    //TODO: il testo va inserito solo dopo che è stato aggiornato il set di dadi
                     Text(text = "Button $i")
                 }
             }
@@ -140,6 +144,18 @@ fun ScoreTable() {
     }
 }
 
+
+fun getScorePreview(rolledDice: List<Int>): List<Int> {
+    //TODO ottenere una lista di punteggi sfruttando la classe ScoreCalculator
+
+    var scorePreviewByCategory = emptyList<Int>()
+
+    for (i in 0..14){
+
+    }
+
+    return scorePreviewByCategory
+}
 
 
 @Composable
