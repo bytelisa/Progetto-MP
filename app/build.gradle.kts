@@ -58,6 +58,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.ui.text.google.fonts)
     val roomVersion = "2.5.1" // Versione di Room
     val kotlinVersion = "1.9.10" // Versione di Kotlin
 
@@ -73,6 +74,9 @@ dependencies {
 
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
+    implementation("androidx.compose.ui:ui:1.2.0")
+    implementation("androidx.compose.material3:material3:1.0.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.2.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
