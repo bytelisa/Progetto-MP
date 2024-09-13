@@ -170,11 +170,6 @@ fun Home() {
                         Text("OK")
                     }
                 },
-                dismissButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("Cancel")
-                    }
-                }
             )
         }
     }
