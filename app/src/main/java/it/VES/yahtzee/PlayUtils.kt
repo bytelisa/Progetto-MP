@@ -21,6 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -74,8 +77,7 @@ class PlayUtils {
                             .padding(1.dp)
                             .graphicsLayer {
                                 // Cambia la luminosità in base al click
-                                alpha = if (isClicked) 0.3f else 1.0f
-
+                                //alpha = if (isClicked) 0.3f else 1.0f
                             }
                             .clickable {
                                 // Cambia lo stato dell'immagine quando viene cliccata
@@ -83,7 +85,15 @@ class PlayUtils {
                                     it[i] = !isClicked
                                 }
                             },
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        colorFilter = if (isClicked) {
+                            ColorFilter.tint(
+                                color = Color.Black.copy(alpha = 0.5f),  // Applica un'ombra nera semi-trasparente
+                                blendMode = BlendMode.Multiply
+                            )
+                        } else {
+                            null  // Nessun filtro quando non è cliccata
+                        }
                     )
                 }
             }
