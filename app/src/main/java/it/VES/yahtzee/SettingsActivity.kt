@@ -56,14 +56,8 @@ fun Setting(){
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(100.dp)) // Titolo in alto
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    color = Color.White
-                ),
-                modifier = Modifier.padding(top = 16.dp)
-            )
+            Spacer(modifier = Modifier.height(270.dp)) // Titolo in alto
+
             // Casella di testo per il nome dell'utente
             TextField(
                 value = userName,
@@ -75,7 +69,7 @@ fun Setting(){
             )
 
             // Primo switch con parole
-            Spacer(modifier=Modifier.height(100.dp))
+            Spacer(modifier=Modifier.height(70.dp))
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -98,7 +92,7 @@ fun Setting(){
             }
 
             // Secondo switch con parole
-            Spacer(modifier=Modifier.height(100.dp))
+            Spacer(modifier=Modifier.height(20.dp))
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -138,7 +132,7 @@ fun BackgroundPictureSettings(){
         modifier=Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.home),
+            painter = painterResource(id = R.drawable.settings),
             contentDescription = "settings",
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
