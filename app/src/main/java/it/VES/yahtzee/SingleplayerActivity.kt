@@ -84,11 +84,10 @@ fun SinglePlayer() {
         ) {
             Button(
                 onClick = {
+
                     //bottone che lancia i dadi
-                    rolledDice = DiceRollActivity().rollDice()
-                    // Usa il context per ottenere gli ID delle immagini
-                    val imageResourceIds = getImageResourceIds(rolledDice, context)
-                    DiceRoll(rolledDice)
+                    rolledDice = DiceRollActivity().rollDice() //genera soltanto numeri casuali
+
                 },
                 modifier= Modifier
                     .padding(end = 8.dp)
@@ -114,7 +113,7 @@ fun SinglePlayer() {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
             ImageSequence(
-                imageIds = rolledDice, //qua dovrei mettere gli id delle immagini
+                imageIds = getImageResourceIds(rolledDice, context), //qua dovrei mettere gli id delle immagini
                 rotationValues = rotationValues
             )
         }
@@ -123,41 +122,40 @@ fun SinglePlayer() {
 }
 
 
-
-
-fun DiceRoll(rolledDice: List<Int>){
-    //funzione che carica le immagini dei dadi secondo i numeri prodotti dalla funzione DiceRoll
-}
-
-
-
 @Composable
 fun ImageSequence(
     imageIds: List<Int>,  // Lista di ID delle immagini da visualizzare
     rotationValues: List<Float>  // Valori di rotazione da applicare
 ) {
+    Box(
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Itera su ciascun ID immagine
-        for (i in imageIds.indices) {
+    ){
+        Spacer(modifier = Modifier.height(800.dp))
 
-            Image(
-                painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
-                contentDescription = null,
-                modifier = Modifier
-                    .size(100.dp)
-                    .scale(0.5f)
-                    .rotate(rotationValues[i])
-                    .padding(8.dp),
-                contentScale = ContentScale.Crop
-            )
+        Row(
+            modifier = Modifier.padding(24.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Itera su ciascun ID immagine
+            for (i in imageIds.indices) {
+
+                Image(
+                    painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .scale(0.5f)
+                        .rotate(rotationValues[i])
+                        .padding(8.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
+
 }
+
 
 @Preview
 @Composable
