@@ -127,14 +127,18 @@ fun ImageSequence(
     imageIds: List<Int>,  // Lista di ID delle immagini da visualizzare
     rotationValues: List<Float>  // Valori di rotazione da applicare
 ) {
-    Box(
-
+    Column(
+        modifier=Modifier
+            .fillMaxSize()
     ){
-        Spacer(modifier = Modifier.height(800.dp))
+        Spacer(modifier = Modifier.height(700.dp))
 
         Row(
-            modifier = Modifier.padding(24.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Itera su ciascun ID immagine
@@ -152,12 +156,13 @@ fun ImageSequence(
                 )
             }
         }
+
     }
 
 }
 
 
-@Preview
+
 @Composable
 fun PreviewImageSequence() {
     // Lista di ID delle immagini da visualizzare
