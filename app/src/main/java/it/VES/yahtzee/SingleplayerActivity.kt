@@ -1,7 +1,6 @@
 package it.VES.yahtzee
 
-import android.content.Intent
-import android.net.Uri
+
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -12,7 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.ClickableText
+
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -32,9 +31,7 @@ import androidx.compose.ui.layout.ContentScale
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDecoration
+
 import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
@@ -112,7 +109,7 @@ fun SinglePlayer() {
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5FF0000)
+                    containerColor = Color(0xB5DA4141)
                 ),
                 modifier= Modifier
                     .padding(end = 8.dp)
@@ -124,7 +121,7 @@ fun SinglePlayer() {
             Button(
                 onClick = {/*azione per il bottone play*/ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5FF0000)
+                    containerColor = Color(0xB5DA4141)
                 ),
                 modifier= Modifier
                     .padding(end = 8.dp)
@@ -192,13 +189,13 @@ fun ScoreTable(scorePreviewList: List<Int>) {
                         // TODO gestione del click su bottoni punteggio
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (clickedButtonIndex == i) Color(0xB5FF0000) else Color(0x5E969696),
+                        containerColor = if (clickedButtonIndex == i) Color(0xB5DA4141) else Color(0x5E969696),
                     ),
                     modifier = Modifier
                         .padding(bottom = 8.dp)
                         .width(80.dp)
                         .height(30.dp)
-                        .offset(x = 0.dp, y = (i+1 * 2.5).dp) // Offset per distanziare i bottoni
+                        .offset(x = 0.dp, y = (i * 2.5).dp) // Offset per distanziare i bottoni
                 ) {
                     if (scorePreviewList[i] != -1){
                         Text(text = scorePreviewList[i].toString())
@@ -233,12 +230,16 @@ fun BackgroundSingleplayer(){
     }
 
 }
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun SinglePreview() {
+fun SinglePlayerPreview() {
     YahtzeeTheme {
-        BackgroundSingleplayer()
-        ScoreTable()
-        SinglePlayer()
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            BackgroundSingleplayer()
+            SinglePlayer()
+            ScoreTable(scorePreviewList = List(14) { 0 }) // Passa una lista di esempio
+        }
     }
-}*/
+}
