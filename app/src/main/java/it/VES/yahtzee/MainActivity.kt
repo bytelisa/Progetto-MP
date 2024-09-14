@@ -42,6 +42,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.AnnotatedString
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
@@ -54,7 +58,8 @@ class MainActivity : ComponentActivity() {
             YahtzeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BackgroundPicture()
-                    Home()
+                    //Home()
+                    AppNavigation()
                 }
             }
         }
@@ -63,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Home() {
+fun Home(navController: NavController) {
     val context = LocalContext.current
     var showDialog  by remember {mutableStateOf(false)}
 
@@ -128,8 +133,17 @@ fun Home() {
         // Third Button
         Button(
             onClick = {
+                /*
                 val intent = Intent(context, SettingsActivity::class.java)
-                context.startActivity(intent) },
+                context.startActivity(intent)
+
+                 */
+
+                navController.navigate("settings") // Naviga alla schermata delle impostazioni
+                 },
+
+
+
             modifier = Modifier
                 .width(200.dp)
                 .height(45.dp),
@@ -203,7 +217,7 @@ fun Home() {
     }
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
@@ -212,6 +226,8 @@ fun HomePreview() {
         Home()
     }
 }
+
+ */
 
 
 
@@ -228,5 +244,17 @@ fun BackgroundPicture(){
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
             )
+    }
+}
+
+
+
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") { Home(navController) }
+        composable("settings") { Setting(navController) }
+        // Aggiungi altre schermate qui
     }
 }
