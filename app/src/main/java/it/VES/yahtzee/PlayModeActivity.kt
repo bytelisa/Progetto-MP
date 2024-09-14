@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
@@ -45,16 +46,15 @@ class PlayModeActivity: ComponentActivity(){
 }
 
 @Composable
-fun Choose(){
-
+fun Choose() {
     val context = LocalContext.current
 
     Box(
-        modifier=Modifier
+        modifier = Modifier
             .fillMaxSize()
-    ){
+    ) {
         Row(
-            modifier=Modifier
+            modifier = Modifier
                 .align(Alignment.Center)
                 .padding(16.dp)
         ) {
@@ -63,26 +63,35 @@ fun Choose(){
                     val intent = Intent(context, SingleplayerActivity::class.java)
                     context.startActivity(intent)
                 },
-                modifier=Modifier
-                    .padding(end=8.dp)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .padding(end = 16.dp) // Aumenta la distanza tra i bottoni
                     .width(150.dp)
                     .height(45.dp),
             ) {
-                Text(text = "Singleplayer")
+                Text(text = "Singleplayer",
+                    fontSize = 18.sp
+                )
             }
             Button(
                 onClick = {
                     val intent = Intent(context, MultiplayerActivity::class.java)
                     context.startActivity(intent)
-                          },
-                modifier=Modifier
-                    .padding(end=8.dp)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
                     .width(150.dp)
                     .height(45.dp),
-
             ) {
-                Text(text = "Multiplayer")
-
+                Text(text = "Multiplayer",
+                fontSize = 18.sp
+                )
             }
         }
     }
