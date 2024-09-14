@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 //questa classe contiene funzioni extra condivise dalle due modalità di gioco (singleplayer e multiplayer), ad es blocco dadi
 
 class PlayUtils {
-    var giro = mutableIntStateOf(0);
 
     @Composable
     fun ImageSequence(

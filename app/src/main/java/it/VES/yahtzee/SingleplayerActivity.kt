@@ -104,14 +104,9 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
                 .padding(16.dp)
         ) {
             Button( //ROLL
-
                 onClick = {
-                    if (rolls < 2){
-                        rolledDice = DiceRollActivity().rollDice()
-                        rolls+=1
 
-                    } else if (rolls == 2) { //ultimo lancio
-
+                    if (rolls < 3) {
                         rolledDice = DiceRollActivity().rollDice()
                         rolls+=1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
@@ -124,18 +119,21 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5DA4141)
+                    containerColor = if (rolls < 3) {
+                        Color(0xB5DA4141)
+                    } else {
+                        Color(0xB5A5A5A5)
+                    }
                 ),
                 modifier= Modifier
                     .padding(end = 8.dp)
                     .width(200.dp)
                     .height(45.dp),
             ) {
-                Text(text = "Roll")
+                Text(text = "Roll (${ 3 - rolls } left)")
             }
-            Button(
-                //PLAY
 
+            Button( //PLAY
                 onClick = {
 
                     if (rounds < 13) {
@@ -162,7 +160,11 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
 
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5DA4141)
+                    containerColor = if (rolls != 0) {
+                        Color(0xB5DA4141)
+                    } else {
+                        Color(0xB5A5A5A5)
+                    }
                 ),
                 modifier = Modifier
                     .padding(end = 8.dp)
@@ -174,7 +176,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
 
         }
 
-        if (rolledDice.isNotEmpty()) {
+        if (rolledDice.isNotEmpty() && rolls!=0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
             PlayUtils().ImageSequence(
@@ -232,7 +234,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
     }
 
     Score(totalScore)
-
+    RoundsLeft(rounds)
     ScoreTable(scorePreviewList, onCategorySelect = { index ->
         onCategoryToPlayChange(index)
     })
@@ -319,6 +321,23 @@ fun Score(score: Int){
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(start = 356.dp, top = 28.dp, end = 10.dp)
+        )
+    }
+}
+
+
+@Composable
+fun RoundsLeft(rounds: Int){
+
+    Box(
+        modifier= Modifier
+    ){
+        Text (
+            text = "Rounds left: ${13-rounds}",
+            fontSize = 25.sp, // Big
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 15.dp, top = 15.dp)
         )
     }
 }
