@@ -107,7 +107,7 @@ class PlayUtils {
     @Composable
     fun calculateImageSize(imageCount: Int): Dp {
         val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-        return (screenWidth / imageCount) - 8.dp // Sottrai un padding di 4.dp su ogni lato
+        return (screenWidth / imageCount) - 8.dp
     }
 
 
