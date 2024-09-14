@@ -2,6 +2,15 @@ package it.VES.yahtzee
 
 class ScoreCalculator {
 
+    fun totalScore(scoreList: List<Int>): Int{
+        var score: Int = 0
+        for (i in 0..13){
+            score += scoreList[i]
+        }
+        return score
+    }
+
+
     fun point(category: Int, myDice: ArrayList<Int>): Int {
 
         if (category in 1..6) {
