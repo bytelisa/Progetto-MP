@@ -60,7 +60,7 @@ fun Back() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(50.dp))
         Button(
             onClick = {/*Bottone Back*/ },
             colors = ButtonDefaults.buttonColors(
