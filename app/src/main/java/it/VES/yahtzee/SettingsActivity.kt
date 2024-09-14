@@ -11,14 +11,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
+
 
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,11 +35,10 @@ class SettingsActivity : ComponentActivity() {
     }
 }
 @Composable
-fun Setting(){
+fun Setting() {
     var switch1State by remember { mutableStateOf(false) }
     var switch2State by remember { mutableStateOf(false) }
     var userName by remember { mutableStateOf("") }
-
 
     Box(
         modifier = Modifier
@@ -52,7 +51,7 @@ fun Setting(){
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(270.dp)) // Titolo in alto
+            Spacer(modifier = Modifier.height(290.dp))
 
             // Casella di testo per il nome dell'utente
             TextField(
@@ -65,12 +64,11 @@ fun Setting(){
             )
 
             // Primo switch con parole
-            Spacer(modifier=Modifier.height(70.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-
                 Text(text = "Sound")
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -88,7 +86,7 @@ fun Setting(){
             }
 
             // Secondo switch con parole
-            Spacer(modifier=Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -108,9 +106,13 @@ fun Setting(){
                     Text(text = "Shake")
                 }
             }
-            Spacer(modifier=Modifier.height(100.dp))
+
+            Spacer(modifier = Modifier.height(100.dp))
             Button(
                 onClick = { /* Azione per il bottone Go Back */ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xD03F51B5) // Cambia il colore del pulsante qui
+                ),
                 modifier = Modifier
                     .width(200.dp)
                     .height(60.dp)
