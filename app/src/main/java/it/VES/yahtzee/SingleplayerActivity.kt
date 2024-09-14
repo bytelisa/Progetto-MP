@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -78,6 +79,8 @@ fun SinglePlayer() {
     val context = LocalContext.current
     var showDialog  by remember {mutableStateOf(false)}
     var rolls  by rememberSaveable { mutableIntStateOf(0) }
+    val scorePreviewByCategory = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
+
 
     Box(
         modifier=Modifier
@@ -100,6 +103,8 @@ fun SinglePlayer() {
                     } else {
                         //finisce il turno di gioco, l'utente deve scegliere un punteggio
                         showDialog=true
+                        //scorePreview!
+                        getScorePreview(rolledDice)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -190,22 +195,21 @@ fun ScoreTable() {
                 ) {
                     // TODO: il testo va inserito solo dopo che è stato aggiornato il set di dadi
                     Text(text = "Button $i")
+                    Text(text = "ciao")
                 }
             }
         }
     }
 }
 
+
+
 fun getScorePreview(rolledDice: List<Int>): List<Int> {
-    //TODO ottenere una lista di punteggi sfruttando la classe ScoreCalculator
-
-    var scorePreviewByCategory = emptyList<Int>()
-
-    for (i in 0..14){
-
+    //questa funzione sfrutta la classe ScoreCalculator per calcolare la preview di tutti i punteggi che poi verrà usata da ScoreTable
+    return List(rolledDice.size) {
+        index -> ScoreCalculator().point(index, ArrayList(rolledDice))
     }
 
-    return scorePreviewByCategory
 }
 
 

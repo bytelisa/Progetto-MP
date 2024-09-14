@@ -2,11 +2,12 @@ package it.VES.yahtzee
 
 class ScoreCalculator {
 
-    fun point(dice: Int, myDice: ArrayList<Int>): Int {
-        if (dice in 1..6) {
-            return number(dice,myDice)
+    fun point(category: Int, myDice: ArrayList<Int>): Int {
+
+        if (category in 1..6) {
+            return number(category,myDice)
         } else {
-            when(dice){
+            when(category){
                 7 -> return threeX(myDice)
                 8 -> return fourX(myDice)
                 9 -> return full(myDice)
