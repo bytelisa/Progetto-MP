@@ -10,10 +10,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
+
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -54,23 +55,36 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
     @Composable
     fun DiceScreen(diceResults: List<Int>) {
         // UI per visualizzare i valori dei dadi e il bottone per lanciare manualmente
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(16.dp)
         ) {
             Text(
                 text = "Lancia i dadi scuotendo il dispositivo!",
                 fontSize = 24.sp,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp)
             )
-            Text(
-                text = diceResults.joinToString(" "), // Visualizza i risultati dei dadi
-                fontSize = 32.sp,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
+
+
+
+            // Posiziona l'animazione dei dadi in un punto specifico della schermata
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(y = 100.dp)
+            ) {
+                Text(
+                    text = diceResults.joinToString(" "), // Visualizza i risultati dei dadi
+                    fontSize = 32.sp,
+                    modifier = Modifier.padding(bottom = 32.dp)
+                )
+            }
+
+
+
             /*Button(
                 onClick = {
                     // Forza un lancio manuale (opzionale)
@@ -84,9 +98,11 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
             }
 
              */
-
         }
     }
+
+
+
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
