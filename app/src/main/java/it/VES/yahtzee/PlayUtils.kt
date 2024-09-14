@@ -46,7 +46,7 @@ class PlayUtils {
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
         val oldImageIds = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
         val imageIds by remember(rolledDice, clickedStates) {
-            mutableStateOf(PlayUtils().getImageResourceIds(rolledDice, context, clickedStates))
+            mutableStateOf(PlayUtils().getImageResourceIds(rolledDice, context, clickedStates, oldImageIds))
         }
 
 
@@ -68,18 +68,15 @@ class PlayUtils {
                 val imageSize = calculateImageSize(5)
 
                 for (i in imageIds.indices) {
-                    oldImageIds[i]= imageIds[i]
+
+                    if (!clickedStates[i]){
+                        oldImageIds[i]= imageIds[i] //oldImageIds viene aggiornato solo per i dadi che non sono stati cliccati
+                    }
 
                     val isClicked = clickedStates[i]
                     Image(
 
-                        painter = painterResource(
-                            id = if (imageIds[i] == 999) {
-                                oldImageIds[i]
-                            } else{
-                            imageIds[i]
-                        }
-                        ),  // Carica l'immagine con il suo ID
+                        painter = painterResource( id = imageIds[i]),
                         contentDescription = null,
                         modifier = Modifier
                             .size(imageSize)
@@ -91,8 +88,8 @@ class PlayUtils {
                                 alpha = if (isClicked) 0.3f else 1.0f
                             }
                             .clickable {
-                                // Cambia lo stato dell'immagine quando viene cliccata
-                                clickedStates = clickedStates
+
+                                clickedStates = clickedStates //cambiamo lo stato dell'immagine
                                     .toMutableList()
                                     .also {
                                         it[i] = !isClicked
@@ -114,14 +111,15 @@ class PlayUtils {
     }
 
 
-    fun getImageResourceIds(diceValues: List<Int>, context: Context, clickedStates: List<Boolean>): List<Int> {
+    fun getImageResourceIds(diceValues: List<Int>, context: Context, clickedStates: List<Boolean>, oldImageIds: List<Int>): List<Int> {
         return diceValues.mapIndexed { index, currentValue ->
             if (!clickedStates[index]) {
                 val resourceName = "dice$currentValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
                 getDrawableResourceByName(resourceName, context)
                 // Se non è cliccata, aggiorna con il nuovo ID
             } else {
-                getDrawableResourceByName("home", context)
+                //getDrawableResourceByName("home", context)
+                oldImageIds[index]
                 // se immagine è bloccata dobbiamo mantenere il vecchio id della sua immagine
                 //posso fare una funzione che salva gli id correnti non appena l'immagine viene cliccata, e poi qui lo accedo
 
@@ -131,16 +129,12 @@ class PlayUtils {
     }
 
     private fun getDrawableResourceByName(name: String, context: Context): Int {
-
-
             val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
             if (resourceId == 0) {
                 throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")
             }
             return resourceId
-        }
-
-
+    }
 
 
 }
