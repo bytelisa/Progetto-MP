@@ -207,17 +207,7 @@ fun BackgroundPictureSettings(){
 }
 
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun SettingPreview() {
-    YahtzeeTheme {
-        BackgroundPictureSettings()
-        Setting(navController)
-    }
-}
 
- */
 
 
 

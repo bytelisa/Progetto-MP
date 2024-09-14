@@ -31,9 +31,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 
 import androidx.compose.ui.tooling.preview.Preview
-
-
-import it.VES.yahtzee.R
+import androidx.navigation.NavController
 
 class HowToPlayActivity: ComponentActivity(){
 
@@ -44,7 +42,8 @@ class HowToPlayActivity: ComponentActivity(){
             YahtzeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BackgroundPictureHTP()
-                    Back()
+                    //howToPlay()
+                    AppNavigation() // Usa AppNavigation per gestire la navigazione
                 }
             }
         }
@@ -52,49 +51,67 @@ class HowToPlayActivity: ComponentActivity(){
 }
 
 @Composable
-fun Back() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom
+fun howToPlay(navController: NavController) {
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
-        Button(
-            onClick = {/*Bottone Back*/ },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xD03F51B5) // Cambia il colore del pulsante qui
-            ),
+        // Immagine di sfondo
+        BackgroundPictureHTP()
+
+
+        Column(
             modifier = Modifier
-                .width(200.dp)
-                .height(45.dp)
-                .offset(y = -50.dp)
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Text(text = "GoBack")
+            Spacer(modifier = Modifier.height(50.dp))
+            Button(
+                onClick = {/*Bottone Back*/
+
+                    // Torna alla schermata Home
+                    navController.popBackStack()
+
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xD03F51B5) // Cambia il colore del pulsante qui
+                ),
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(45.dp)
+                    .offset(y = -50.dp)
+            ) {
+                Text(text = "Go Back")
+            }
         }
     }
-}
-
-
-@Composable
-fun BackgroundPictureHTP(){
-    Box(
-        modifier=Modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.howtoplay),
-            contentDescription = "How to play background",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
     }
-}
+
+
+    @Composable
+    fun BackgroundPictureHTP() {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.howtoplay),
+                contentDescription = "How to play background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
+        }
+    }
+
+
+/*
 @Preview(showBackground = true)
 @Composable
 fun HTPreview() {
     YahtzeeTheme {
         BackgroundPictureHTP()
-        Back()
+        howToPlay()
     }
 }
+
+ */

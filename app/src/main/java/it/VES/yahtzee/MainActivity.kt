@@ -116,9 +116,7 @@ fun Home(navController: NavController) {
         Button(
 
             onClick = {
-                // Avvia la nuova Activity per le regole di gioco
-                val intent = Intent(context, HowToPlayActivity::class.java)
-                context.startActivity(intent)
+                navController.navigate("howToPlay") // Naviga alla schermata delle impostazioni
             },
 
             modifier = Modifier
@@ -133,16 +131,8 @@ fun Home(navController: NavController) {
         // Third Button
         Button(
             onClick = {
-                /*
-                val intent = Intent(context, SettingsActivity::class.java)
-                context.startActivity(intent)
-
-                 */
-
                 navController.navigate("settings") // Naviga alla schermata delle impostazioni
-                 },
-
-
+            },
 
             modifier = Modifier
                 .width(200.dp)
@@ -155,7 +145,7 @@ fun Home(navController: NavController) {
         //fourth button
         Button(
             onClick={showDialog=true},
-            modifier=Modifier
+            modifier= Modifier
                 .width(200.dp)
                 .height(45.dp),
         ){
@@ -217,20 +207,6 @@ fun Home(navController: NavController) {
     }
 }
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun HomePreview() {
-    YahtzeeTheme {
-        BackgroundPicture()
-        Home()
-    }
-}
-
- */
-
-
-
 
 
 @Composable
@@ -255,6 +231,7 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { Home(navController) }
         composable("settings") { Setting(navController) }
+        composable("howToPlay") { howToPlay(navController)}
         // Aggiungi altre schermate qui
     }
 }
