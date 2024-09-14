@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -26,28 +25,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
 import androidx.compose.ui.layout.ContentScale
-
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-
-import androidx.compose.ui.tooling.preview.Preview
-
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 class SingleplayerActivity : ComponentActivity() {
 
-    var scorePlaceholder = List(14){-1}
     private var _categoryToPlay by mutableIntStateOf(-1)
+    private var scoreList by mutableStateOf(List(14){0})
+    var scorePlaceholder = List(14){-1}
     var categoryToPlay: Int
         get() = _categoryToPlay
         set(value) {
             _categoryToPlay = value
         }
-    var scoreList by mutableStateOf(List(14){0})
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +62,6 @@ class SingleplayerActivity : ComponentActivity() {
                                 categoryToPlay = categoryToPlay,
                                 onCategoryToPlayChange = { newCategory ->
                                     categoryToPlay = newCategory
-                                }, scoreList, onScoreListChange = { newScore ->
-                                    scoreList = listOf(newScore)
                                 }
                             )
                             ScoreTable(     //posiziono la tabella dei punteggi a destra
@@ -78,7 +70,8 @@ class SingleplayerActivity : ComponentActivity() {
                                 onCategorySelect = { newCategory ->
                                     categoryToPlay = newCategory
                                 }
-                            )                        }
+                            )
+                        }
                     }
                 )
             }
@@ -88,7 +81,7 @@ class SingleplayerActivity : ComponentActivity() {
 
 
 @Composable
-fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, finalScoreList: List<Int>, onScoreListChange: (Int) -> Unit) {
+fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
 
     //queste mi servono per mostrare i dadi quando viene premuto roll
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
@@ -98,6 +91,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, fin
     var rolls  by rememberSaveable { mutableIntStateOf(0) }
     val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
     val scoreList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
+    var totalScore by remember { mutableIntStateOf(0) }
 
 
     Box(
@@ -143,16 +137,17 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, fin
             Button( //PLAY
 
                 onClick = {
-                    val i = categoryToPlay
 
-                    if (i != -1){
-                        scoreList[i] = scorePreviewList[i]
+                    if (categoryToPlay != -1) {
+                        scoreList[categoryToPlay] = scorePreviewList[categoryToPlay]
+                        Log.d("SinglePlayerActivity", "#selected score: ${scoreList[categoryToPlay]}")
 
-                        Log.d("SinglePlayerActivity", "#selected score: ${scoreList[i]}")
                     } else {
                         showPlayDialog = true
                     }
                     Log.d("SinglePlayerActivity", "New Score List: $scoreList")
+
+                    totalScore = ScoreCalculator().totalScore(scoreList)
 
                     rolls = 0
                 },
@@ -222,6 +217,8 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, fin
 
     }
 
+    Score(totalScore)
+
     ScoreTable(scorePreviewList, selectedCategory = categoryToPlay, onCategorySelect = { index ->
         onCategoryToPlayChange(index)
     })
@@ -271,9 +268,21 @@ fun ScoreTable(scorePreviewList: List<Int>, selectedCategory: Int, onCategorySel
 }
 
 
-@Composable
-fun updateScore(scoreList: List<Int>){
 
+@Composable
+fun Score(score: Int){
+
+    Box(
+        modifier= Modifier
+    ){
+        Text (
+            text = score.toString(),
+            fontSize = 35.sp, // Big
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(start = 356.dp, top = 28.dp, end = 10.dp)
+        )
+    }
 }
 
 
