@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
-
+import it.VES.yahtzee.PlayUtils
 
 
 class MultiplayerActivity : ComponentActivity() {
@@ -61,6 +61,7 @@ class MultiplayerActivity : ComponentActivity() {
 
 @Composable
 fun MultiPlayer() {
+
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
     val context = LocalContext.current
 
@@ -104,12 +105,14 @@ fun MultiPlayer() {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
             PlayUtils().ImageSequence(
-                imageIds = PlayUtils().getImageResourceIds(rolledDice, context),
-                rotationValues = rotationValues
+                rolledDice,
+                rotationValues = rotationValues,
+                context
             )
         }
     }
 }
+
 
 @Composable
 fun ScoreTableM() {
@@ -162,8 +165,6 @@ fun ScoreTableM() {
         }
     }
 }
-
-
 
 
 

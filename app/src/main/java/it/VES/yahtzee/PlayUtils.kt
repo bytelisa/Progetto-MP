@@ -14,16 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -35,17 +35,21 @@ import androidx.compose.ui.unit.dp
 //questa classe contiene funzioni extra condivise dalle due modalità di gioco (singleplayer e multiplayer), ad es blocco dadi
 
 class PlayUtils {
-
-    fun DiceBlock(){
-        //funzione che blocca un dado quando viene selezionato, ci applichiamo un filtro grigio scuro e impediamo che venga rilanciato
-    }
-
+    var giro = mutableIntStateOf(0);
 
     @Composable
     fun ImageSequence(
-        imageIds: List<Int>,  // Lista di ID delle immagini da visualizzare
-        rotationValues: List<Float>
+        rolledDice: List<Int>,  // Lista dei dadi
+        rotationValues: List<Float>,
+        context: Context
     ) {
+        var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
+        val oldImageIds = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
+        val imageIds by remember(rolledDice, clickedStates) {
+            mutableStateOf(PlayUtils().getImageResourceIds(rolledDice, context, clickedStates, oldImageIds))
+        }
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -61,18 +65,22 @@ class PlayUtils {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                val imageSize = calculateImageSize(imageIds.size)
-
-                var clickedStates by rememberSaveable { mutableStateOf(List(imageIds.size) { false }) }
+                val imageSize = calculateImageSize(5)
 
                 for (i in imageIds.indices) {
+
+                    if (!clickedStates[i]){
+                        oldImageIds[i]= imageIds[i] //oldImageIds viene aggiornato solo per i dadi che non sono stati cliccati
+                    }
+
                     val isClicked = clickedStates[i]
                     Image(
-                        painter = painterResource(id = imageIds[i]),  // Carica l'immagine con il suo ID
+
+                        painter = painterResource( id = imageIds[i]),
                         contentDescription = null,
                         modifier = Modifier
                             .size(imageSize)
-                            .scale(0.7f)
+                            .scale(0.85f)
                             .rotate(rotationValues[i])
                             .padding(1.dp)
                             .graphicsLayer {
@@ -80,50 +88,53 @@ class PlayUtils {
                                 alpha = if (isClicked) 0.3f else 1.0f
                             }
                             .clickable {
-                                // Cambia lo stato dell'immagine quando viene cliccata
-                                clickedStates = clickedStates.toMutableList().also {
-                                    it[i] = !isClicked
-                                }
+
+                                clickedStates = clickedStates //cambiamo lo stato dell'immagine
+                                    .toMutableList()
+                                    .also {
+                                        it[i] = !isClicked
+                                    }
                             },
                         contentScale = ContentScale.Crop,
-
                     )
                 }
             }
         }
     }
-    /*
-    @Composable
-    fun blockDice(i: Int): () -> Unit {
-        //blocca il dado cambiandone il colore e modificandone lo stato
-        return
-    }
 
 
-
-     */
     // Funzione per calcolare la dimensione massima delle immagini
     @Composable
     fun calculateImageSize(imageCount: Int): Dp {
         val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-        return (screenWidth / imageCount) - 8.dp // Sottrai un padding di 4.dp su ogni lato
+        return (screenWidth / imageCount) - 8.dp
     }
 
 
-    fun getImageResourceIds(diceValues: List<Int>, context: Context): List<Int> {
-        return diceValues.map { diceValue ->
-            val resourceName = "dice$diceValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
-            val resourceId = getDrawableResourceByName(resourceName, context)
-            resourceId
+    fun getImageResourceIds(diceValues: List<Int>, context: Context, clickedStates: List<Boolean>, oldImageIds: List<Int>): List<Int> {
+        return diceValues.mapIndexed { index, currentValue ->
+            if (!clickedStates[index]) {
+                val resourceName = "dice$currentValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
+                getDrawableResourceByName(resourceName, context)
+                // Se non è cliccata, aggiorna con il nuovo ID
+            } else {
+                //getDrawableResourceByName("home", context)
+                oldImageIds[index]
+                // se immagine è bloccata dobbiamo mantenere il vecchio id della sua immagine
+                //posso fare una funzione che salva gli id correnti non appena l'immagine viene cliccata, e poi qui lo accedo
+
+            }
         }
+
     }
 
     private fun getDrawableResourceByName(name: String, context: Context): Int {
-        val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
-        if (resourceId == 0) {
-            throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")
-        }
-        return resourceId
+            val resourceId = context.resources.getIdentifier(name, "drawable", context.packageName)
+            if (resourceId == 0) {
+                throw IllegalArgumentException("Risorsa drawable non trovata per nome: $name")
+            }
+            return resourceId
     }
+
 
 }
