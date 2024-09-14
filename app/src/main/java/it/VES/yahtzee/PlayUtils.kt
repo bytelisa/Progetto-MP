@@ -41,7 +41,7 @@ class PlayUtils {
         rolledDice: List<Int>,  // Lista dei dadi
         rotationValues: List<Float>,
         context: Context
-    ) {
+    ){
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
         val oldImageIds = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
         val imageIds by remember(rolledDice, clickedStates) {

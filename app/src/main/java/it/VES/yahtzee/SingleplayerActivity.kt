@@ -23,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -68,7 +67,7 @@ class SingleplayerActivity : ComponentActivity() {
                                 scorePreviewList = scorePlaceholder,
                                 onCategorySelect = { newCategory ->
                                     categoryToPlay = newCategory
-                                }, scorePlaceholder
+                                }, List(14){0}, List(14){false}, true
                             )
                         }
                     }
@@ -90,9 +89,11 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
     var showDialog  by remember {mutableStateOf(false)}
     var showPlayDialog  by remember {mutableStateOf(false)}
     val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
-    val scoreList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
+    val scoreList = remember { mutableStateListOf(*List(14) {0}.toTypedArray()) }
     var totalScore by remember { mutableIntStateOf(0) }
     var gameFinished by rememberSaveable {mutableStateOf(false)}
+    val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
+    var playPressed by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier=Modifier
@@ -104,8 +105,8 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
         ) {
-            Button( //ROLL
-                onClick = {
+            Button(
+                onClick = { //roll
 
                     if (rolls < 3) {
                         rolledDice = DiceRollActivity().rollDice()
@@ -113,7 +114,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
                         scorePreviewList.addAll(scorePreview)
-
+                        playPressed = false
                     } else {
                         //finisce il turno di gioco, l'utente deve scegliere un punteggio
                         showDialog = true
@@ -134,12 +135,13 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
                 Text(text = "Roll (${ 3 - rolls } left)")
             }
 
-            Button( //PLAY
-                onClick = {
+            Button(
+                onClick = { //play
 
                     if (rounds < 13) {
                         if (categoryToPlay != -1) {
                             scoreList[categoryToPlay-1] = scorePreviewList[categoryToPlay-1]
+                            playedCategories[categoryToPlay-1] = true
                             Log.d(
                                 "SinglePlayerActivity",
                                 "#selected score: ${scoreList[categoryToPlay-1]}"
@@ -155,6 +157,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
                         rolls = 0
                         rounds += 1
                         scorePreviewList.clear()
+                        playPressed = true
 
                     } else {
                         //finisce la partita
@@ -232,21 +235,30 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
 
     }
 
+    if (!playPressed){
+        ScoreTable(scorePreviewList, onCategorySelect = { index ->
+            onCategoryToPlayChange(index)
+        }, scoreList, playedCategories, playPressed)
+    }
+
     if (gameFinished){
         GameFinish(score = totalScore)
     }
 
     Score(totalScore)
     RoundsLeft(rounds)
+
     ScoreTable(scorePreviewList, onCategorySelect = { index ->
         onCategoryToPlayChange(index)
-    }, scoreList)
+    }, scoreList, playedCategories, playPressed)
+
 }
 
 @Composable
-fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>) {
+fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
+    var playedCategory by remember { mutableIntStateOf(-1) }
 
     Box(
         modifier = Modifier
@@ -260,17 +272,21 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
             for (i in 0..13) {
                 Button(
                     onClick = {
-                        if (scoreList[i] == -1){
+                        if (!playedCategories[i]){ //se la categoria non è già stata giocata
                             clickedButtonIndex = i
                             onCategorySelect(clickedButtonIndex+1) // Aggiorna la variabile globale
+                            playedCategory = i
                             Log.d("SinglePlayerActivity", "#selected category: ${clickedButtonIndex+1}")
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = when {
-                            scoreList[i] != -1 -> Color(0xFF80C0DD) // Categoria già giocata, colore fisso (blu)
-                            clickedButtonIndex == i && scoreList[i] == -1 -> Color(0xB5DA4141) // Rosso se selezionato e non giocato
-                            else -> Color(0xB5D3D3D3) // Colore predefinito se non selezionato e non giocato
+
+                        containerColor = if (playedCategories[i]){
+                            Color(0xFF80C0DD)
+                        } else if (clickedButtonIndex == i){
+                            Color(0xB5DA4141)
+                        } else {
+                            Color.Transparent
                         },
                     ),
                     modifier = Modifier
@@ -279,13 +295,13 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
                         .height(30.dp)
                         .offset(x = 0.dp, y = (i * 2.5).dp)
                 ) {
-                    if (scorePreviewList.isNotEmpty() && scorePreviewList[i] !=-1 && scoreList[i] == -1) {
+                    if (scorePreviewList.isNotEmpty() && scorePreviewList[i] !=-1 && !playedCategories[i]) {
                         Text(
                             text = scorePreviewList[i].toString(), // Mostra il punteggio se non è -1
-                            color = if (clickedButtonIndex == i) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                            color = if (playedCategories[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
                         )
                     }
-                    if (scoreList[i] != -1){
+                    if (scoreList[i] != 0){
                         //la categoria è già stata giocata
                         Text(
                             text = scoreList[i].toString(),
@@ -317,7 +333,10 @@ fun GameFinish(score: Int){
             }
         },
         confirmButton = {
-            Button(onClick = { gameFinished = false }) {
+            Button(onClick = {
+                gameFinished = false
+
+            }) {
                 Text("OK")
             }
         },
@@ -335,7 +354,7 @@ fun Score(score: Int){
             fontSize = 35.sp, // Big
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(start = 356.dp, top = 28.dp, end = 10.dp)
+                .padding(start = 350.dp, top = 28.dp, end = 10.dp)
         )
     }
 }
