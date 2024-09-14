@@ -39,8 +39,13 @@ import androidx.compose.ui.unit.dp
 
 class SingleplayerActivity : ComponentActivity() {
 
-    var rolls: Int = 0
     var scorePlaceholder = List(14){-1}
+    private var _categoryToPlay by mutableStateOf(-1)
+    var categoryToPlay: Int
+        get() = _categoryToPlay
+        set(value) {
+            _categoryToPlay = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,10 +62,19 @@ class SingleplayerActivity : ComponentActivity() {
                         ) {
                             BackgroundSingleplayer()
                             //per i bottoni roll and play
-                            SinglePlayer()
-                            //posiziono la tabella dei punteggi a destra
-                            ScoreTable(scorePlaceholder)
-                        }
+                            SinglePlayer(
+                                categoryToPlay = categoryToPlay,
+                                onCategoryToPlayChange = { newCategory ->
+                                    categoryToPlay = newCategory
+                                }
+                            )                            //posiziono la tabella dei punteggi a destra
+                            ScoreTable(
+                                scorePreviewList = scorePlaceholder,
+                                selectedCategory = categoryToPlay,
+                                onCategorySelect = { newCategory ->
+                                    categoryToPlay = newCategory
+                                }
+                            )                        }
                     }
                 )
             }
@@ -70,15 +84,16 @@ class SingleplayerActivity : ComponentActivity() {
 
 
 @Composable
-fun SinglePlayer() {
+fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
 
     //queste mi servono per mostrare i dadi quando viene premuto roll
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
     val context = LocalContext.current
     var showDialog  by remember {mutableStateOf(false)}
+    var showPlayDialog  by remember {mutableStateOf(false)}
     var rolls  by rememberSaveable { mutableIntStateOf(0) }
-    val scorePreviewList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
-
+    val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
+    val scoreList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
 
     Box(
         modifier=Modifier
@@ -93,19 +108,20 @@ fun SinglePlayer() {
         ) {
             Button(
                 onClick = {
-                    if (rolls < 3){
+                    if (rolls < 2){
                         rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
                         rolls+=1
-                        Log.d("SinglePlayerActivity", "#rolls: $rolls")
 
-                    } else {
-                        //finisce il turno di gioco, l'utente deve scegliere un punteggio
-                        showDialog=true
-
-                        val scorePreview = getScorePreview(rolledDice)
+                    } else if (rolls == 2) { //ultimo lancio
+                        rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
+                        rolls+=1
+                        val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
                         scorePreviewList.addAll(scorePreview)
 
+                    } else {
+                        //finisce il turno di gioco, l'utente deve scegliere un punteggio
+                        showDialog = true
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -119,7 +135,18 @@ fun SinglePlayer() {
                 Text(text = "Roll")
             }
             Button(
-                onClick = {/*azione per il bottone play*/ },
+                onClick = {
+                    // quando viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
+                    val i = categoryToPlay
+
+                    if (i != -1){
+                        scoreList[i] = scorePreviewList[i]
+                        Log.d("SinglePlayerActivity", "#selected score: ${scoreList[i]}")
+                    } else {
+                        showPlayDialog = true
+                    }
+
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xB5DA4141)
                 ),
@@ -161,13 +188,37 @@ fun SinglePlayer() {
             )
         }
 
+        if(showPlayDialog){
+            AlertDialog(
+                onDismissRequest = { showPlayDialog = false },
+                title = {
+                    Text(
+                        text = "Play",
+                        color = Color.Red
+                    )},
+
+                text = {
+                    Column {
+                        Text("Select a category to play.")
+
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showPlayDialog = false }) {
+                        Text("OK")
+                    }
+                },
+            )
+        }
+
     }
 
-    ScoreTable(scorePreviewList)
-}
+    ScoreTable(scorePreviewList, selectedCategory = categoryToPlay, onCategorySelect = { index ->
+        onCategoryToPlayChange(index)
+    })}
 
 @Composable
-fun ScoreTable(scorePreviewList: List<Int>) {
+fun ScoreTable(scorePreviewList: List<Int>, selectedCategory: Int, onCategorySelect: (Int) -> Unit) {
 
     var clickedButtonIndex by remember { mutableStateOf(-1) }
 
@@ -178,15 +229,15 @@ fun ScoreTable(scorePreviewList: List<Int>) {
     ) {
         Column(
             modifier = Modifier
-                .align(Alignment.CenterEnd) // Allinea la colonna a destra
+                .align(Alignment.CenterEnd)
         ) {
             for (i in 0..13) {
                 Button(
                     onClick = {
                         clickedButtonIndex = i
-                        // seleziona preview del punteggio
-                        // quando poi viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
-                        // TODO gestione del click su bottoni punteggio
+                        onCategorySelect(clickedButtonIndex) // Aggiorna la variabile globale
+                        Log.d("SinglePlayerActivity", "#selected category: ${selectedCategory}")
+
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (clickedButtonIndex == i) Color(0xB5DA4141) else Color(0x5E969696),
@@ -195,10 +246,13 @@ fun ScoreTable(scorePreviewList: List<Int>) {
                         .padding(bottom = 8.dp)
                         .width(80.dp)
                         .height(30.dp)
-                        .offset(x = 0.dp, y = (i * 2.5).dp) // Offset per distanziare i bottoni
+                        .offset(x = 0.dp, y = (i * 2.5).dp)
                 ) {
-                    if (scorePreviewList[i] != -1){
-                        Text(text = scorePreviewList[i].toString())
+                    if (scorePreviewList[i] != -1) {
+                        Text(
+                            text = scorePreviewList[i].toString(), // Mostra il punteggio se non è -1
+                            color = if (clickedButtonIndex == i) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                        )
                     }
                 }
             }
@@ -208,12 +262,6 @@ fun ScoreTable(scorePreviewList: List<Int>) {
 
 
 
-fun getScorePreview(rolledDice: List<Int>): List<Int> {
-    //questa funzione sfrutta la classe ScoreCalculator per calcolare la preview di tutti i punteggi che poi verrà usata da ScoreTable
-    return List(14) {
-        index -> ScoreCalculator().point(index, ArrayList(rolledDice))
-    }
-}
 
 
 @Composable
@@ -230,16 +278,12 @@ fun BackgroundSingleplayer(){
     }
 
 }
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
-fun SinglePlayerPreview() {
+fun SinglePreview() {
     YahtzeeTheme {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            BackgroundSingleplayer()
-            SinglePlayer()
-            ScoreTable(scorePreviewList = List(14) { 0 }) // Passa una lista di esempio
-        }
+        BackgroundSingleplayer()
+        ScoreTable()
+        SinglePlayer()
     }
-}
+}*/
