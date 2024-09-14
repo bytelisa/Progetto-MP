@@ -44,6 +44,7 @@ class SingleplayerActivity : ComponentActivity() {
 
     var rolls: Int = 0
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -166,6 +167,7 @@ fun SinglePlayer() {
 @Composable
 fun ScoreTable() {
     var clickedButtonIndex by remember { mutableStateOf(-1) }
+    var scorePreviewList by rememberSaveable { mutableStateOf(List(5) { 0 }.toTypedArray()) }
 
     Box(
         modifier = Modifier
@@ -209,7 +211,6 @@ fun getScorePreview(rolledDice: List<Int>): List<Int> {
     return List(rolledDice.size) {
         index -> ScoreCalculator().point(index, ArrayList(rolledDice))
     }
-
 }
 
 
