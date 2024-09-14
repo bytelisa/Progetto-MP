@@ -138,7 +138,7 @@ class PlayUtils {
     fun getScorePreview(rolledDice: List<Int>): List<Int> {
         //questa funzione sfrutta la classe ScoreCalculator per calcolare la preview di tutti i punteggi che poi verrà usata da ScoreTable
         return List(14) {
-                index -> ScoreCalculator().point(index, ArrayList(rolledDice))
+                index -> ScoreCalculator().point(index+1, ArrayList(rolledDice))
         }
     }
 

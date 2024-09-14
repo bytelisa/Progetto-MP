@@ -17,13 +17,14 @@ class ScoreCalculator {
             return number(category,myDice)
         } else {
             when(category){
-                7 -> return threeX(myDice)
-                8 -> return fourX(myDice)
-                9 -> return full(myDice)
-                10 -> return lowScale(myDice)
-                11 -> return bigScale(myDice)
-                12 -> return yahtzee(myDice)
-                13 -> return chance(myDice)
+                //TODO BONUS
+                8 -> return threeX(myDice)
+                9 -> return fourX(myDice)
+                10 -> return full(myDice)
+                11 -> return lowScale(myDice)
+                12 -> return bigScale(myDice)
+                13 -> return yahtzee(myDice)
+                14 -> return chance(myDice)
             }
             return 0
         }
