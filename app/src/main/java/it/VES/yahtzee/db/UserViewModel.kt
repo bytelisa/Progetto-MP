@@ -22,7 +22,6 @@ class UserViewModel(application: Application): AndroidViewModel(application) {
 
         // Ottieni il DAO dal database
         val userDAO = UserDatabase.getDatabase(application).userDao()
-            ?: throw IllegalStateException("UserDatabase is not initialized properly")
 
         // Inizializza il repository
         repository = UserRepository(userDAO)

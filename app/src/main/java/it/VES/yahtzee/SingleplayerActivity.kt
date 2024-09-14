@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -26,21 +25,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
 import androidx.compose.ui.layout.ContentScale
-
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-
-import androidx.compose.ui.tooling.preview.Preview
-
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 class SingleplayerActivity : ComponentActivity() {
 
+    private var _categoryToPlay by mutableIntStateOf(-1)
+    private var scoreList by mutableStateOf(List(14){0})
     var scorePlaceholder = List(14){-1}
-    private var _categoryToPlay by mutableStateOf(-1)
     var categoryToPlay: Int
         get() = _categoryToPlay
         set(value) {
@@ -67,14 +63,15 @@ class SingleplayerActivity : ComponentActivity() {
                                 onCategoryToPlayChange = { newCategory ->
                                     categoryToPlay = newCategory
                                 }
-                            )                            //posiziono la tabella dei punteggi a destra
-                            ScoreTable(
+                            )
+                            ScoreTable(     //posiziono la tabella dei punteggi a destra
                                 scorePreviewList = scorePlaceholder,
                                 selectedCategory = categoryToPlay,
                                 onCategorySelect = { newCategory ->
                                     categoryToPlay = newCategory
                                 }
-                            )                        }
+                            )
+                        }
                     }
                 )
             }
@@ -93,27 +90,30 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
     var showPlayDialog  by remember {mutableStateOf(false)}
     var rolls  by rememberSaveable { mutableIntStateOf(0) }
     val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
-    val scoreList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
+    val scoreList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
+    var totalScore by remember { mutableIntStateOf(0) }
+
 
     Box(
         modifier=Modifier
-            .fillMaxSize()//Riempie tutta la schermata
+            .fillMaxSize()
     ){
 
-        //Uso row per affiancare i due bottoni in basso
         Row(
             modifier= Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
         ) {
-            Button(
+            Button( //ROLL
+
                 onClick = {
                     if (rolls < 2){
-                        rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
+                        rolledDice = DiceRollActivity().rollDice()
                         rolls+=1
 
                     } else if (rolls == 2) { //ultimo lancio
-                        rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
+
+                        rolledDice = DiceRollActivity().rollDice()
                         rolls+=1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
@@ -134,18 +134,22 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
             ) {
                 Text(text = "Roll")
             }
-            Button(
-                onClick = {
-                    // quando viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
-                    val i = categoryToPlay
+            Button( //PLAY
 
-                    if (i != -1){
-                        scoreList[i] = scorePreviewList[i]
-                        Log.d("SinglePlayerActivity", "#selected score: ${scoreList[i]}")
+                onClick = {
+
+                    if (categoryToPlay != -1) {
+                        scoreList[categoryToPlay] = scorePreviewList[categoryToPlay]
+                        Log.d("SinglePlayerActivity", "#selected score: ${scoreList[categoryToPlay]}")
+
                     } else {
                         showPlayDialog = true
                     }
+                    Log.d("SinglePlayerActivity", "New Score List: $scoreList")
 
+                    totalScore = ScoreCalculator().totalScore(scoreList)
+
+                    rolls = 0
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xB5DA4141)
@@ -213,14 +217,17 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
 
     }
 
+    Score(totalScore)
+
     ScoreTable(scorePreviewList, selectedCategory = categoryToPlay, onCategorySelect = { index ->
         onCategoryToPlayChange(index)
-    })}
+    })
+}
 
 @Composable
 fun ScoreTable(scorePreviewList: List<Int>, selectedCategory: Int, onCategorySelect: (Int) -> Unit) {
 
-    var clickedButtonIndex by remember { mutableStateOf(-1) }
+    var clickedButtonIndex by remember { mutableIntStateOf(-1) }
 
     Box(
         modifier = Modifier
@@ -236,7 +243,7 @@ fun ScoreTable(scorePreviewList: List<Int>, selectedCategory: Int, onCategorySel
                     onClick = {
                         clickedButtonIndex = i
                         onCategorySelect(clickedButtonIndex) // Aggiorna la variabile globale
-                        Log.d("SinglePlayerActivity", "#selected category: ${selectedCategory}")
+                        Log.d("SinglePlayerActivity", "#selected category: $selectedCategory")
 
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -261,6 +268,22 @@ fun ScoreTable(scorePreviewList: List<Int>, selectedCategory: Int, onCategorySel
 }
 
 
+
+@Composable
+fun Score(score: Int){
+
+    Box(
+        modifier= Modifier
+    ){
+        Text (
+            text = score.toString(),
+            fontSize = 35.sp, // Big
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(start = 356.dp, top = 28.dp, end = 10.dp)
+        )
+    }
+}
 
 
 
