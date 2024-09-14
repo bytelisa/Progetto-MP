@@ -42,8 +42,12 @@ import androidx.compose.ui.unit.dp
 
 class SingleplayerActivity : ComponentActivity() {
 
-    var rolls: Int = 1
     var scorePlaceholder = List(14){-1}
+    var categoryToPlay = -1
+        get() = field
+        set(value) {
+            field = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +85,7 @@ fun SinglePlayer() {
     var showDialog  by remember {mutableStateOf(false)}
     var rolls  by rememberSaveable { mutableIntStateOf(0) }
     val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
-
+    val scoreList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
 
     Box(
         modifier=Modifier
@@ -99,7 +103,6 @@ fun SinglePlayer() {
                     if (rolls < 2){
                         rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
                         rolls+=1
-                        Log.d("SinglePlayerActivity", "#rolls: $rolls")
 
                     } else if (rolls == 2) { //ultimo lancio
                         rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
@@ -124,7 +127,13 @@ fun SinglePlayer() {
                 Text(text = "Roll")
             }
             Button(
-                onClick = {/*azione per il bottone play*/ },
+                onClick = {
+                    // quando viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
+                    val i = SingleplayerActivity().categoryToPlay
+                    scoreList[i] = scorePreviewList[i]
+                    Log.d("SinglePlayerActivity", "#selected score: ${scoreList[i]}")
+
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xB5FF0000)
                 ),
@@ -189,8 +198,8 @@ fun ScoreTable(scorePreviewList: List<Int>) {
                 Button(
                     onClick = {
                         clickedButtonIndex = i
-                        // seleziona preview del punteggio
-                        // quando poi viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
+                        SingleplayerActivity().categoryToPlay = i //informa tutti che viene giocata questa categoria
+
                         // TODO gestione del click su bottoni punteggio
                     },
                     colors = ButtonDefaults.buttonColors(
