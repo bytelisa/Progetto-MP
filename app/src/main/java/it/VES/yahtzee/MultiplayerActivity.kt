@@ -78,7 +78,7 @@ fun MultiPlayer() {
                     rolledDice = DiceRollActivity().rollDice()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5FF0000)
+                    containerColor = Color(0xB5DA4141)
                 ),
                 modifier = Modifier
                     .padding(end = 8.dp)
@@ -90,7 +90,7 @@ fun MultiPlayer() {
             Button(
                 onClick = { /*azione per il bottone play*/ },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5FF0000)
+                    containerColor = Color(0xB5DA4141)
                 ),
                 modifier = Modifier
                     .padding(end = 8.dp)
@@ -136,7 +136,7 @@ fun ScoreTableM() {
                             clickedButtonIndex = i * 2 + 1
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (clickedButtonIndex == i * 2 + 1) Color(0xB5FF0000) else Color(0x5E969696)
+                            containerColor = if (clickedButtonIndex == i * 2 + 1) Color(0xB5DA4141) else Color(0x5E969696)
                         ),
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -151,7 +151,7 @@ fun ScoreTableM() {
                             clickedButtonIndex = i * 2 + 2
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (clickedButtonIndex == i * 2 + 2) Color(0xB5FF0000) else Color(0x5E969696)
+                            containerColor = if (clickedButtonIndex == i * 2 + 2) Color(0xB5DA4141) else Color(0x5E969696)
                         ),
                         modifier = Modifier
                             .width(80.dp)

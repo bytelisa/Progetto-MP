@@ -1,7 +1,6 @@
 package it.VES.yahtzee
 
-import android.content.Intent
-import android.net.Uri
+
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -12,7 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.ClickableText
+
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -32,9 +31,7 @@ import androidx.compose.ui.layout.ContentScale
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDecoration
+
 import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
@@ -134,7 +131,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, fin
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5FF0000)
+                    containerColor = Color(0xB5DA4141)
                 ),
                 modifier= Modifier
                     .padding(end = 8.dp)
@@ -160,7 +157,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, fin
                     rolls = 0
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5FF0000)
+                    containerColor = Color(0xB5DA4141)
                 ),
                 modifier= Modifier
                     .padding(end = 8.dp)
@@ -253,7 +250,7 @@ fun ScoreTable(scorePreviewList: List<Int>, selectedCategory: Int, onCategorySel
 
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (clickedButtonIndex == i) Color(0xB5FF0000) else Color(0x5E969696),
+                        containerColor = if (clickedButtonIndex == i) Color(0xB5DA4141) else Color(0x5E969696),
                     ),
                     modifier = Modifier
                         .padding(bottom = 8.dp)

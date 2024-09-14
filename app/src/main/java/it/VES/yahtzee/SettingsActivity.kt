@@ -115,7 +115,7 @@ fun Setting() {
                 ),
                 modifier = Modifier
                     .width(200.dp)
-                    .height(60.dp)
+                    .height(45.dp)
                     .padding(bottom = 16.dp)
             ) {
                 Text(text = "Go Back")
