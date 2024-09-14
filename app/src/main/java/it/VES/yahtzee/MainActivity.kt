@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -136,6 +137,7 @@ fun Home() {
             Text(text = "Settings")
         }
         Spacer(modifier = Modifier.height(24.dp))
+
         //fourth button
         Button(
             onClick={showDialog=true},
@@ -145,15 +147,28 @@ fun Home() {
         ){
             Text(text="About Us")
         }
-        if(showDialog){
+        if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text(text = "About Us") },
+                title = {
+                    Text(
+                        text = "About Us",
+                        textAlign = TextAlign.Center, // Centra il testo
+                        fontSize = 24.sp, // Aumenta la dimensione del testo
+                        fontWeight = FontWeight.Bold, // Imposta il testo in grassetto
+                        modifier = Modifier
+                            .fillMaxWidth() // Riempie la larghezza per centrare il titolo
+                            .padding(bottom = 8.dp) // Aggiunge padding per migliorare la spaziatura
+                    )
+                },
                 text = {
-                    Column {
-                        Text("Name 1: Elisa Marzioli")
-                        Text("Name 2: Sofia Tosti")
-                        Text("Name 3: Valentina Jin")
+                    Column(
+                        modifier = Modifier.fillMaxWidth(), // Colonna riempie la larghezza
+                        horizontalAlignment = Alignment.CenterHorizontally // Centra il contenuto
+                    ) {
+                        Text("Elisa Marzioli", fontSize = 18.sp, textAlign = TextAlign.Center) // Nome centrato
+                        Text("Sofia Tosti", fontSize = 18.sp, textAlign = TextAlign.Center) // Nome centrato
+                        Text("Valentina Jin", fontSize = 18.sp, textAlign = TextAlign.Center) // Nome centrato
                         Spacer(modifier = Modifier.height(16.dp))
                         ClickableText(
                             text = AnnotatedString("Learn more on Wikipedia"),
@@ -161,13 +176,26 @@ fun Home() {
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/Yahtzee"))
                                 context.startActivity(intent)
                             },
-                            style = TextStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)
+                            style = TextStyle(
+                                fontSize = 16.sp, // Ingrandisce il testo del link
+                                color = Color.Blue,
+                                textDecoration = TextDecoration.Underline
+                            ),
+                            modifier = Modifier.align(Alignment.CenterHorizontally) // Testo cliccabile centrato
                         )
                     }
                 },
                 confirmButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("OK")
+                    Box(
+                        modifier = Modifier.fillMaxWidth(), // Riempi la larghezza del Box
+                        contentAlignment = Alignment.Center // Centra il contenuto del Box
+                    ) {
+                        Button(
+                            onClick = { showDialog = false },
+                            modifier = Modifier.width(120.dp) // Riduce la lunghezza del bottone
+                        ) {
+                            Text("OK", textAlign = TextAlign.Center) // Testo del bottone centrato
+                        }
                     }
                 },
             )
