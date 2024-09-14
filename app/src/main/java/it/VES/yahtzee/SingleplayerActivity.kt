@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 class SingleplayerActivity : ComponentActivity() {
 
     var rolls: Int = 0
-
+    var scorePlaceholder = List(14){-1}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +62,7 @@ class SingleplayerActivity : ComponentActivity() {
                             //per i bottoni roll and play
                             SinglePlayer()
                             //posiziono la tabella dei punteggi a destra
-                            ScoreTable()
+                            ScoreTable(scorePlaceholder)
                         }
                     }
                 )
@@ -80,7 +80,7 @@ fun SinglePlayer() {
     val context = LocalContext.current
     var showDialog  by remember {mutableStateOf(false)}
     var rolls  by rememberSaveable { mutableIntStateOf(0) }
-    val scorePreviewByCategory = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
+    val scorePreviewList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
 
 
     Box(
@@ -104,8 +104,11 @@ fun SinglePlayer() {
                     } else {
                         //finisce il turno di gioco, l'utente deve scegliere un punteggio
                         showDialog=true
-                        //scorePreview!
-                        getScorePreview(rolledDice)
+
+                        val scorePreview = getScorePreview(rolledDice)
+                        scorePreviewList.clear()
+                        scorePreviewList.addAll(scorePreview)
+
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -162,12 +165,14 @@ fun SinglePlayer() {
         }
 
     }
+
+    ScoreTable(scorePreviewList)
 }
 
 @Composable
-fun ScoreTable() {
+fun ScoreTable(scorePreviewList: List<Int>) {
+
     var clickedButtonIndex by remember { mutableStateOf(-1) }
-    var scorePreviewList by rememberSaveable { mutableStateOf(List(5) { 0 }.toTypedArray()) }
 
     Box(
         modifier = Modifier
@@ -178,7 +183,7 @@ fun ScoreTable() {
             modifier = Modifier
                 .align(Alignment.CenterEnd) // Allinea la colonna a destra
         ) {
-            for (i in 1..14) {
+            for (i in 0..13) {
                 Button(
                     onClick = {
                         clickedButtonIndex = i
@@ -193,11 +198,11 @@ fun ScoreTable() {
                         .padding(bottom = 8.dp)
                         .width(80.dp)
                         .height(30.dp)
-                        .offset(x = 0.dp, y = (i * 2.5).dp) // Offset per distanziare i bottoni
+                        .offset(x = 0.dp, y = (i+1 * 2.5).dp) // Offset per distanziare i bottoni
                 ) {
-                    // TODO: il testo va inserito solo dopo che è stato aggiornato il set di dadi
-                    Text(text = "Button $i")
-                    Text(text = "ciao")
+                    if (scorePreviewList[i] != -1){
+                        Text(text = scorePreviewList[i].toString())
+                    }
                 }
             }
         }
@@ -208,7 +213,7 @@ fun ScoreTable() {
 
 fun getScorePreview(rolledDice: List<Int>): List<Int> {
     //questa funzione sfrutta la classe ScoreCalculator per calcolare la preview di tutti i punteggi che poi verrà usata da ScoreTable
-    return List(rolledDice.size) {
+    return List(14) {
         index -> ScoreCalculator().point(index, ArrayList(rolledDice))
     }
 }
