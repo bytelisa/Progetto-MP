@@ -1,6 +1,7 @@
 package it.VES.yahtzee
 
-import android.content.Context
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.Color
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,17 +15,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
+
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
+
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
 
 
@@ -79,6 +81,9 @@ fun SinglePlayer() {
                 onClick = {
                     rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
                 },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xB5FF0000)
+                ),
                 modifier= Modifier
                     .padding(end = 8.dp)
                     .width(200.dp)
@@ -88,6 +93,9 @@ fun SinglePlayer() {
             }
             Button(
                 onClick = {/*azione per il bottone play*/ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xB5FF0000)
+                ),
                 modifier= Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -110,16 +118,15 @@ fun SinglePlayer() {
     }
 }
 
-
 @Composable
 fun ScoreTable() {
+    var clickedButtonIndex by remember { mutableStateOf(-1) }
+
     Box(
         modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 100.dp) // necessario a spostare i bottoni
+            .fillMaxSize()
+            .padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 90.dp) // necessario a spostare i bottoni
     ) {
-        // Usa una Column per allineare i bottoni verticalmente
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd) // Allinea la colonna a destra
@@ -127,23 +134,27 @@ fun ScoreTable() {
             for (i in 1..14) {
                 Button(
                     onClick = {
-                        //seleziona preview del punteggio
-                        //quando poi viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
-                        //TODO gestione del click su bottoni punteggio
+                        clickedButtonIndex = i
+                        // seleziona preview del punteggio
+                        // quando poi viene premuto play il punteggio del bottone selezionato viene salvato nell'array dello score finale nella posizione i-esima
+                        // TODO gestione del click su bottoni punteggio
                     },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (clickedButtonIndex == i) Color(0xB5FF0000) else Color(0x5E969696),
+                    ),
                     modifier = Modifier
                         .padding(bottom = 8.dp)
-                        .width(85.dp)
-                        .height(37.dp)
+                        .width(80.dp)
+                        .height(30.dp)
+                        .offset(x = 0.dp, y = (i * 2.5).dp) // Offset per distanziare i bottoni
                 ) {
-                    //TODO: il testo va inserito solo dopo che è stato aggiornato il set di dadi
+                    // TODO: il testo va inserito solo dopo che è stato aggiornato il set di dadi
                     Text(text = "Button $i")
                 }
             }
         }
     }
 }
-
 
 fun getScorePreview(rolledDice: List<Int>): List<Int> {
     //TODO ottenere una lista di punteggi sfruttando la classe ScoreCalculator
@@ -172,3 +183,12 @@ fun BackgroundSingleplayer(){
     }
 
 }
+/*@Preview(showBackground = true)
+@Composable
+fun SinglePreview() {
+    YahtzeeTheme {
+        BackgroundSingleplayer()
+        ScoreTable()
+        SinglePlayer()
+    }
+}*/
