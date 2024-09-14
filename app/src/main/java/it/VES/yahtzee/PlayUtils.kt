@@ -118,7 +118,6 @@ class PlayUtils {
                 getDrawableResourceByName(resourceName, context)
                 // Se non è cliccata, aggiorna con il nuovo ID
             } else {
-                //getDrawableResourceByName("home", context)
                 oldImageIds[index]
                 // se immagine è bloccata dobbiamo mantenere il vecchio id della sua immagine
                 //posso fare una funzione che salva gli id correnti non appena l'immagine viene cliccata, e poi qui lo accedo

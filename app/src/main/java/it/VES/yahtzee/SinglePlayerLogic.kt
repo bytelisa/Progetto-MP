@@ -1,2 +1,0 @@
-package it.VES.yahtzee
-

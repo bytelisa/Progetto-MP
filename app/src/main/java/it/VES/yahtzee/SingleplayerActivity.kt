@@ -1,19 +1,25 @@
 package it.VES.yahtzee
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,12 +31,17 @@ import androidx.compose.ui.layout.ContentScale
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 
 
 class SingleplayerActivity : ComponentActivity() {
+
+    var rolls: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,8 +75,9 @@ fun SinglePlayer() {
 
     //queste mi servono per mostrare i dadi quando viene premuto roll
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
-
     val context = LocalContext.current
+    var showDialog  by remember {mutableStateOf(false)}
+    var rolls  by rememberSaveable { mutableIntStateOf(0) }
 
     Box(
         modifier=Modifier
@@ -75,12 +87,20 @@ fun SinglePlayer() {
         //Uso row per affiancare i due bottoni in basso
         Row(
             modifier= Modifier
-                .align(Alignment.BottomCenter)//Allinea i bottoni al centro in basso
-                .padding(16.dp)//distanzio i bottoni
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
         ) {
             Button(
                 onClick = {
-                    rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
+                    if (rolls < 3){
+                        rolledDice = DiceRollActivity().rollDice() //genera numeri casuali
+                        rolls+=1
+                        Log.d("SinglePlayerActivity", "#rolls: $rolls")
+
+                    } else {
+                        //finisce il turno di gioco, l'utente deve scegliere un punteggio
+                        showDialog=true
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xB5FF0000)
@@ -116,6 +136,25 @@ fun SinglePlayer() {
                 context
             )
         }
+
+        if(showDialog){
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text(text = "Fine Turno :(") },
+                text = {
+                    Column {
+                        Text("Hai terminato il numero di tiri a disposizione per questo turno! Scegli un punteggio da giocare.")
+
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showDialog = false }) {
+                        Text("OK")
+                    }
+                },
+            )
+        }
+
     }
 }
 
