@@ -305,7 +305,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
         if (turnEndDialog) {
 
-
             AlertDialog(
                 onDismissRequest = { turnEndDialog = false },
                 title = {
@@ -335,13 +334,13 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                 confirmButton = {
                     Button(onClick = {
                         turnEndDialog = false
-                        onTurnEnd()
                     }) {
                         Text("OK")
 
                     }
                 },
             )
+            onTurnEnd()
         }
     }
 
