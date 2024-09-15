@@ -1,6 +1,7 @@
 package it.VES.yahtzee
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -58,7 +59,8 @@ class MultiplayerActivity : ComponentActivity() {
                                 categoryToPlay = categoryToPlay
                             )
 
-                            ScoreTableM(1,
+                            ScoreTableM(
+                                currentPlayer= currentPlayer,
                                 scorePreview1 = List(14){-1},
                                 scorePreview2 = List(14){-1},
                                 scoreList1 = List(14){0},
@@ -238,8 +240,9 @@ fun ScoreTableM(
                         onClick = {
                             if (player == 1 && !playedCategories1[i]){
                                 clickedButtonIndex = i * 2 + 1
-                                onCategorySelect1(clickedButtonIndex + 1) // Aggiorna la variabile globale
-                                playedCategory = i
+                                onCategorySelect1(clickedButtonIndex) // Aggiorna la variabile globale
+                                playedCategory = i + 1
+                                Log.d("MultiplayerActivity", "Player $player selected category: ${clickedButtonIndex + 1}")
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -253,10 +256,10 @@ fun ScoreTableM(
                     ) {
                         //Text(text = "Button ${i * 2 + 1}")
 
-                        if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
+                        if (player==1 && scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
                             Text(
                                 text = scorePreview1[i].toString(), // Mostra il punteggio se non è -1
-                                color = if (playedCategories1[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                                color = if (playedCategories1[i] && player==1) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
                             )
                         }
                         if (scoreList1[i] != 0) {
@@ -272,8 +275,10 @@ fun ScoreTableM(
                         onClick = {
                             if (player == 2 && !playedCategories2[i]){
                                 clickedButtonIndex = i * 2 + 2
-                                onCategorySelect2(clickedButtonIndex + 1) // Aggiorna la variabile globale
-                                playedCategory = i
+                                onCategorySelect2(clickedButtonIndex) // Aggiorna la variabile globale
+                                playedCategory = i + 1
+                                Log.d("MultiplayerActivity", "Player $player selected category: ${clickedButtonIndex + 1}")
+
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -285,7 +290,7 @@ fun ScoreTableM(
                             .offset(x = 19.dp, y = (i * 2.5).dp) // Aggiungi l'offset desiderato
                     ) {
                         //Text(text = "Button ${i * 2 + 2}")
-                        if (scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
+                        if (player == 2 && scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
                             Text(
                                 text = scorePreview2[i].toString(), // Mostra il punteggio se non è -1
                                 color = if (playedCategories2[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti

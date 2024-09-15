@@ -71,7 +71,8 @@ class SingleplayerActivity : ComponentActivity() {
                                 scoreList = List(14){0},
                                 playedCategories = List(14){false},
                                 playPressed = true,
-                                previousCategory = -1
+                                previousCategory = -1,
+                                usedByMultiplayer = false
                             )
                         }
                     }
@@ -250,7 +251,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
     if (!playPressed) {
         ScoreTable(scorePreviewList, onCategorySelect = { index ->
             onCategoryToPlayChange(index)
-        }, scoreList, playedCategories, playPressed, previousCategory)
+        }, scoreList, playedCategories, playPressed, previousCategory, usedByMultiplayer)
     }
 
     if (gameFinished) {
@@ -259,15 +260,16 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
 
     Score(totalScore)
     RoundsLeft(rounds)
-
-    ScoreTable(scorePreviewList, onCategorySelect = { index ->
-        onCategoryToPlayChange(index)
-    }, scoreList, playedCategories, playPressed, previousCategory)
+    if (!usedByMultiplayer){
+        ScoreTable(scorePreviewList, onCategorySelect = { index ->
+            onCategoryToPlayChange(index)
+        }, scoreList, playedCategories, playPressed, previousCategory, usedByMultiplayer)
+    }
 
 }
 
 @Composable
-fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean, previousCategory: Int) {
+fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean, previousCategory: Int, usedByMultiplayer: Boolean) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
     var playedCategory by remember { mutableIntStateOf(-1) }
@@ -281,45 +283,48 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
             modifier = Modifier
                 .align(Alignment.CenterEnd)
         ) {
-            for (i in 0..13) {
-                Button(
-                    onClick = {
-                        if (!playedCategories[i]) { // se la categoria non è già stata giocata
-                            clickedButtonIndex = i
-                            onCategorySelect(clickedButtonIndex + 1) // Aggiorna la variabile globale
-                            playedCategory = i
-                            Log.d("SinglePlayerActivity", "#selected category: ${clickedButtonIndex + 1}")
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = when {
-                            playedCategories[i] -> Color(0xFF80C0DD)
-                            clickedButtonIndex == i -> Color(0xB5DA4141)
-                            previousCategory == i -> Color(0xFF4CAF50) // New color for previously selected category
-                            else -> Color.Transparent
+            if (!usedByMultiplayer){
+                for (i in 0..13) {
+                    Button(
+                        onClick = {
+                            if (!playedCategories[i]) { // se la categoria non è già stata giocata
+                                clickedButtonIndex = i
+                                onCategorySelect(clickedButtonIndex + 1) // Aggiorna la variabile globale
+                                playedCategory = i
+                                Log.d("SinglePlayerActivity", "#selected category: ${clickedButtonIndex + 1}")
+                            }
                         },
-                    ),
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .width(100.dp)
-                        .height(30.dp)
-                        .offset(x = 0.dp, y = (i * 2.5).dp)
-                ) {
-                    if (scorePreviewList.isNotEmpty() && scorePreviewList[i] != -1 && !playedCategories[i]) {
-                        Text(
-                            text = scorePreviewList[i].toString(), // Mostra il punteggio se non è -1
-                            color = if (playedCategories[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
-                        )
-                    }
-                    if (scoreList[i] != 0) {
-                        // la categoria è già stata giocata
-                        Text(
-                            text = scoreList[i].toString(),
-                            color = Color.White
-                        )
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = when {
+                                playedCategories[i] -> Color(0xFF80C0DD)
+                                clickedButtonIndex == i -> Color(0xB5DA4141)
+                                previousCategory == i -> Color(0xFF4CAF50) // New color for previously selected category
+                                else -> Color.Transparent
+                            },
+                        ),
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                            .width(100.dp)
+                            .height(30.dp)
+                            .offset(x = 0.dp, y = (i * 2.5).dp)
+                    ) {
+                        if (scorePreviewList.isNotEmpty() && scorePreviewList[i] != -1 && !playedCategories[i]) {
+                            Text(
+                                text = scorePreviewList[i].toString(), // Mostra il punteggio se non è -1
+                                color = if (playedCategories[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                            )
+                        }
+                        if (scoreList[i] != 0) {
+                            // la categoria è già stata giocata
+                            Text(
+                                text = scoreList[i].toString(),
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }
+
         }
     }
 }
