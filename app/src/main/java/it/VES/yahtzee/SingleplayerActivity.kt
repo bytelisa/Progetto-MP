@@ -84,7 +84,7 @@ class SingleplayerActivity : ComponentActivity() {
 
 
 @Composable
-fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)? = null, usedByMultiplayer: Boolean = false) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
+fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)? = null, usedByMultiplayer: Boolean = false, playerState: SinglePlayerState? = null): SinglePlayerState? { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -99,6 +99,8 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
     val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
+
+    var currentState by rememberSaveable{ mutableStateOf(playerState) } //for multiplayer
 
     Box(
         modifier = Modifier
@@ -116,10 +118,12 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
                     if (rolls < 3) {
                         playPressed = false
                         rolledDice = DiceRollActivity().rollDice()
+                        currentState?.rolledDice ?: rolledDice
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
                         scorePreviewList.addAll(scorePreview)
+                        currentState?.scorePreviewList ?: scorePreviewList
                         playPressed = false
                     } else {
                         // finisce il turno di gioco, l'utente deve scegliere un punteggio
@@ -148,6 +152,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
                         if (categoryToPlay != -1) {
                             scoreList[categoryToPlay - 1] = scorePreviewList[categoryToPlay - 1]
                             playedCategories[categoryToPlay - 1] = true
+                            currentState?.playedCategories?.set(categoryToPlay - 1, true)
                             previousCategory = categoryToPlay - 1
                             Log.d(
                                 "SinglePlayerActivity",
@@ -163,6 +168,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
                         totalScore = ScoreCalculator().totalScore(scoreList)
                         rolls = 0
                         rounds += 1
+                        currentState?.rounds = rounds
                         scorePreviewList.clear()
                         playPressed = true
 
@@ -265,8 +271,10 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
         ScoreTable(scorePreviewList, onCategorySelect = { index ->
             onCategoryToPlayChange(index)
         }, scoreList, playedCategories, playPressed, previousCategory, usedByMultiplayer)
+        return null
     }
 
+    return currentState
 }
 
 @Composable

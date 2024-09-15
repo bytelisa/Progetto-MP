@@ -138,22 +138,25 @@ fun MultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
     */
 
 
-    val player1State = remember { SinglePlayerState() }
-    val player2State = remember { SinglePlayerState() }
+    var player1State = remember { SinglePlayerState() }
+    var player2State = remember { SinglePlayerState() }
 
     if (currentPlayer == 1) {
-        SinglePlayerScreen(
-            state = player1State,
-            onTurnEnd = onTurnEnd // Passa la gestione della fine del turno
-        )
+          player1State = singlePlayerScreen(
+              state = player1State,
+              onTurnEnd = onTurnEnd // Passa la gestione della fine del turno
+          )!!
     } else if (currentPlayer == 2){
-        SinglePlayerScreen(
+        player2State = singlePlayerScreen(
             state = player2State,
             onTurnEnd = onTurnEnd // Passa la gestione della fine del turno
-        )
+        )!!
     }
 
-    var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+    var currentCategoryToPlay by rememberSaveable {
+        mutableIntStateOf(-1)
+    }
+    val rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
     val context = LocalContext.current
 
     Box(
@@ -208,6 +211,23 @@ fun MultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
             )
         }
 
+        ScoreTableM(
+            currentPlayer = player,
+            scorePreview1 = player1State.scorePreviewList,
+            scorePreview2 = player2State.scorePreviewList,
+            scoreList1 = List(14){0},
+            scoreList2 = List(14){0},
+            playedCategories1 = player1State.playedCategories,
+            playedCategories2 =player2State.playedCategories,
+            onCategorySelect1 = { newCategory ->
+                currentCategoryToPlay = newCategory
+            },
+            onCategorySelect2 = { newCategory ->
+                currentCategoryToPlay = newCategory
+            },
+            state1 = player1State,
+            state2 = player2State
+        )
     }
 }
 
@@ -321,23 +341,33 @@ class SinglePlayerState {
     var playedCategories = mutableStateListOf(*List(14) { false }.toTypedArray())
     var totalScore by mutableIntStateOf(0)
     var categoryToPlay by androidx.compose.runtime.mutableIntStateOf(0)
-    // Aggiungi qui altri stati di gioco del singolo giocatore
+    var scorePreviewList = mutableStateListOf(*List(14) { -1 }.toTypedArray())
+    var rolledDice by mutableStateOf<List<Int>>(emptyList())
+
 }
 
 @Composable
-fun SinglePlayerScreen(
-    state: SinglePlayerState,
+fun singlePlayerScreen(
+    state: SinglePlayerState?,
     onTurnEnd: () -> Unit
-) {
+): SinglePlayerState? {
+    var currentState by rememberSaveable{ mutableStateOf(state) }
+
     // Usa il singolo stato del giocatore, simile a come fai nel singleplayer
-    SinglePlayer(
-        categoryToPlay = state.categoryToPlay,
-        onCategoryToPlayChange = { newCategory ->
-            state.categoryToPlay = newCategory
-        },
-        onTurnEnd = onTurnEnd,
-        usedByMultiplayer = true
-    )
+    if (state != null) {
+        currentState = SinglePlayer(
+            categoryToPlay = state.categoryToPlay,
+            onCategoryToPlayChange = { newCategory ->
+                state.categoryToPlay = newCategory
+            },
+            onTurnEnd = onTurnEnd,
+            usedByMultiplayer = true,
+            playerState = state,)
+        return currentState
+
+    } else {
+        return null
+    }
 }
 
 @Composable
