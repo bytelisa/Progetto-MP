@@ -73,7 +73,7 @@ fun Choose() {
                     .height(45.dp),
             ) {
                 Text(text = "Singleplayer",
-                    fontSize = 18.sp
+                    fontSize = 17.sp
                 )
             }
             Button(
