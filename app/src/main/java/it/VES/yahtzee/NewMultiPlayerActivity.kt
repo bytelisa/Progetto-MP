@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -18,16 +17,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.material3.ButtonDefaults
-
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mutableStateListOf
-
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -92,25 +86,32 @@ class NewMultiPlayerActivity : ComponentActivity() {
         // Cambia il giocatore corrente
         currentPlayer = (currentPlayer + 1) % 2
     }
-
 }
 
 @Composable
 fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
-    var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
+    var rounds1 by rememberSaveable { mutableIntStateOf(0) } // max 13
+    var rounds2 by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var showPlayDialog by remember { mutableStateOf(false) }
-    val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
-    val scoreList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
-    var totalScore by remember { mutableIntStateOf(0) }
+    val scorePreviewList1 = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
+    val scorePreviewList2 = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
+    val scoreList1 = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
+    val scoreList2 = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
+    var totalScore1 by remember { mutableIntStateOf(0) }
+    var totalScore2 by remember { mutableIntStateOf(0) }
     var gameFinished by rememberSaveable { mutableStateOf(false) }
-    val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
+    val playedCategories1 = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
+    val playedCategories2 = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
 
+    var player by rememberSaveable {
+        ( mutableIntStateOf(currentPlayer))
+    }
 
     Box(
         modifier = Modifier
@@ -130,8 +131,14 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         rolledDice = DiceRollActivity().rollDice()
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
-                        scorePreviewList.clear()
-                        scorePreviewList.addAll(scorePreview)
+                        if (player == 1){
+                            scorePreviewList1.clear()
+                            scorePreviewList1.addAll(scorePreview)
+                        } else {
+                            scorePreviewList2.clear()
+                            scorePreviewList2.addAll(scorePreview)
+                        }
+
                         playPressed = false
                     } else {
                         // finisce il turno di gioco, l'utente deve scegliere un punteggio
@@ -155,38 +162,68 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
             Button(
                 onClick = { // play
+                    if (player == 1){
+                        if (rounds1 < 13) {
+                            if (categoryToPlay != -1) {
+                                scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
+                                playedCategories1[categoryToPlay - 1] = true
+                                previousCategory = categoryToPlay - 1
+                                Log.d(
+                                    "SinglePlayerActivity",
+                                    "#selected score: ${scoreList2[categoryToPlay - 1]}"
+                                )
 
-                    if (rounds < 13) {
-                        if (categoryToPlay != -1) {
-                            scoreList[categoryToPlay - 1] = scorePreviewList[categoryToPlay - 1]
-                            playedCategories[categoryToPlay - 1] = true
-                            previousCategory = categoryToPlay - 1
-                            Log.d(
-                                "SinglePlayerActivity",
-                                "#selected score: ${scoreList[categoryToPlay - 1]}"
-                            )
+                            } else {
+                                showPlayDialog = true
+                            }
+                            Log.d("MultiPlayerActivity", "New Score List player 1: $scoreList1")
+                            Log.d("MultiPlayerActivity", "Round finished for player 1: ${rounds1 + 1}")
+
+                            totalScore1 = ScoreCalculator().totalScore(scoreList1)
+                            rolls = 0
+                            rounds1 += 1
+                            scorePreviewList1.clear()
+                            playPressed = true
+
+                            player = 2  //fine turno
+
 
                         } else {
-                            showPlayDialog = true
-                        }
-                        Log.d("SinglePlayerActivity", "New Score List: $scoreList")
-                        Log.d("SinglePlayerActivity", "Round finished: ${rounds + 1}")
-
-                        totalScore = ScoreCalculator().totalScore(scoreList)
-                        rolls = 0
-                        rounds += 1
-                        scorePreviewList.clear()
-                        playPressed = true
-
-
-                        if (onTurnEnd != null) {
-                            onTurnEnd()
+                            // finisce la partita
+                            gameFinished = true
                         }
 
+                    } else if (player == 2){
+                        if (rounds2 < 13) {
+                            if (categoryToPlay != -1) {
+                                scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
+                                playedCategories2[categoryToPlay - 1] = true
+                                previousCategory = categoryToPlay - 1
+                                Log.d(
+                                    "SinglePlayerActivity",
+                                    "#selected score: ${scoreList2[categoryToPlay - 1]}"
+                                )
 
-                    } else {
-                        // finisce la partita
-                        gameFinished = true
+                            } else {
+                                showPlayDialog = true
+                            }
+                            Log.d("SinglePlayerActivity", "New Score List player 2: $scoreList2")
+                            Log.d("SinglePlayerActivity", "Round finished for player 2: ${rounds2 + 1}")
+
+                            totalScore2 = ScoreCalculator().totalScore(scoreList2)
+                            rolls = 0
+                            rounds2 += 1
+                            scorePreviewList2.clear()
+                            playPressed = true
+
+                            player = 2  //fine turno
+
+
+                        } else {
+                            // finisce la partita
+                            gameFinished = true
+                        }
+
                     }
 
                 },
@@ -264,12 +301,12 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     if (!playPressed) {
         ScoreTableM(
             currentPlayer= currentPlayer,
-            scorePreview1 = List(14){-1},
-            scorePreview2 = List(14){-1},
-            scoreList1 = List(14){0},
-            scoreList2 = List(14){0},
-            playedCategories1 = List(14){false},
-            playedCategories2 = List(14){false},
+            scorePreview1 = scorePreviewList1,
+            scorePreview2 = scorePreviewList2,
+            scoreList1 = scoreList1,
+            scoreList2 = scoreList2,
+            playedCategories1 = playedCategories1,
+            playedCategories2 = playedCategories2,
             onCategorySelect1 = { index ->
                 onCategoryToPlayChange(index)
             },
@@ -281,12 +318,24 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     }
 
     if (gameFinished) {
-        GameFinish(score = totalScore)
+        GameFinish(score = when {
+            totalScore1 > totalScore2 -> totalScore1
+            totalScore2 > totalScore1 -> totalScore2
+            else -> totalScore1 //pareggio
+        })
     }
 
-    Score(totalScore)
-    RoundsLeft(rounds)
+    //mostriamo un punteggio alla volta per mancanza di spazio e perché teoricamente in yahtzee non vedi il punteggio degli altri ;)
+    if (player == 1){
+        Score(totalScore1)
+        RoundsLeft(rounds1)
 
+    } else {
+        Score(totalScore2)
+        RoundsLeft(rounds = rounds2)
+    }
+
+    //TODO: trovare modo per evidenziare il vincitore
 
 }
 
@@ -294,93 +343,85 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 @Composable
 fun ScoreTableM(
     currentPlayer: Int,
-    scorePreview1: List<Int>, scorePreview2: List<Int>,
-    scoreList1: List<Int>, scoreList2: List<Int>,
-    playedCategories1: List<Boolean>, playedCategories2: List<Boolean>,
-    onCategorySelect1: (Int) -> Unit, onCategorySelect2: (Int) -> Unit,
-    state1: SinglePlayerState, state2: SinglePlayerState
+    scorePreview1: List<Int>,
+    scorePreview2: List<Int>,
+    scoreList1: List<Int>,
+    scoreList2: List<Int>,
+    playedCategories1: List<Boolean>,
+    playedCategories2: List<Boolean>,
+    onCategorySelect1: (Int) -> Unit,
+    onCategorySelect2: (Int) -> Unit
 ) {
-
-    var clickedButtonIndex by remember { mutableIntStateOf(-1) }
-    var player by rememberSaveable { mutableIntStateOf(currentPlayer) }
-    var playedCategory by remember { mutableIntStateOf(-1) }
-
+    var clickedButtonIndex by remember { mutableStateOf(-1) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 90.dp) // Padding per spostare i bottoni
+            .padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 90.dp)
     ) {
         Column(
-            modifier = Modifier
-                .align(Alignment.CenterEnd) // Allinea la colonna a destra
+            modifier = Modifier.align(Alignment.CenterEnd)
         ) {
             for (i in 0 until 14) {
                 Row(
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    Button( //player 1
+                    // Player 1 buttons
+                    Button(
                         onClick = {
-                            if (player == 1 && !playedCategories1[i]){
+                            if (currentPlayer == 1 && !playedCategories1[i]) {
                                 clickedButtonIndex = i * 2 + 1
-                                onCategorySelect1(clickedButtonIndex) // Aggiorna la variabile globale
-                                playedCategory = i + 1
-                                Log.d("MultiplayerActivity", "Player $player selected category: ${clickedButtonIndex + 1}")
+                                onCategorySelect1(i+1) //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if ((clickedButtonIndex == i * 2 + 1) && (player == 1)) Color(0xB5DA4141) else Color(0x5E969696)
+                            containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
+                                Color(0xB5DA4141) else Color(0x5E969696)
                         ),
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .width(80.dp)
                             .height(30.dp)
-                            .offset(x = 19.dp, y = (i * 2.5).dp) // Aggiungi l'offset desiderato
+                            .offset(x = 19.dp, y = (i * 2.5).dp)
                     ) {
-                        //Text(text = "Button ${i * 2 + 1}")
-
-                        if (player==1 && scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
+                        if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
                             Text(
-                                text = scorePreview1[i].toString(), // Mostra il punteggio se non è -1
-                                color = if (playedCategories1[i] && player==1) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                                text = scorePreview1[i].toString(),
+                                color = if (playedCategories1[i]) Color.White else Color.Black
                             )
                         }
                         if (scoreList1[i] != 0) {
-                            // la categoria è già stata giocata
                             Text(
                                 text = scoreList1[i].toString(),
                                 color = Color.White
                             )
                         }
-
                     }
-                    Button( //player 2
-                        onClick = {
-                            if (player == 2 && !playedCategories2[i]){
-                                clickedButtonIndex = i * 2 + 2
-                                onCategorySelect2(clickedButtonIndex) // Aggiorna la variabile globale
-                                playedCategory = i + 1
-                                Log.d("MultiplayerActivity", "Player $player selected category: ${clickedButtonIndex + 1}")
 
+                    // Player 2 buttons
+                    Button(
+                        onClick = {
+                            if (currentPlayer == 2 && !playedCategories2[i]) {
+                                clickedButtonIndex = i * 2 + 2
+                                onCategorySelect2(i+1)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if ((clickedButtonIndex == i * 2 + 2) && (player == 2)) Color(0xB5DA4141) else Color(0x5E969696)
+                            containerColor = if (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2)
+                                Color(0xB5DA4141) else Color(0x5E969696)
                         ),
                         modifier = Modifier
                             .width(80.dp)
                             .height(30.dp)
-                            .offset(x = 19.dp, y = (i * 2.5).dp) // Aggiungi l'offset desiderato
+                            .offset(x = 19.dp, y = (i * 2.5).dp)
                     ) {
-                        //Text(text = "Button ${i * 2 + 2}")
-                        if (player == 2 && scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
+                        if (scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
                             Text(
-                                text = scorePreview2[i].toString(), // Mostra il punteggio se non è -1
-                                color = if (playedCategories2[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                                text = scorePreview2[i].toString(),
+                                color = if (playedCategories2[i]) Color.White else Color.Black
                             )
                         }
                         if (scoreList2[i] != 0) {
-                            // la categoria è già stata giocata
                             Text(
                                 text = scoreList2[i].toString(),
                                 color = Color.White
@@ -392,6 +433,8 @@ fun ScoreTableM(
         }
     }
 }
+
+
 
 @Composable
 fun NamesPopup(){
