@@ -18,10 +18,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.material3.ButtonDefaults
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.mutableStateListOf
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -32,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
-class MultiplayerActivity : ComponentActivity() {
+class NewMultiPlayerActivity : ComponentActivity() {
 
     //variabile che tiene traccia del giocatore corrente, varia tra 1 e 2
     private var currentPlayer by mutableIntStateOf(1)
@@ -54,10 +55,14 @@ class MultiplayerActivity : ComponentActivity() {
                         ) {
                             BackgroundMultiplayer()
 
-                            MultiPlayer(
-                                player = currentPlayer,
-                                onTurnEnd = {nextPlayer()},
-                                categoryToPlay = categoryToPlay
+
+                            newMultiPlayer(
+                                currentPlayer = currentPlayer,
+                                categoryToPlay = categoryToPlay,
+                                onCategoryToPlayChange = { newCategory ->
+                                    categoryToPlay = newCategory
+                                },
+                                onTurnEnd = {nextPlayer()}
                             )
 
                             ScoreTableM(
@@ -74,9 +79,8 @@ class MultiplayerActivity : ComponentActivity() {
                                 onCategorySelect2 = { newCategory ->
                                     categoryToPlay = newCategory
                                 },
-                                state1 = SinglePlayerState(),
-                                state2 = SinglePlayerState()
-                                )
+
+                            )
                         }
                     }
                 )
@@ -92,103 +96,106 @@ class MultiplayerActivity : ComponentActivity() {
 }
 
 @Composable
-fun NamesPopup(){
-
-    var open by rememberSaveable {mutableStateOf(true)}
-
-    AlertDialog(
-        onDismissRequest = { open = false },
-        title = { Text(
-            text = "Multiplayer",
-            fontSize = 35.sp, // Big
-        ) },
-        text = {
-            Column {
-                Text("Player 1:")
-                Text("Player 2:")
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                open = false
-
-            }) {
-                Text("OK")
-            }
-        },
-    )
-}
-
-
-@Composable
-fun MultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
-
-    var currentPlayer by rememberSaveable { mutableIntStateOf(player) }
-    //var currentPlayerActivity by rememberSaveable { mutableStateOf(SingleplayerActivity()) }
-
-    /*voglio usare due istanze di singleplayer per gestire i singoli giochi,
-    val Player1 = SingleplayerActivity()
-    val Player2 = SingleplayerActivity()
-
-    if (currentPlayer == 1){
-        currentPlayerActivity = Player1
-    } else if (currentPlayer == 2) {
-        currentPlayerActivity = Player2
-    }
-    */
-
-
-    var player1State = remember { SinglePlayerState() }
-    var player2State = remember { SinglePlayerState() }
-
-    if (currentPlayer == 1) {
-          player1State = singlePlayerScreen(
-              state = player1State,
-              onTurnEnd = onTurnEnd // Passa la gestione della fine del turno
-          )!!
-    } else if (currentPlayer == 2){
-        player2State = singlePlayerScreen(
-            state = player2State,
-            onTurnEnd = onTurnEnd // Passa la gestione della fine del turno
-        )!!
-    }
-
-    var currentCategoryToPlay by rememberSaveable {
-        mutableIntStateOf(-1)
-    }
-    val rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
+    var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
+    var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
+    var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
     val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
+    var showPlayDialog by remember { mutableStateOf(false) }
+    val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
+    val scoreList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
+    var totalScore by remember { mutableIntStateOf(0) }
+    var gameFinished by rememberSaveable { mutableStateOf(false) }
+    val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
+    var playPressed by rememberSaveable { mutableStateOf(false) }
+    var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
+
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
     ) {
+
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
         ) {
-            //ho tolto i bottoni perché usiamo quelli delle rispettive activity singlePlayer
-            /*
             Button(
-                onClick = {
-                    rolledDice = DiceRollActivity().rollDice()
+                onClick = { // roll
+
+                    if (rolls < 3) {
+                        playPressed = false
+                        rolledDice = DiceRollActivity().rollDice()
+                        rolls += 1
+                        val scorePreview = PlayUtils().getScorePreview(rolledDice)
+                        scorePreviewList.clear()
+                        scorePreviewList.addAll(scorePreview)
+                        playPressed = false
+                    } else {
+                        // finisce il turno di gioco, l'utente deve scegliere un punteggio
+                        showDialog = true
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5DA4141)
+                    containerColor = if (rolls < 3) {
+                        Color(0xB5DA4141)
+                    } else {
+                        Color(0xB5A5A5A5)
+                    }
                 ),
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(200.dp)
                     .height(45.dp),
             ) {
-                Text(text = "Roll")
+                Text(text = "Roll (${3 - rolls} left)")
             }
 
-
             Button(
-                onClick = { /*azione per il bottone play*/ },
+                onClick = { // play
+
+                    if (rounds < 13) {
+                        if (categoryToPlay != -1) {
+                            scoreList[categoryToPlay - 1] = scorePreviewList[categoryToPlay - 1]
+                            playedCategories[categoryToPlay - 1] = true
+                            previousCategory = categoryToPlay - 1
+                            Log.d(
+                                "SinglePlayerActivity",
+                                "#selected score: ${scoreList[categoryToPlay - 1]}"
+                            )
+
+                        } else {
+                            showPlayDialog = true
+                        }
+                        Log.d("SinglePlayerActivity", "New Score List: $scoreList")
+                        Log.d("SinglePlayerActivity", "Round finished: ${rounds + 1}")
+
+                        totalScore = ScoreCalculator().totalScore(scoreList)
+                        rolls = 0
+                        rounds += 1
+                        scorePreviewList.clear()
+                        playPressed = true
+
+
+                        if (onTurnEnd != null) {
+                            onTurnEnd()
+                        }
+
+
+                    } else {
+                        // finisce la partita
+                        gameFinished = true
+                    }
+
+                },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xB5DA4141)
+                    containerColor = if (rolls != 0) {
+                        Color(0xB5DA4141)
+                    } else {
+                        Color(0xB5A5A5A5)
+                    }
                 ),
                 modifier = Modifier
                     .padding(end = 8.dp)
@@ -198,10 +205,9 @@ fun MultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
                 Text(text = "Play")
             }
 
-             */
         }
 
-        if (rolledDice.isNotEmpty()) {
+        if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
             PlayUtils().ImageSequence(
@@ -211,35 +217,88 @@ fun MultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
             )
         }
 
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text(text = "Uh-oh :(") },
+                text = {
+                    Column {
+                        Text("You're out of rolls for this round. Choose a category and play!")
+
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showDialog = false }) {
+                        Text("OK")
+                    }
+                },
+            )
+        }
+
+        if (showPlayDialog) {
+            AlertDialog(
+                onDismissRequest = { showPlayDialog = false },
+                title = {
+                    Text(
+                        text = "Play",
+                        color = Color.Red
+                    )
+                },
+
+                text = {
+                    Column {
+                        Text("Select a category to play.")
+
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showPlayDialog = false }) {
+                        Text("OK")
+                    }
+                },
+            )
+        }
+
+    }
+
+    if (!playPressed) {
         ScoreTableM(
-            currentPlayer = player,
-            scorePreview1 = player1State.scorePreviewList,
-            scorePreview2 = player2State.scorePreviewList,
+            currentPlayer= currentPlayer,
+            scorePreview1 = List(14){-1},
+            scorePreview2 = List(14){-1},
             scoreList1 = List(14){0},
             scoreList2 = List(14){0},
-            playedCategories1 = player1State.playedCategories,
-            playedCategories2 =player2State.playedCategories,
-            onCategorySelect1 = { newCategory ->
-                currentCategoryToPlay = newCategory
+            playedCategories1 = List(14){false},
+            playedCategories2 = List(14){false},
+            onCategorySelect1 = { index ->
+                onCategoryToPlayChange(index)
             },
-            onCategorySelect2 = { newCategory ->
-                currentCategoryToPlay = newCategory
+            onCategorySelect2 = { index ->
+                onCategoryToPlayChange(index)
             },
-            state1 = player1State,
-            state2 = player2State
-        )
+
+            )
     }
+
+    if (gameFinished) {
+        GameFinish(score = totalScore)
+    }
+
+    Score(totalScore)
+    RoundsLeft(rounds)
+
+
 }
 
 
 @Composable
 fun ScoreTableM(
-                currentPlayer: Int,
-                scorePreview1: List<Int>, scorePreview2: List<Int>,
-                scoreList1: List<Int>, scoreList2: List<Int>,
-                playedCategories1: List<Boolean>, playedCategories2: List<Boolean>,
-                onCategorySelect1: (Int) -> Unit, onCategorySelect2: (Int) -> Unit,
-                state1: SinglePlayerState, state2: SinglePlayerState
+    currentPlayer: Int,
+    scorePreview1: List<Int>, scorePreview2: List<Int>,
+    scoreList1: List<Int>, scoreList2: List<Int>,
+    playedCategories1: List<Boolean>, playedCategories2: List<Boolean>,
+    onCategorySelect1: (Int) -> Unit, onCategorySelect2: (Int) -> Unit,
+    state1: SinglePlayerState, state2: SinglePlayerState
 ) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
@@ -334,65 +393,30 @@ fun ScoreTableM(
     }
 }
 
-class SinglePlayerState {
-    var rolls by mutableIntStateOf(0)
-    var rounds by mutableIntStateOf(0)
-    var scoreList = mutableStateListOf(*List(14) { 0 }.toTypedArray())
-    var playedCategories = mutableStateListOf(*List(14) { false }.toTypedArray())
-    var totalScore by mutableIntStateOf(0)
-    var categoryToPlay by androidx.compose.runtime.mutableIntStateOf(0)
-    var scorePreviewList = mutableStateListOf(*List(14) { -1 }.toTypedArray())
-    var rolledDice by mutableStateOf<List<Int>>(emptyList())
-
-}
-
 @Composable
-fun singlePlayerScreen(
-    state: SinglePlayerState?,
-    onTurnEnd: () -> Unit
-): SinglePlayerState? {
-    var currentState by rememberSaveable{ mutableStateOf(state) }
+fun NamesPopup(){
 
-    // Usa il singolo stato del giocatore, simile a come fai nel singleplayer
-    if (state != null) {
-        currentState = SinglePlayer(
-            categoryToPlay = state.categoryToPlay,
-            onCategoryToPlayChange = { newCategory ->
-                state.categoryToPlay = newCategory
-            },
-            onTurnEnd = onTurnEnd,
-            usedByMultiplayer = true,
-            playerState = state,)
-        return currentState
+    var open by rememberSaveable {mutableStateOf(true)}
 
-    } else {
-        return null
-    }
+    AlertDialog(
+        onDismissRequest = { open = false },
+        title = { Text(
+            text = "Multiplayer",
+            fontSize = 35.sp, // Big
+        ) },
+        text = {
+            Column {
+                Text("Player 1:")
+                Text("Player 2:")
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                open = false
+
+            }) {
+                Text("OK")
+            }
+        },
+    )
 }
-
-@Composable
-fun BackgroundMultiplayer(){
-    Box(
-        modifier=Modifier.fillMaxSize()
-    ){
-        Image(
-            painter=painterResource(id= R.drawable.multiplayer),
-            contentDescription="Multi player background",
-            contentScale= ContentScale.Crop,
-            modifier=Modifier.matchParentSize()
-        )
-    }
-
-}
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    YahtzeeTheme {
-        BackgroundMultiplayer()
-        ScoreTableM(1, SingleplayerActivity())
-        MultiPlayer(1)
-    }
-}
-*/
