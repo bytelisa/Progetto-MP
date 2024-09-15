@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -80,7 +79,7 @@ class SingleplayerActivity : ComponentActivity() {
 
 
 @Composable
-fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
+fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)? = null, usedByMultiplayer: Boolean = false) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -160,6 +159,12 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) {
                         rounds += 1
                         scorePreviewList.clear()
                         playPressed = true
+
+                        if (usedByMultiplayer){
+                            if (onTurnEnd != null) {
+                                onTurnEnd()
+                            }
+                        }
 
                     } else {
                         // finisce la partita
