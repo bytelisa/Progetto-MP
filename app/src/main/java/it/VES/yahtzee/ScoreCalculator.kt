@@ -1,5 +1,7 @@
 package it.VES.yahtzee
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
+
 class ScoreCalculator {
 
     fun totalScore(scoreList: List<Int>): Int{
@@ -179,4 +181,16 @@ class ScoreCalculator {
         }
         return 0
     }
+
+    public fun bonusCheck(myDice: SnapshotStateList<Int>): Int{
+        var sum: Int = 0
+        for (i in 0..5){
+            sum+=myDice[5]
+        }
+        return when{
+            sum>63 -> sum
+            else -> 0
+        }
+    }
+
 }

@@ -177,6 +177,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         if (rounds1 < 13) {
                             if (categoryToPlay != -1) {
                                 scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
+                                scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
                                 playedCategories1[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
@@ -204,6 +205,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                                 Log.d("MultiPlayerActivity", "Player 2 selected category: $categoryToPlay")
 
                                 scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
+                                scoreList2[6] = ScoreCalculator().bonusCheck(scoreList2)
                                 playedCategories2[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
