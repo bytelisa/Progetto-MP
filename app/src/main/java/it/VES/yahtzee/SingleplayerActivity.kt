@@ -67,7 +67,11 @@ class SingleplayerActivity : ComponentActivity() {
                                 scorePreviewList = scorePlaceholder,
                                 onCategorySelect = { newCategory ->
                                     categoryToPlay = newCategory
-                                }, List(14){0}, List(14){false}, true,previousCategory=-1
+                                },
+                                scoreList = List(14){0},
+                                playedCategories = List(14){false},
+                                playPressed = true,
+                                previousCategory = -1
                             )
                         }
                     }

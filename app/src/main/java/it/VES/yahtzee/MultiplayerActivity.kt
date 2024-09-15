@@ -35,7 +35,7 @@ class MultiplayerActivity : ComponentActivity() {
 
     //variabile che tiene traccia del giocatore corrente, varia tra 1 e 2
     private var currentPlayer by mutableIntStateOf(1)
-
+    private var categoryToPlay by mutableIntStateOf(-1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +54,24 @@ class MultiplayerActivity : ComponentActivity() {
 
                             MultiPlayer(
                                 player = currentPlayer,
-                                onTurnEnd = {nextPlayer()}
+                                onTurnEnd = {nextPlayer()},
+                                categoryToPlay = categoryToPlay
                             )
 
-                            ScoreTableM(1, SingleplayerActivity())
+                            ScoreTableM(1,
+                                scorePreview1 = List(14){-1},
+                                scorePreview2 = List(14){-1},
+                                scoreList1 = List(14){0},
+                                scoreList2 = List(14){0},
+                                playedCategories1 = List(14){false},
+                                playedCategories2 = List(14){false},
+                                onCategorySelect1 = { newCategory ->
+                                    categoryToPlay = newCategory
+                                },
+                                onCategorySelect2 = { newCategory ->
+                                    categoryToPlay = newCategory
+                                },
+                                )
                         }
                     }
                 )
@@ -102,7 +116,7 @@ fun NamesPopup(){
 
 
 @Composable
-fun MultiPlayer(player: Int, onTurnEnd: () -> Unit) {
+fun MultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
 
     var currentPlayer by rememberSaveable { mutableIntStateOf(player) }
     //var currentPlayerActivity by rememberSaveable { mutableStateOf(SingleplayerActivity()) }
@@ -145,6 +159,7 @@ fun MultiPlayer(player: Int, onTurnEnd: () -> Unit) {
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
         ) {
+            //ho tolto i bottoni perché usiamo quelli delle rispettive activity singlePlayer
             /*
             Button(
                 onClick = {
@@ -193,10 +208,18 @@ fun MultiPlayer(player: Int, onTurnEnd: () -> Unit) {
 
 
 @Composable
-fun ScoreTableM(currentPlayer: Int, currentActivity: SingleplayerActivity) {
+fun ScoreTableM(
+                currentPlayer: Int,
+                scorePreview1: List<Int>, scorePreview2: List<Int>,
+                scoreList1: List<Int>, scoreList2: List<Int>,
+                playedCategories1: List<Boolean>, playedCategories2: List<Boolean>,
+                onCategorySelect1: (Int) -> Unit, onCategorySelect2: (Int) -> Unit
+) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
     var player by rememberSaveable { mutableIntStateOf(currentPlayer) }
+    var playedCategory by remember { mutableIntStateOf(-1) }
+
 
     Box(
         modifier = Modifier
@@ -213,8 +236,10 @@ fun ScoreTableM(currentPlayer: Int, currentActivity: SingleplayerActivity) {
                 ) {
                     Button( //player 1
                         onClick = {
-                            if (player == 1){
+                            if (player == 1 && !playedCategories1[i]){
                                 clickedButtonIndex = i * 2 + 1
+                                onCategorySelect1(clickedButtonIndex + 1) // Aggiorna la variabile globale
+                                playedCategory = i
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -226,12 +251,29 @@ fun ScoreTableM(currentPlayer: Int, currentActivity: SingleplayerActivity) {
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp) // Aggiungi l'offset desiderato
                     ) {
-                        Text(text = "Button ${i * 2 + 1}")
+                        //Text(text = "Button ${i * 2 + 1}")
+
+                        if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
+                            Text(
+                                text = scorePreview1[i].toString(), // Mostra il punteggio se non è -1
+                                color = if (playedCategories1[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                            )
+                        }
+                        if (scoreList1[i] != 0) {
+                            // la categoria è già stata giocata
+                            Text(
+                                text = scoreList1[i].toString(),
+                                color = Color.White
+                            )
+                        }
+
                     }
                     Button( //player 2
                         onClick = {
-                            if (player == 2){
+                            if (player == 2 && !playedCategories2[i]){
                                 clickedButtonIndex = i * 2 + 2
+                                onCategorySelect2(clickedButtonIndex + 1) // Aggiorna la variabile globale
+                                playedCategory = i
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -242,7 +284,20 @@ fun ScoreTableM(currentPlayer: Int, currentActivity: SingleplayerActivity) {
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp) // Aggiungi l'offset desiderato
                     ) {
-                        Text(text = "Button ${i * 2 + 2}")
+                        //Text(text = "Button ${i * 2 + 2}")
+                        if (scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
+                            Text(
+                                text = scorePreview2[i].toString(), // Mostra il punteggio se non è -1
+                                color = if (playedCategories2[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                            )
+                        }
+                        if (scoreList2[i] != 0) {
+                            // la categoria è già stata giocata
+                            Text(
+                                text = scoreList2[i].toString(),
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }
