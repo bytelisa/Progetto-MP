@@ -47,7 +47,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
-
+import java.util.Date
 
 
 class MainActivity : ComponentActivity() {
@@ -151,6 +151,19 @@ fun Home(navController: NavController) {
         ){
             Text(text="About Us")
         }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // New Button for Score Screen
+        Button(
+            onClick = {
+                navController.navigate("score") // Naviga alla schermata dei punteggi
+            },
+            modifier = Modifier
+                .width(200.dp)
+                .height(45.dp),
+        ) {
+            Text(text = "Score")
+        }
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
@@ -228,10 +241,16 @@ fun BackgroundPicture(){
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val sampleScores=listOf(
+        Score("Player1", "Singleplayer", 1500, Date()),
+        Score("Player2", "Multiplayer", 2000, Date()),
+        Score("Player3", "Singleplayer", 1800, Date())
+    )
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { Home(navController) }
         composable("settings") { Setting(navController) }
         composable("howToPlay") { howToPlay(navController)}
+        composable("score"){ScoreScreen(scores = sampleScores)}
         // Aggiungi altre schermate qui
     }
 }
