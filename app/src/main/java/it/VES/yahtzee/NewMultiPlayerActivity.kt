@@ -115,7 +115,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     var turnEndDialog by rememberSaveable { mutableStateOf(false) }
 
 
-    //mostriamo un punteggio alla volta per mancanza di spazio e perché teoricamente in yahtzee non vedi il punteggio degli altri ;)
     if (currentPlayer == 1){
         Score(totalScore1)
         RoundsLeft(rounds1)
@@ -204,7 +203,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                     } else if (currentPlayer == 2){
                         if (rounds2 < 13) {
                             if (categoryToPlay != -1) {
-                                Log.d("MultiePlayerActivity", "Player 2 selected category: $categoryToPlay")
+                                Log.d("MultiPlayerActivity", "Player 2 selected category: $categoryToPlay")
 
                                 scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
                                 playedCategories2[categoryToPlay - 1] = true
@@ -308,6 +307,8 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         }
 
         if (turnEndDialog) {
+
+
             AlertDialog(
                 onDismissRequest = { turnEndDialog = false },
                 title = {
