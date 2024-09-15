@@ -42,6 +42,12 @@
         </activity>
 
         <activity
+            android:name=".NewMultiPlayerActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Yahtzee">
+        </activity>
+
+        <activity
             android:name=".HowToPlayActivity"
             android:exported="true"
             android:theme="@style/Theme.Yahtzee">
