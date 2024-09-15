@@ -109,8 +109,14 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
 
-    var player by rememberSaveable {
-        ( mutableIntStateOf(currentPlayer))
+    //mostriamo un punteggio alla volta per mancanza di spazio e perché teoricamente in yahtzee non vedi il punteggio degli altri ;)
+    if (currentPlayer == 1){
+        Score(totalScore1)
+        RoundsLeft(rounds1)
+
+    } else {
+        Score(totalScore2)
+        RoundsLeft(rounds = rounds2)
     }
 
     Box(
@@ -131,15 +137,15 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         rolledDice = DiceRollActivity().rollDice()
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
-                        if (player == 1){
+                        if (currentPlayer == 1){
                             scorePreviewList1.clear()
                             scorePreviewList1.addAll(scorePreview)
                         } else {
                             scorePreviewList2.clear()
                             scorePreviewList2.addAll(scorePreview)
                         }
-
                         playPressed = false
+
                     } else {
                         // finisce il turno di gioco, l'utente deve scegliere un punteggio
                         showDialog = true
@@ -162,14 +168,14 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
             Button(
                 onClick = { // play
-                    if (player == 1){
+                    if (currentPlayer == 1){
                         if (rounds1 < 13) {
                             if (categoryToPlay != -1) {
                                 scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
                                 playedCategories1[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
-                                    "SinglePlayerActivity",
+                                    "MultiPlayerActivity",
                                     "#selected score: ${scoreList2[categoryToPlay - 1]}"
                                 )
 
@@ -184,16 +190,11 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             rounds1 += 1
                             scorePreviewList1.clear()
                             playPressed = true
+                            onTurnEnd()
 
-                            player = 2  //fine turno
-
-
-                        } else {
-                            // finisce la partita
-                            gameFinished = true
                         }
 
-                    } else if (player == 2){
+                    } else if (currentPlayer == 2){
                         if (rounds2 < 13) {
                             if (categoryToPlay != -1) {
                                 scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
@@ -216,14 +217,14 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             scorePreviewList2.clear()
                             playPressed = true
 
-                            player = 2  //fine turno
+                            onTurnEnd()
 
-
-                        } else {
-                            // finisce la partita
-                            gameFinished = true
                         }
 
+                    }
+
+                    if (rounds1 >= 13 && rounds2 >= 13) {
+                        gameFinished = true
                     }
 
                 },
@@ -243,6 +244,8 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
             }
 
         }
+
+
 
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
@@ -325,15 +328,24 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         })
     }
 
-    //mostriamo un punteggio alla volta per mancanza di spazio e perché teoricamente in yahtzee non vedi il punteggio degli altri ;)
-    if (player == 1){
-        Score(totalScore1)
-        RoundsLeft(rounds1)
 
-    } else {
-        Score(totalScore2)
-        RoundsLeft(rounds = rounds2)
-    }
+
+    ScoreTableM(
+        currentPlayer= currentPlayer,
+        scorePreview1 = scorePreviewList1,
+        scorePreview2 = scorePreviewList2,
+        scoreList1 = scoreList1,
+        scoreList2 = scoreList2,
+        playedCategories1 = playedCategories1,
+        playedCategories2 = playedCategories2,
+        onCategorySelect1 = { index ->
+            onCategoryToPlayChange(index)
+        },
+        onCategorySelect2 = { index ->
+            onCategoryToPlayChange(index)
+        },
+
+        )
 
     //TODO: trovare modo per evidenziare il vincitore
 
