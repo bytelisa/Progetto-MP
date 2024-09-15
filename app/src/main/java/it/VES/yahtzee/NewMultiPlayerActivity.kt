@@ -196,8 +196,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             playPressed = true
                             totalScore1 = ScoreCalculator().totalScore(scoreList1) //così sotto al pop up viene visualizzato lo score del giocatore corrente
                             turnEndDialog = true
-                            onTurnEnd()
-
                         }
 
                     } else if (currentPlayer == 2){
@@ -225,7 +223,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             playPressed = true
                             totalScore2 = ScoreCalculator().totalScore(scoreList2)
                             turnEndDialog = true
-                            onTurnEnd()
 
                         }
                     }
@@ -314,11 +311,11 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                 title = {
                     Text(
                         text = when {
-                            currentPlayer == 2 -> "+ ${scoreList1[categoryToPlay - 1]}!"
+                            currentPlayer == 1 -> "+ ${scoreList1[categoryToPlay - 1]}!"
                             else -> "+ ${scoreList2[categoryToPlay - 1]}!"
                         },
                         color = when {
-                            currentPlayer == 2 -> Color.Blue
+                            currentPlayer == 1 -> Color.Blue
                             else -> Color.Red
                         }
                     )
@@ -328,7 +325,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                     Column {
                         Text(
                             text = when {
-                                currentPlayer == 2 -> "It's player #2's turn!"
+                                currentPlayer == 1 -> "It's player #2's turn!"
                                 else -> "It's player #1's turn!"
                             }
                         )
@@ -336,8 +333,12 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                     }
                 },
                 confirmButton = {
-                    Button(onClick = { turnEndDialog = false }) {
+                    Button(onClick = {
+                        turnEndDialog = false
+                        onTurnEnd()
+                    }) {
                         Text("OK")
+
                     }
                 },
             )
