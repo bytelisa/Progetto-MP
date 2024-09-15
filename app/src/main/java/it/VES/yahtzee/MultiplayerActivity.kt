@@ -39,6 +39,7 @@ class MultiplayerActivity : ComponentActivity() {
     private var categoryToPlay by mutableIntStateOf(-1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -73,6 +74,8 @@ class MultiplayerActivity : ComponentActivity() {
                                 onCategorySelect2 = { newCategory ->
                                     categoryToPlay = newCategory
                                 },
+                                state1 = SinglePlayerState(),
+                                state2 = SinglePlayerState()
                                 )
                         }
                     }
@@ -215,7 +218,8 @@ fun ScoreTableM(
                 scorePreview1: List<Int>, scorePreview2: List<Int>,
                 scoreList1: List<Int>, scoreList2: List<Int>,
                 playedCategories1: List<Boolean>, playedCategories2: List<Boolean>,
-                onCategorySelect1: (Int) -> Unit, onCategorySelect2: (Int) -> Unit
+                onCategorySelect1: (Int) -> Unit, onCategorySelect2: (Int) -> Unit,
+                state1: SinglePlayerState, state2: SinglePlayerState
 ) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
