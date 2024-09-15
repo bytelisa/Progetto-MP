@@ -83,8 +83,12 @@ class NewMultiPlayerActivity : ComponentActivity() {
     }
 
     private fun nextPlayer() {
-        // Cambia il giocatore corrente
-        currentPlayer = (currentPlayer + 1) % 2
+
+        currentPlayer = if (currentPlayer == 1) {
+            2
+        } else {
+            1
+        }
     }
 }
 
@@ -108,6 +112,8 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     val playedCategories2 = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
+    var turnEndDialog by rememberSaveable { mutableStateOf(false) }
+
 
     //mostriamo un punteggio alla volta per mancanza di spazio e perché teoricamente in yahtzee non vedi il punteggio degli altri ;)
     if (currentPlayer == 1){
@@ -185,11 +191,12 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             Log.d("MultiPlayerActivity", "New Score List player 1: $scoreList1")
                             Log.d("MultiPlayerActivity", "Round finished for player 1: ${rounds1 + 1}")
 
-                            totalScore1 = ScoreCalculator().totalScore(scoreList1)
                             rolls = 0
                             rounds1 += 1
                             scorePreviewList1.clear()
                             playPressed = true
+                            totalScore1 = ScoreCalculator().totalScore(scoreList1) //così sotto al pop up viene visualizzato lo score del giocatore corrente
+                            turnEndDialog = true
                             onTurnEnd()
 
                         }
@@ -197,30 +204,31 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                     } else if (currentPlayer == 2){
                         if (rounds2 < 13) {
                             if (categoryToPlay != -1) {
+                                Log.d("MultiePlayerActivity", "Player 2 selected category: $categoryToPlay")
+
                                 scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
                                 playedCategories2[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
-                                    "SinglePlayerActivity",
+                                    "MultiPlayerActivity",
                                     "#selected score: ${scoreList2[categoryToPlay - 1]}"
                                 )
 
                             } else {
                                 showPlayDialog = true
                             }
-                            Log.d("SinglePlayerActivity", "New Score List player 2: $scoreList2")
-                            Log.d("SinglePlayerActivity", "Round finished for player 2: ${rounds2 + 1}")
+                            Log.d("MultiPlayerActivity", "New Score List player 2: $scoreList2")
+                            Log.d("MultiPlayerActivity", "Round finished for player 2: ${rounds2 + 1}")
 
-                            totalScore2 = ScoreCalculator().totalScore(scoreList2)
                             rolls = 0
                             rounds2 += 1
                             scorePreviewList2.clear()
                             playPressed = true
-
+                            totalScore2 = ScoreCalculator().totalScore(scoreList2)
+                            turnEndDialog = true
                             onTurnEnd()
 
                         }
-
                     }
 
                     if (rounds1 >= 13 && rounds2 >= 13) {
@@ -299,6 +307,40 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
             )
         }
 
+        if (turnEndDialog) {
+            AlertDialog(
+                onDismissRequest = { turnEndDialog = false },
+                title = {
+                    Text(
+                        text = when {
+                            currentPlayer == 2 -> "+ ${scoreList1[categoryToPlay - 1]}!"
+                            else -> "+ ${scoreList2[categoryToPlay - 1]}!"
+                        },
+                        color = when {
+                            currentPlayer == 2 -> Color.Blue
+                            else -> Color.Red
+                        }
+                    )
+                },
+
+                text = {
+                    Column {
+                        Text(
+                            text = when {
+                                currentPlayer == 2 -> "It's player #2's turn!"
+                                else -> "It's player #1's turn!"
+                            }
+                        )
+
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { turnEndDialog = false }) {
+                        Text("OK")
+                    }
+                },
+            )
+        }
     }
 
     if (!playPressed) {
@@ -321,7 +363,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     }
 
     if (gameFinished) {
-        GameFinish(score = when {
+        WinningPlayer(currentPlayer, score = when {
             totalScore1 > totalScore2 -> totalScore1
             totalScore2 > totalScore1 -> totalScore2
             else -> totalScore1 //pareggio
@@ -347,7 +389,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
         )
 
-    //TODO: trovare modo per evidenziare il vincitore
+    //TODO: trovare modo per evidenziare il giocatore
 
 }
 
@@ -386,9 +428,19 @@ fun ScoreTableM(
                                 onCategorySelect1(i+1) //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
                             }
                         },
+
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
-                                Color(0xB5DA4141) else Color(0x5E969696)
+                            /*containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
+                                Color(0xB5DA4141) else Color.Transparent
+
+                             */
+                            containerColor = when {
+                                playedCategories1[i] -> Color(0xFF80C0DD)
+                                (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1) -> Color(
+                                    0xB5DA4141
+                                )
+                                else -> Color.Transparent
+                            },
                         ),
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -413,14 +465,28 @@ fun ScoreTableM(
                     // Player 2 buttons
                     Button(
                         onClick = {
+                            Log.d("MultiPlayerActivity", "currentPlayer: $currentPlayer")
+
                             if (currentPlayer == 2 && !playedCategories2[i]) {
                                 clickedButtonIndex = i * 2 + 2
                                 onCategorySelect2(i+1)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
+                            /*
                             containerColor = if (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2)
-                                Color(0xB5DA4141) else Color(0x5E969696)
+                                Color(0xB5DA4141) else Color.Transparent
+
+
+                             */
+                            containerColor = when {
+                                playedCategories2[i] -> Color(0xFF80C0DD)
+                                (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2) -> Color(
+                                    0xB5DA4141
+                                )
+                                else -> Color.Transparent
+                            },
+
                         ),
                         modifier = Modifier
                             .width(80.dp)
@@ -446,6 +512,35 @@ fun ScoreTableM(
     }
 }
 
+
+
+@Composable
+fun WinningPlayer(winner: Int, score: Int){
+
+    var gameFinished by rememberSaveable {mutableStateOf(true)}
+
+
+    AlertDialog(
+        onDismissRequest = { gameFinished = false },
+        title = { Text(
+            text = "Player #$winner wins!",
+            fontSize = 35.sp, // Big
+        ) },
+        text = {
+            Column {
+                Text ("You scored $score points." )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                gameFinished = false
+
+            }) {
+                Text("OK")
+            }
+        },
+    )
+}
 
 
 @Composable
