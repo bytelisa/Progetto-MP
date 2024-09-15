@@ -70,7 +70,7 @@ class SingleplayerActivity : ComponentActivity() {
                                 },
                                 scoreList = List(14){0},
                                 playedCategories = List(14){false},
-                                playPressed = true,
+                                playPressed = false,
                                 previousCategory = -1,
                                 usedByMultiplayer = false
                             )
@@ -114,6 +114,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
                 onClick = { // roll
 
                     if (rolls < 3) {
+                        playPressed = false
                         rolledDice = DiceRollActivity().rollDice()
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
@@ -269,10 +270,11 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
 }
 
 @Composable
-fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean, previousCategory: Int, usedByMultiplayer: Boolean) {
+fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean = false, previousCategory: Int, usedByMultiplayer: Boolean) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
     var playedCategory by remember { mutableIntStateOf(-1) }
+    var justPlayed by remember { mutableStateOf(playPressed) }
 
     Box(
         modifier = Modifier
@@ -297,7 +299,7 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
                         colors = ButtonDefaults.buttonColors(
                             containerColor = when {
                                 playedCategories[i] -> Color(0xFF80C0DD)
-                                clickedButtonIndex == i -> Color(0xB5DA4141)
+                                (clickedButtonIndex == i && !justPlayed) -> Color(0xB5DA4141)
                                 previousCategory == i -> Color(0xFF4CAF50) // New color for previously selected category
                                 else -> Color.Transparent
                             },
@@ -324,7 +326,6 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
                     }
                 }
             }
-
         }
     }
 }
