@@ -5,17 +5,13 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,7 +53,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                             BackgroundMultiplayer()
 
 
-                            NewMultiPlayer(
+                            newMultiPlayer(
                                 currentPlayer = currentPlayer,
                                 categoryToPlay = categoryToPlay,
                                 onCategoryToPlayChange = { newCategory ->
@@ -81,7 +77,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                                     categoryToPlay = newCategory
                                 },
 
-                            )
+                                )
                         }
                     }
                 )
@@ -100,7 +96,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
 }
 
 @Composable
-fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
+fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds1 by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rounds2 by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -122,13 +118,13 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     var turnEndDialog by rememberSaveable { mutableStateOf(false) }
 
 
-
-    if (currentPlayer == 1) {
-        Score(totalScore1.toString(), "datePlayed", "gameMode")
+    if (currentPlayer == 1){
+        Score(totalScore1)
         PlayUtils().RoundsLeft(rounds1)
+
     } else {
-        Score(totalScore2.toString(), "datePlayed", "gameMode")
-        PlayUtils().RoundsLeft(rounds2)
+        Score(totalScore2)
+        PlayUtils().RoundsLeft(rounds = rounds2)
     }
 
     Box(
@@ -249,7 +245,7 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         Color(0xB5A5A5A5)
                     }
                 ),
-                enabled = rolls!=0,
+                enabled = rolls != 0,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -393,20 +389,19 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         scoreList2 = scoreList2,
         playedCategories1 = playedCategories1,
         playedCategories2 = playedCategories2,
-        onCategorySelect1 = { index -> onCategoryToPlayChange(index) },
-        onCategorySelect2 = { index -> onCategoryToPlayChange(index) },
-        currentPlayerColor=if(currentPlayer==1)Color.LightGray else Color.LightGray
-    )
+        onCategorySelect1 = { index ->
+            onCategoryToPlayChange(index)
+        },
+        onCategorySelect2 = { index ->
+            onCategoryToPlayChange(index)
+        },
 
+        )
 
+    //TODO: trovare modo per evidenziare il giocatore
 
 }
 
-
-@Composable
-fun Score(score: String, datePlayed: String, gameMode: String) {
-    Text(text = "Score: $score, Date: $datePlayed, Mode: $gameMode")
-}
 
 @Composable
 fun ScoreTableM(
@@ -418,8 +413,7 @@ fun ScoreTableM(
     playedCategories1: List<Boolean>,
     playedCategories2: List<Boolean>,
     onCategorySelect1: (Int) -> Unit,
-    onCategorySelect2: (Int) -> Unit,
-    currentPlayerColor: Color = Color.LightGray
+    onCategorySelect2: (Int) -> Unit
 ) {
     var clickedButtonIndex by remember { mutableStateOf(-1) }
 
@@ -439,27 +433,29 @@ fun ScoreTableM(
                     Button(
                         onClick = {
                             if (currentPlayer == 1 && !playedCategories1[i]) {
-                                onCategorySelect1(i + 1)
                                 clickedButtonIndex = i * 2 + 1
+                                onCategorySelect1(i+1) //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
                             }
                         },
+
                         colors = ButtonDefaults.buttonColors(
+                            /*containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
+                                Color(0xB5DA4141) else Color.Transparent
+
+                             */
                             containerColor = when {
                                 playedCategories1[i] -> Color(0xFF80C0DD)
-                                clickedButtonIndex == i * 2 + 1 && currentPlayer == 1 -> Color(0xFF4CAF50)
+                                (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1) -> Color(
+                                    0xB5DA4141
+                                )
                                 else -> Color.Transparent
-                            }
+                            },
                         ),
-                        enabled = !playedCategories1[i],
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .width(80.dp)
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp)
-                            .border(
-                                width = 2.dp,
-                                color = if (currentPlayer == 1) currentPlayerColor else Color.Transparent
-                            )
                     ) {
                         if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
                             Text(
@@ -478,27 +474,33 @@ fun ScoreTableM(
                     // Player 2 buttons
                     Button(
                         onClick = {
+                            Log.d("MultiPlayerActivity", "currentPlayer: $currentPlayer")
+
                             if (currentPlayer == 2 && !playedCategories2[i]) {
                                 clickedButtonIndex = i * 2 + 2
-                                onCategorySelect2(i + 1)
+                                onCategorySelect2(i+1)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
+                            /*
+                            containerColor = if (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2)
+                                Color(0xB5DA4141) else Color.Transparent
+
+
+                             */
                             containerColor = when {
                                 playedCategories2[i] -> Color(0xFF80C0DD)
-                                clickedButtonIndex == i * 2 + 2 && currentPlayer == 2 -> Color(0xFF2196F3)
+                                (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2) -> Color(
+                                    0xB5DA4141
+                                )
                                 else -> Color.Transparent
-                            }
-                        ),
-                        enabled = !playedCategories2[i],
+                            },
+
+                            ),
                         modifier = Modifier
                             .width(80.dp)
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp)
-                            .border(
-                                width = 2.dp,
-                                color = if (currentPlayer == 2) currentPlayerColor else Color.Transparent
-                            )
                     ) {
                         if (scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
                             Text(
@@ -592,6 +594,5 @@ fun NamesPopup(){
         },
     )
 }
-
 
 
