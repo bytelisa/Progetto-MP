@@ -42,8 +42,7 @@ class PlayUtils {
     fun imageSequence(
         rolledDice: List<Int>,  // Lista dei dadi
         rotationValues: List<Float>,
-        context: Context,
-        rollPressed: Boolean
+        context: Context
     ): List<Boolean>
     {
         var newDice by rememberSaveable { mutableStateOf(mutableListOf(*List(5) { 0 }.toTypedArray())) }
@@ -105,17 +104,6 @@ class PlayUtils {
                 }
             }
         }
-
-        if (rollPressed){
-            for (i in 0..4){
-                if (clickedStates[i]){
-                    newDice[i]= rolledDice[i] //se il dado è stato bloccato ricarichiamo il vecchio valore
-                } else {
-                    newDice[i] = (1..6).random() //altrimenti ne generiamo un altro
-                }
-            }
-        }
-
 
         return clickedStates
     }

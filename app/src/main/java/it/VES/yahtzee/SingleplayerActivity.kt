@@ -115,7 +115,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                     if (rolls < 3) {
                         rollPressed = true
                         playPressed = false
-                        rolledDice = DiceRollActivity().rollDice().toMutableList()
+                        rolledDice = DiceRollActivity().rollDiceStates(clickedStates).toMutableList()
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
@@ -195,17 +195,9 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                 clickedStates = PlayUtils().imageSequence(
                     rolledDice,
                     rotationValues = rotationValues,
-                    context,
-                    rollPressed
+                    context
                 ).toMutableList()
 
-                for (i in 0..4) {
-                    if (clickedStates[i]) {
-                        rolledDice[i] =
-                            (1..6).random() // Assegna un nuovo valore solo se il dado non è bloccato
-                        rolls++
-                    }
-                }
             }
         }
 

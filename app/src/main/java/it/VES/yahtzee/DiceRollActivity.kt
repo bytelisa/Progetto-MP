@@ -1,5 +1,6 @@
 package it.VES.yahtzee
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -161,6 +163,19 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
         val results = List(5) { (1..6).random() }
         Log.d("DiceRollActivity", "New Dice Results: $results")
         return results
+    }
+
+    public fun rollDiceStates(clickedStates: List<Boolean>): List<Int> {
+        val rolledDice = MutableList(5) { 0 } // Inizializza come una MutableList
+
+        for (i in 0..4) {
+            if (!clickedStates[i]) {
+                rolledDice[i] =
+                    (1..6).random() // Assegna un nuovo valore solo se il dado non è bloccato
+            }
+        }
+        Log.d("DiceRollActivity", "New Dice Results: $rolledDice")
+        return rolledDice
     }
 
 }
