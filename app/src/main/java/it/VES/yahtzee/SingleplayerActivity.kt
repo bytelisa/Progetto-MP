@@ -95,7 +95,6 @@ class SingleplayerActivity : ComponentActivity() {
         }
     }
 
-
     private fun saveGameToDB(score: Int) {
 
         // Recupera il contesto e le SharedPreferences
@@ -218,9 +217,14 @@ fun SinglePlayer(
 
                         totalScore = ScoreCalculator().totalScore(scoreList)
                         rolls = 0
-                        rounds += 1
-                        scorePreviewList.clear()
-                        playPressed = true
+                        if (rounds == 12){
+                            rounds += 1
+                            gameFinished = true
+                        } else {
+                            rounds += 1
+                            scorePreviewList.clear()
+                            playPressed = true
+                        }
 
                     } else {
                         // finisce la partita
@@ -280,6 +284,9 @@ fun SinglePlayer(
             }, scoreList, playedCategories, playPressed)
         }
 
+    if (rounds > 13){
+        gameFinished = true
+    }
 
     // Quando la partita finisce
     if (gameFinished) {
@@ -310,7 +317,7 @@ fun GameFinish(score: Int, onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = { gameFinished = false },
         title = { Text("Game Finished") },
-        text = { Text("Your total score is $score") },
+        text = { Text("Your total score is $score!") },
         confirmButton = {
             Button(onClick = {
                 onConfirm()  // Chiama la funzione che salva i dati
