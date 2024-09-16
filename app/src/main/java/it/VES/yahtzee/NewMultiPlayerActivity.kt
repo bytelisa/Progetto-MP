@@ -168,6 +168,7 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         Color(0xB5A5A5A5)
                     }
                 ),
+                enabled=rolls<3,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(200.dp)
@@ -246,6 +247,7 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         Color(0xB5A5A5A5)
                     }
                 ),
+                enabled = rolls!=0,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -391,10 +393,10 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         playedCategories2 = playedCategories2,
         onCategorySelect1 = { index -> onCategoryToPlayChange(index) },
         onCategorySelect2 = { index -> onCategoryToPlayChange(index) },
-        currentPlayerColor=if(currentPlayer==1)Color.Green else Color.Yellow
+        currentPlayerColor=if(currentPlayer==1)Color.LightGray else Color.LightGray
     )
 
-    //TODO: trovare modo per evidenziare il giocatore
+
 
 }
 
@@ -410,7 +412,7 @@ fun ScoreTableM(
     playedCategories2: List<Boolean>,
     onCategorySelect1: (Int) -> Unit,
     onCategorySelect2: (Int) -> Unit,
-    currentPlayerColor:Color=Color.Green
+    currentPlayerColor:Color=Color.LightGray
 ) {
     var clickedButtonIndex by remember { mutableStateOf(-1) }
 
@@ -435,7 +437,6 @@ fun ScoreTableM(
                                 //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
                             }
                         },
-
                         colors = ButtonDefaults.buttonColors(
                             /*containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
                                 Color(0xB5DA4141) else Color.Transparent
