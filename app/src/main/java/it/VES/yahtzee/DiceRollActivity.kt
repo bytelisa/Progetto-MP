@@ -159,13 +159,13 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 
-    public fun rollDice(): List<Int> {
+    fun rollDice(): List<Int> {
         val results = List(5) { (1..6).random() }
         Log.d("DiceRollActivity", "New Dice Results: $results")
         return results
     }
 
-    public fun rollDiceStates(rolledDice: List<Int>, clickedStates: List<Boolean>): List<Int> {
+    fun rollDiceStates(rolledDice: List<Int>, clickedStates: List<Boolean>): List<Int> {
 
         val newDice = MutableList(5) { 0 }
 

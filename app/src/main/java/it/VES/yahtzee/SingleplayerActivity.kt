@@ -178,7 +178,7 @@ fun SinglePlayer(
                         playPressed = false
 
                         rolledDice = if (rolls == 0){
-                            DiceRollActivity().rollDiceStates(MutableList(5){0}, clickedStates).toMutableList()
+                            DiceRollActivity().rollDice().toMutableList()
 
                         } else {
                             DiceRollActivity().rollDiceStates(rolledDice, clickedStates).toMutableList()
