@@ -20,10 +20,12 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val userDao = UserDatabase.getDatabase(application).userDao()
         repository = UserRepository(userDao)
-        allUsers = repository.allUsers
-        Log.d("UserViewModel", "UserViewModel initialized")
+        allUsers = repository.allUsers   // funziona
+
     }
 
+
+    // funziona
     fun insert(user: User) {
         Log.d("UserViewModel", "Attempting to insert user: $user")
         repository.insert(user)
@@ -32,7 +34,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun delete(user: User) {
-        // Eliminazione gestita dal repository
-        repository.delete(user)
+        Log.d("UserViewModel", "Tentativo di eliminazione utente: $user")
+        viewModelScope.launch {
+            repository.delete(user)
+        }
     }
 }

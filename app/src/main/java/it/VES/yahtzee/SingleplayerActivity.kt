@@ -405,7 +405,34 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
     }
 }
 
+@Composable
+fun GameFinish(score: Int){
 
+    var gameFinished by rememberSaveable {mutableStateOf(true)}
+
+
+    AlertDialog(
+        onDismissRequest = { gameFinished = false },
+        title = { Text(
+            text = "Final Score:",
+            fontSize = 35.sp, // Big
+        ) },
+        text = {
+            Column {
+                Text("Nice game, see you next time! :)")
+                Text(text = score.toString(), fontSize = 35.sp)
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                gameFinished = false
+
+            }) {
+                Text("OK")
+            }
+        },
+    )
+}
 
 @Composable
 fun Score(score: Int) {
