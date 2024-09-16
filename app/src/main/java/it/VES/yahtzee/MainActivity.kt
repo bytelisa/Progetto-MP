@@ -1,8 +1,11 @@
 package it.VES.yahtzee
 
+import android.app.Application
 import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
@@ -42,12 +46,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.AnnotatedString
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import it.VES.yahtzee.db.Scores
+import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 import java.util.Date
+import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
@@ -157,13 +167,16 @@ fun Home(navController: NavController) {
         Button(
             onClick = {
                 navController.navigate("score") // Naviga alla schermata dei punteggi
-            },
+                Log.d("HomeScreen", "Pulsante 'Go to Scores' cliccato")            },
             modifier = Modifier
                 .width(200.dp)
                 .height(45.dp),
         ) {
             Text(text = "Score")
         }
+
+
+
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
@@ -241,17 +254,21 @@ fun BackgroundPicture(){
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val sampleScores=listOf(
-        Score("Player1", "Singleplayer", 1500, Date()),
-        Score("Player2", "Multiplayer", 2000, Date()),
-        Score("Player3", "Singleplayer", 1800, Date())
-    )
+
+
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { Home(navController) }
         composable("settings") { Setting(navController) }
         composable("howToPlay") { howToPlay(navController)}
-        //composable("score"){ScoreScreen(scores = sampleScores)}
+
+        composable("score") { ScoreScreen(navController) } // Usa ScoreScreen come composable
+
+
         // Aggiungi altre schermate qui
     }
 }
+
+
+
+
 

@@ -58,6 +58,11 @@
             android:exported="true"
             android:theme="@style/Theme.Yahtzee">
         </activity>
+        <activity
+            android:name=".ScoreActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Yahtzee">
+        </activity>
 
         <activity android:name=".DiceRollActivity" />
 

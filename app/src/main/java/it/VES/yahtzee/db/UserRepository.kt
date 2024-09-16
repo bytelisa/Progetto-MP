@@ -18,6 +18,7 @@ class UserRepository(private val userDao: UserDAO) {
         Thread {
             userDao.insertUser(user)
         }.start()
+        Log.d("UserRep", "Insert request sent for user: $user")
     }
 
     fun delete(user: User) {
