@@ -165,17 +165,20 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
         return results
     }
 
-    public fun rollDiceStates(clickedStates: List<Boolean>): List<Int> {
-        val rolledDice = MutableList(5) { 0 } // Inizializza come una MutableList
+    public fun rollDiceStates(rolledDice: List<Int>, clickedStates: List<Boolean>): List<Int> {
+
+        val newDice = MutableList(5) { 0 }
 
         for (i in 0..4) {
             if (!clickedStates[i]) {
-                rolledDice[i] =
-                    (1..6).random() // Assegna un nuovo valore solo se il dado non è bloccato
+                newDice[i] = (1..6).random() // Assegna un nuovo valore solo se il dado non è bloccato
+            } else {
+                newDice[i] = rolledDice[i]
             }
         }
         Log.d("DiceRollActivity", "New Dice Results: $rolledDice")
-        return rolledDice
+
+        return newDice
     }
 
 }

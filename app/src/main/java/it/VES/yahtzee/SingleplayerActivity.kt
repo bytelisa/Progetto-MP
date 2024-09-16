@@ -176,7 +176,13 @@ fun SinglePlayer(
 
                     if (rolls < 3) {
                         playPressed = false
-                        rolledDice = DiceRollActivity().rollDiceStates(clickedStates).toMutableList() //questo lancio dadi tiene conto dello stato dei dadi
+
+                        if (rolls == 0){
+                            rolledDice = DiceRollActivity().rollDiceStates(MutableList(5){0}, clickedStates).toMutableList()
+
+                        } else {
+                            rolledDice = DiceRollActivity().rollDiceStates(rolledDice, clickedStates).toMutableList()
+                        }
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
@@ -254,23 +260,13 @@ fun SinglePlayer(
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            /*
-            while (rolls < 3) {
-                clickedStates = PlayUtils().imageSequence(
-                    rolledDice,
-                    rotationValues = rotationValues,
-                    context
-                ).toMutableList() as SnapshotStateList<Boolean> //TODO questo non si può fare!!!!!!!!
 
-            }
+            val newClickedStates = PlayUtils().imageSequence(rolledDice, rotationValues = rotationValues, context)
 
-             */
+            // Aggiorna la lista clickedStates preservando lo stato reattivo
+            clickedStates.clear()
+            clickedStates.addAll(newClickedStates)
 
-            PlayUtils().imageSequence(
-                rolledDice,
-                rotationValues = rotationValues,
-                context
-            )
         }
 
         if (showDialog) {
