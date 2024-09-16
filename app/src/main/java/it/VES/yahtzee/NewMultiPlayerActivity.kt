@@ -258,6 +258,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                     }
                 ),
                 enabled = when {
+                    categoryToPlay == -1 -> false
                     currentPlayer == 1 -> ((rolls != 0) && (!playedCategories1[categoryToPlay - 1]))
                     else -> ((rolls != 0) && (!playedCategories2[categoryToPlay - 1]))
                                },
@@ -473,7 +474,6 @@ fun ScoreTableM(
                             .width(80.dp)
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp)
-                            .clickable { }
                     ) {
                         if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
                             Text(
