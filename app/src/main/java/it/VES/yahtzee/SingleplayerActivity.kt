@@ -87,7 +87,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
-    var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+    var rolledDice by rememberSaveable { mutableStateOf(MutableList(5) { 0 }) } // Inizializza come una MutableList
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var showPlayDialog by remember { mutableStateOf(false) }
@@ -100,8 +100,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     var rollPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     var newRoll by rememberSaveable {mutableStateOf<List<Int>>(emptyList()) }
-    //var arrayLocked by rememberSaveable { mutableStateListOf(arrayListOf(false,false,false,false,false)) }
-    var clickedStates = arrayListOf(false,false,false,false,false)
+    var clickedStates = mutableListOf(false, false, false, false, false)
 
 
     Box(
@@ -120,7 +119,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                     if (rolls < 3) {
                         rollPressed = true
                         playPressed = false
-                        rolledDice = DiceRollActivity().rollDice()
+                        rolledDice = DiceRollActivity().rollDice().toMutableList()
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
@@ -198,20 +197,22 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            clickedStates = PlayUtils().imageSequence(
-                rolledDice,
-                rotationValues = rotationValues,
-                context,
-                rollPressed
-            )
+            while (rolls < 3) {
+                clickedStates = PlayUtils().imageSequence(
+                    rolledDice,
+                    rotationValues = rotationValues,
+                    context,
+                    rollPressed
+                ).toMutableList()
 
-            if (rollPressed){
-                //ImageSequence mi restituisce la lista di dadi corrente, tenendo traccia di quali sono stati bloccati
-                rolledDice = newRoll
-                rollPressed = false // Resetta rollPressed dopo aver aggiornato i dadi
-
+                for (i in 0..4) {
+                    if (clickedStates[i]) {
+                        rolledDice[i] =
+                            (1..6).random() // Assegna un nuovo valore solo se il dado non è bloccato
+                        rolls++
+                    }
+                }
             }
-
         }
 
         if (showDialog) {
