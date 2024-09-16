@@ -448,6 +448,7 @@ fun ScoreTableM(
                                 else -> Color.Transparent
                             }
                         ),
+                        enabled = !playedCategories1[i],
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .width(80.dp)
@@ -492,6 +493,7 @@ fun ScoreTableM(
                             }
 
                         ),
+                        enabled = !playedCategories2[i],
                         modifier = Modifier
                             .width(80.dp)
                             .height(30.dp)
