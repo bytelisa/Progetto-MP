@@ -197,7 +197,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                     rolledDice,
                     rotationValues = rotationValues,
                     context
-                ).toMutableList() as SnapshotStateList<Boolean>
+                ).toMutableList() as SnapshotStateList<Boolean> //TODO questo non si può fare!!!!!!!!
 
             }
         }
