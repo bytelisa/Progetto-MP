@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.BorderStroke
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
@@ -401,7 +401,6 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
 }
 
-
 @Composable
 fun ScoreTableM(
     currentPlayer: Int,
@@ -438,9 +437,15 @@ fun ScoreTableM(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent
+                            containerColor = when {
+                                playedCategories1[i] -> Color(0xFF80C0DD)
+                                clickedButtonIndex == i * 2 + 1 && currentPlayer == 1 -> Color(
+                                    0xFF4CAF50
+                                ) // Verde per selezione
+                                currentPlayer == 1 -> Color(0xFF8BC34A) // Verde chiaro per conferma
+                                else -> Color.Transparent
+                            }
                         ),
-                        border = if (currentPlayer == 1) BorderStroke(2.dp, currentPlayerColor) else null,
                         enabled = !playedCategories1[i],
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -471,9 +476,15 @@ fun ScoreTableM(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent
+                            containerColor = when {
+                                playedCategories2[i] -> Color(0xFF80C0DD)
+                                clickedButtonIndex == i * 2 + 2 && currentPlayer == 2 -> Color(
+                                    0xFF3F51B5
+                                ) // Blu per selezione
+                                currentPlayer == 2 -> Color(0xFF2196F3) // Blu chiaro per conferma
+                                else -> Color.Transparent
+                            }
                         ),
-                        border = if (currentPlayer == 2) BorderStroke(2.dp, currentPlayerColor) else null,
                         enabled = !playedCategories2[i],
                         modifier = Modifier
                             .width(80.dp)
