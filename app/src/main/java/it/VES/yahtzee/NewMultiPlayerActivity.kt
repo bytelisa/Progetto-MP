@@ -122,13 +122,13 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     var turnEndDialog by rememberSaveable { mutableStateOf(false) }
 
 
-    if (currentPlayer == 1){
-        Score(totalScore1)
-        RoundsLeft(rounds1)
 
+    if (currentPlayer == 1) {
+        Score(totalScore1.toString(), "datePlayed", "gameMode")
+        RoundsLeft(rounds1)
     } else {
-        Score(totalScore2)
-        RoundsLeft(rounds = rounds2)
+        Score(totalScore2.toString(), "datePlayed", "gameMode")
+        RoundsLeft(rounds2)
     }
 
     Box(
@@ -400,6 +400,15 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
 
 
+}
+@Composable
+fun RoundsLeft(rounds: Int) {
+    Text(text = "Rounds left: $rounds")
+}
+
+@Composable
+fun Score(score: String, datePlayed: String, gameMode: String) {
+    Text(text = "Score: $score, Date: $datePlayed, Mode: $gameMode")
 }
 
 @Composable
