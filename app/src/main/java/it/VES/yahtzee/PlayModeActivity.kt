@@ -112,11 +112,3 @@ fun BackgroundPicturepm(){
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewPage() {
-    YahtzeeTheme {
-        BackgroundPicturepm()
-        Choose()
-    }
-}

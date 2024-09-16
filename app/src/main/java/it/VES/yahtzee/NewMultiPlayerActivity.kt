@@ -12,6 +12,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -53,7 +55,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                             BackgroundMultiplayer()
 
 
-                            newMultiPlayer(
+                            NewMultiPlayer(
                                 currentPlayer = currentPlayer,
                                 categoryToPlay = categoryToPlay,
                                 onCategoryToPlayChange = { newCategory ->
@@ -96,7 +98,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
 }
 
 @Composable
-fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
+fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds1 by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rounds2 by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -386,14 +388,10 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         scoreList2 = scoreList2,
         playedCategories1 = playedCategories1,
         playedCategories2 = playedCategories2,
-        onCategorySelect1 = { index ->
-            onCategoryToPlayChange(index)
-        },
-        onCategorySelect2 = { index ->
-            onCategoryToPlayChange(index)
-        },
-
-        )
+        onCategorySelect1 = { index -> onCategoryToPlayChange(index) },
+        onCategorySelect2 = { index -> onCategoryToPlayChange(index) },
+        currentPlayerColor=if(currentPlayer==1)Color.Green else Color.Yellow
+    )
 
     //TODO: trovare modo per evidenziare il giocatore
 
@@ -410,7 +408,8 @@ fun ScoreTableM(
     playedCategories1: List<Boolean>,
     playedCategories2: List<Boolean>,
     onCategorySelect1: (Int) -> Unit,
-    onCategorySelect2: (Int) -> Unit
+    onCategorySelect2: (Int) -> Unit,
+    currentPlayerColor:Color=Color.Green
 ) {
     var clickedButtonIndex by remember { mutableStateOf(-1) }
 
@@ -430,8 +429,9 @@ fun ScoreTableM(
                     Button(
                         onClick = {
                             if (currentPlayer == 1 && !playedCategories1[i]) {
+                                onCategorySelect1(i+1)
                                 clickedButtonIndex = i * 2 + 1
-                                onCategorySelect1(i+1) //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
+                                //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
                             }
                         },
 
@@ -442,11 +442,9 @@ fun ScoreTableM(
                              */
                             containerColor = when {
                                 playedCategories1[i] -> Color(0xFF80C0DD)
-                                (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1) -> Color(
-                                    0xB5DA4141
-                                )
+                                currentPlayer==1->currentPlayerColor
                                 else -> Color.Transparent
-                            },
+                            }
                         ),
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -487,11 +485,9 @@ fun ScoreTableM(
                              */
                             containerColor = when {
                                 playedCategories2[i] -> Color(0xFF80C0DD)
-                                (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2) -> Color(
-                                    0xB5DA4141
-                                )
+                                currentPlayer==2->currentPlayerColor
                                 else -> Color.Transparent
-                            },
+                            }
 
                         ),
                         modifier = Modifier
@@ -591,3 +587,6 @@ fun NamesPopup(){
         },
     )
 }
+
+
+

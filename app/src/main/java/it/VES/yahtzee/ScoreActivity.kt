@@ -199,15 +199,3 @@ fun ScoreScreen(scores: List<Score>) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ScoreScreenPreview() {
-    YahtzeeTheme {
-        val sampleScores = listOf(
-            Score("Player1", "Singleplayer", 1500, Date()),
-            Score("Player2", "Multiplayer", 2000, Date()),
-            Score("Player3", "Singleplayer", 1800, Date())
-        )
-        ScoreScreen(scores = sampleScores)
-    }
-}
