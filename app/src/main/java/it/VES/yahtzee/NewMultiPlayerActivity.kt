@@ -450,7 +450,7 @@ fun ScoreTableM(
 
                             if (currentPlayer == 1 && !playedCategories1[i]) {
                                 clickedButtonIndex = i * 2 + 1
-                                onCategorySelect1(i+1) //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
+                                onCategorySelect1(i+1) //gli passo i+1 perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria)
                             }
                         },
 
@@ -459,12 +459,23 @@ fun ScoreTableM(
                             containerColor = when {
                                 playedCategories1[i] -> Color(0xFF80C0DD)
                                 (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1) -> Color(
-                                    0xB5DA4141
+                                    0x943688AD
                                 )
                                 else -> Color.Transparent
                             },
+
+                            disabledContainerColor = when {     //per il bottone disabilitato
+                                i==6 -> Color.Transparent
+                                else -> Color(0x9C9FD8F1)
+                            }, //TODO differenziare colore in base al giocatore (blu per player1 e rosso per player 2)
+
+                            contentColor = Color.DarkGray,                 //testo del bottone attivo
+                            disabledContentColor = Color.Black
                         ),
-                        enabled = !playedCategories1[i],  // Disabilita il bottone se la categoria è già stata giocata
+                        enabled = when {
+                            i == 6 -> false                   //il bottone del punteggio bonus non è cliccabile
+                            else -> !playedCategories1[i]    // Disabilita il bottone se la categoria è già stata giocata
+                                       },
 
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -475,19 +486,21 @@ fun ScoreTableM(
                         if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
                             Text(
                                 text = scorePreview1[i].toString(),
-                                color = if (playedCategories1[i]) Color.White else Color.Black
+                                color = when {
+                                    clickedButtonIndex == i -> Color.White
+                                    else -> Color.DarkGray} // Bianco se selezionato, nero altrimenti
                             )
                         }
                         if (playedCategories1[i]) {
                             Text(
                                 text = scoreList1[i].toString(),
-                                color = Color.White
+                                color = Color.Black
                             )
                         }
                     }
 
-                    // Player 2 buttons
-                    Button(
+
+                    Button( // Player 2 buttons
                         onClick = {
                             Log.d("MultiPlayerActivity", "currentPlayer: $currentPlayer")
 
@@ -497,22 +510,25 @@ fun ScoreTableM(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            /*
-                            containerColor = if (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2)
-                                Color(0xB5DA4141) else Color.Transparent
 
-
-                             */
                             containerColor = when {
-                                playedCategories2[i] -> Color(0xFF80C0DD)
+                                playedCategories2[i] -> Color(0xA6E69696)
                                 (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2) -> Color(
-                                    0xB5DA4141
+                                    0x90DA4141
                                 )
                                 else -> Color.Transparent
                             },
-
+                            disabledContainerColor = when {     //per il bottone disabilitato
+                                i==6 -> Color.Transparent
+                                else -> Color(0xA9D39B98)
+                            },
+                            contentColor = Color.DarkGray,                 //testo del bottone attivo
+                            disabledContentColor = Color.Black
                             ),
-                        enabled = !playedCategories2[i],  // Disabilita il bottone se la categoria è già stata giocata
+
+                        enabled = when {
+                            i == 6 -> false //il bottone del punteggio bonus non è cliccabile
+                            else -> !playedCategories2[i]},  // Disabilitiamo il bottone se la categoria è già stata giocata
 
                         modifier = Modifier
                             .width(80.dp)
@@ -522,13 +538,15 @@ fun ScoreTableM(
                         if (scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
                             Text(
                                 text = scorePreview2[i].toString(),
-                                color = if (playedCategories2[i]) Color.White else Color.Black
+                                color = when {
+                                    clickedButtonIndex == i -> Color.White
+                                    else -> Color.DarkGray}
                             )
                         }
                         if (playedCategories2[i]) {
                             Text(
                                 text = scoreList2[i].toString(),
-                                color = Color.White
+                                color = Color.Black
                             )
                         }
                     }
