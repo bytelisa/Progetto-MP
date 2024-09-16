@@ -43,7 +43,7 @@ class PlayUtils {
         rolledDice: List<Int>,  // Lista dei dadi
         rotationValues: List<Float>,
         context: Context
-    ): List<Boolean>
+    ): MutableList<Boolean>
     {
         var newDice by rememberSaveable { mutableStateOf(mutableListOf(*List(5) { 0 }.toTypedArray())) }
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
@@ -105,7 +105,7 @@ class PlayUtils {
             }
         }
 
-        return clickedStates
+        return clickedStates.toMutableList()
     }
 
 
