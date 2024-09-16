@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -188,7 +189,8 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                 onClick = { // play
                     if (currentPlayer == 1){
                         if (rounds1 < 13) {
-                            if (categoryToPlay != -1) {
+                            if (categoryToPlay != -1 && !playedCategories1[categoryToPlay - 1]) {
+
                                 scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
                                 //scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
                                 playedCategories1[categoryToPlay - 1] = true
@@ -215,7 +217,8 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
                     } else if (currentPlayer == 2){
                         if (rounds2 < 13) {
-                            if (categoryToPlay != -1) {
+
+                            if (categoryToPlay != -1 && !playedCategories2[categoryToPlay - 1]) {
                                 Log.d("MultiPlayerActivity", "Player 2 selected category: $categoryToPlay")
 
                                 scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
@@ -254,7 +257,10 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         Color(0xB5A5A5A5)
                     }
                 ),
-                enabled = rolls != 0,
+                enabled = when {
+                    currentPlayer == 1 -> ((rolls != 0) && (!playedCategories1[categoryToPlay - 1]))
+                    else -> ((rolls != 0) && (!playedCategories2[categoryToPlay - 1]))
+                               },
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -460,11 +466,14 @@ fun ScoreTableM(
                                 else -> Color.Transparent
                             },
                         ),
+                        enabled = !playedCategories1[i],  // Disabilita il bottone se la categoria è già stata giocata
+
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .width(80.dp)
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp)
+                            .clickable { }
                     ) {
                         if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
                             Text(
@@ -506,6 +515,8 @@ fun ScoreTableM(
                             },
 
                             ),
+                        enabled = !playedCategories2[i],  // Disabilita il bottone se la categoria è già stata giocata
+
                         modifier = Modifier
                             .width(80.dp)
                             .height(30.dp)

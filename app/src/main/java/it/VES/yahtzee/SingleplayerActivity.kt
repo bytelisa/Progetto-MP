@@ -63,6 +63,9 @@ class SingleplayerActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             YahtzeeTheme {
+
+
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     content = { innerPadding ->
@@ -216,13 +219,17 @@ fun SinglePlayer(
 
                     if (rounds < 13) {
                         if (categoryToPlay != -1) {
-                            scoreList[categoryToPlay - 1] = scorePreviewList[categoryToPlay - 1]
-                            playedCategories[categoryToPlay - 1] = true
-                            previousCategory = categoryToPlay - 1
-                            Log.d(
-                                "SinglePlayerActivity",
-                                "#selected score: ${scoreList[categoryToPlay - 1]}"
-                            )
+
+                            if (!playedCategories[categoryToPlay - 1]){
+                                scoreList[categoryToPlay - 1] = scorePreviewList[categoryToPlay - 1]
+                                playedCategories[categoryToPlay - 1] = true
+                                previousCategory = categoryToPlay - 1
+                                Log.d(
+                                    "SinglePlayerActivity",
+                                    "#selected score: ${scoreList[categoryToPlay - 1]}"
+                                )
+                            }
+
                         }
                         Log.d("SinglePlayerActivity", "New Score List: $scoreList")
                         Log.d("SinglePlayerActivity", "Round finished: ${rounds + 1}")
@@ -246,7 +253,9 @@ fun SinglePlayer(
                         Color(0xB5A5A5A5)
                     }
                 ),
-                enabled = rolls != 0,
+                enabled = when {
+                    (categoryToPlay == -1) -> false
+                    else -> (rolls == 0 && !playedCategories[categoryToPlay - 1])},
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -344,7 +353,6 @@ fun GameFinish(score: Int, onConfirm: () -> Unit) {
 
 
 @Composable
-
 fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean = false, previousCategory: Int) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
@@ -379,6 +387,8 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
                             else -> Color.Transparent
                         },
                     ),
+                    enabled = !playedCategories[i],  // Disabilitiamo il bottone se la categoria è già stata giocata
+
                     modifier = Modifier
                         .padding(bottom = 8.dp)
                         .width(100.dp)

@@ -177,7 +177,6 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
             }
         }
         Log.d("DiceRollActivity", "New Dice Results: $rolledDice")
-
         return newDice
     }
 
