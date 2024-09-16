@@ -46,10 +46,9 @@ class PlayUtils {
     fun imageSequence(
         rolledDice: List<Int>,  // Lista dei dadi
         rotationValues: List<Float>,
-        context: Context
+        context: Context,
     ): List<Boolean>
     {
-        var newDice by rememberSaveable { mutableStateOf(mutableListOf(*List(5) { 0 }.toTypedArray())) }
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
         val oldImageIds = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
         val imageIds by remember(rolledDice, clickedStates) {
@@ -59,9 +58,10 @@ class PlayUtils {
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize() ,
+            verticalArrangement = Arrangement.Bottom,  // Aligns children at the bottom
         ) {
-            Spacer(modifier = Modifier.height(720.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             Row(
                 modifier = Modifier
@@ -69,7 +69,7 @@ class PlayUtils {
                     .padding(8.dp),
 
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
 
                 val imageSize = calculateImageSize(5)
@@ -107,6 +107,8 @@ class PlayUtils {
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(65.dp))
+
         }
 
         return clickedStates
