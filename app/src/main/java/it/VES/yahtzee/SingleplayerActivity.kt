@@ -358,15 +358,17 @@ fun ScoreTable(
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = when {
-                            playedCategories[i] -> Color(0xFF80C0DD)
-                            (clickedButtonIndex == i && !justPlayed) -> Color(0xB5DA4141)
+                            playedCategories[i] -> Color(0x9E80C0DD)
+                            (clickedButtonIndex == i && !justPlayed) -> Color(0x99DA4141)
                             else -> Color.Transparent
                         },
                         disabledContainerColor = when {     //per il bottone disabilitato
                             i==6 -> Color.Transparent
-                            else -> Color(0xFF9FD8F1)
+                            else -> Color(0x9E80C0DD)
                         },
-                        contentColor = Color.DarkGray,                 //testo del bottone attivo
+                        contentColor = when {
+                            clickedButtonIndex == i -> Color.White
+                            else -> Color.DarkGray},                 //testo del bottone attivo
                         disabledContentColor = Color.Black
                     ),
                     enabled = when {
