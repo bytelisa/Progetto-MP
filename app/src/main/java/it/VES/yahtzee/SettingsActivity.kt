@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
@@ -174,6 +175,7 @@ fun Setting(navController: NavController) {
                     editor.putBoolean("soundEnabled", switch1State)
                     editor.putBoolean("clickMode", switch2State)
                     editor.apply()
+
 
                     // Torna alla schermata Home
                     navController.popBackStack()

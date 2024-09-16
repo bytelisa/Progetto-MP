@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -121,13 +122,13 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     var turnEndDialog by rememberSaveable { mutableStateOf(false) }
 
 
-    if (currentPlayer == 1){
-        Score(totalScore1)
-        RoundsLeft(rounds1)
 
+    if (currentPlayer == 1) {
+        Score(totalScore1.toString(), "datePlayed", "gameMode")
+        RoundsLeft(rounds1)
     } else {
-        Score(totalScore2)
-        RoundsLeft(rounds = rounds2)
+        Score(totalScore2.toString(), "datePlayed", "gameMode")
+        RoundsLeft(rounds2)
     }
 
     Box(
@@ -400,6 +401,15 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
 
 }
+@Composable
+fun RoundsLeft(rounds: Int) {
+    Text(text = "Rounds left: $rounds")
+}
+
+@Composable
+fun Score(score: String, datePlayed: String, gameMode: String) {
+    Text(text = "Score: $score, Date: $datePlayed, Mode: $gameMode")
+}
 
 @Composable
 fun ScoreTableM(
@@ -439,10 +449,7 @@ fun ScoreTableM(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = when {
                                 playedCategories1[i] -> Color(0xFF80C0DD)
-                                clickedButtonIndex == i * 2 + 1 && currentPlayer == 1 -> Color(
-                                    0xFF4CAF50
-                                ) // Verde per selezione
-                                currentPlayer == 1 -> Color(0xFF8BC34A) // Verde chiaro per conferma
+                                clickedButtonIndex == i * 2 + 1 && currentPlayer == 1 -> Color(0xFF4CAF50)
                                 else -> Color.Transparent
                             }
                         ),
@@ -452,6 +459,10 @@ fun ScoreTableM(
                             .width(80.dp)
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp)
+                            .border(
+                                width = 2.dp,
+                                color = if (currentPlayer == 1) currentPlayerColor else Color.Transparent
+                            )
                     ) {
                         if (scorePreview1.isNotEmpty() && scorePreview1[i] != -1 && !playedCategories1[i]) {
                             Text(
@@ -478,10 +489,7 @@ fun ScoreTableM(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = when {
                                 playedCategories2[i] -> Color(0xFF80C0DD)
-                                clickedButtonIndex == i * 2 + 2 && currentPlayer == 2 -> Color(
-                                    0xFF3F51B5
-                                ) // Blu per selezione
-                                currentPlayer == 2 -> Color(0xFF2196F3) // Blu chiaro per conferma
+                                clickedButtonIndex == i * 2 + 2 && currentPlayer == 2 -> Color(0xFF2196F3)
                                 else -> Color.Transparent
                             }
                         ),
@@ -490,6 +498,10 @@ fun ScoreTableM(
                             .width(80.dp)
                             .height(30.dp)
                             .offset(x = 19.dp, y = (i * 2.5).dp)
+                            .border(
+                                width = 2.dp,
+                                color = if (currentPlayer == 2) currentPlayerColor else Color.Transparent
+                            )
                     ) {
                         if (scorePreview2.isNotEmpty() && scorePreview2[i] != -1 && !playedCategories2[i]) {
                             Text(
