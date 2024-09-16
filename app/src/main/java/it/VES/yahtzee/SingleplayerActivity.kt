@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -46,13 +45,9 @@ class SingleplayerActivity : ComponentActivity() {
 
     private lateinit var userViewModel: UserViewModel
 
-    private var _categoryToPlay by mutableIntStateOf(-1)
     private var scorePlaceholder = List(14) { -1 }
-    private var categoryToPlay: Int
-        get() = _categoryToPlay
-        set(value) {
-            _categoryToPlay = value
-        }
+    private var categoryToPlay by mutableIntStateOf(-1)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +58,6 @@ class SingleplayerActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             YahtzeeTheme {
-
-
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -96,7 +89,7 @@ class SingleplayerActivity : ComponentActivity() {
                                 scoreList = List(14) { 0 },
                                 playedCategories = List(14) { false },
                                 playPressed = false,
-                                previousCategory = -1
+                                previousCategory = -14
                             )
                         }
                     }
@@ -111,8 +104,6 @@ class SingleplayerActivity : ComponentActivity() {
         // Recupera il contesto e le SharedPreferences
         val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val userName = sharedPreferences.getString("userName", "NomeGiocatore") ?: "NomeGiocatore"
-
-
 
 
         // per dubbug
@@ -144,7 +135,7 @@ fun SinglePlayer(
     categoryToPlay: Int,
     onCategoryToPlayChange: (Int) -> Unit,
     onGameFinish: (Int?) -> Unit
-) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
+) {
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -157,12 +148,8 @@ fun SinglePlayer(
     var gameFinished by rememberSaveable { mutableStateOf(false) }
     val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
     var playPressed by rememberSaveable { mutableStateOf(false) }
-    var rollPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
-    var newRoll by rememberSaveable {mutableStateOf<List<Int>>(emptyList()) }
     var clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
-
-
 
     Box(
         modifier = Modifier
@@ -255,7 +242,7 @@ fun SinglePlayer(
                 ),
                 enabled = when {
                     (categoryToPlay == -1) -> false
-                    else -> (rolls == 0 && !playedCategories[categoryToPlay - 1])},
+                    else -> (rolls != 0 && !playedCategories[categoryToPlay - 1])},
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -269,10 +256,8 @@ fun SinglePlayer(
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-
             val newClickedStates = PlayUtils().imageSequence(rolledDice, rotationValues = rotationValues, context)
 
-            // Aggiorna la lista clickedStates preservando lo stato reattivo
             clickedStates.clear()
             clickedStates.addAll(newClickedStates)
 
@@ -309,17 +294,15 @@ fun SinglePlayer(
         GameFinish(score = totalScore, onConfirm = {
             // Quando l'utente clicca su "OK", chiama onGameFinish per salvare i dati
             onGameFinish(totalScore)
-
         })
     }
 
+    Score(totalScore)
+    PlayUtils().RoundsLeft(rounds)
 
-        Score(totalScore)
-        PlayUtils().RoundsLeft(rounds)
-
-        ScoreTable(scorePreviewList, onCategorySelect = { index ->
-            onCategoryToPlayChange(index)
-        }, scoreList, playedCategories, playPressed, previousCategory)
+    ScoreTable(scorePreviewList, onCategorySelect = { index ->
+        onCategoryToPlayChange(index)
+    }, scoreList, playedCategories, playPressed, previousCategory)
 
     }
 }
@@ -348,12 +331,15 @@ fun GameFinish(score: Int, onConfirm: () -> Unit) {
 }
 
 
-
-
-
-
 @Composable
-fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean = false, previousCategory: Int) {
+fun ScoreTable(
+    scorePreviewList: List<Int>,
+    onCategorySelect: (Int) -> Unit,
+    scoreList: List<Int>,
+    playedCategories: List<Boolean>,
+    playPressed: Boolean = false,
+    previousCategory: Int
+) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
     var playedCategory by remember { mutableIntStateOf(-1) }

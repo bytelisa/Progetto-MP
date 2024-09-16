@@ -279,7 +279,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
             val newClickedStates = PlayUtils().imageSequence(rolledDice, rotationValues = rotationValues, context)
 
-            // Aggiorna la lista clickedStates preservando lo stato reattivo
             clickedStates.clear()
             clickedStates.addAll(newClickedStates)
         }
@@ -411,7 +410,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         onCategorySelect2 = { index ->
             onCategoryToPlayChange(index)
         },
-
         )
 
     //TODO: trovare modo per evidenziare il giocatore
@@ -445,9 +443,10 @@ fun ScoreTableM(
                 Row(
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    // Player 1 buttons
+
                     Button(
-                        onClick = {
+                        onClick = { // Player 1 buttons
+
                             if (currentPlayer == 1 && !playedCategories1[i]) {
                                 clickedButtonIndex = i * 2 + 1
                                 onCategorySelect1(i+1) //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
@@ -455,10 +454,7 @@ fun ScoreTableM(
                         },
 
                         colors = ButtonDefaults.buttonColors(
-                            /*containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
-                                Color(0xB5DA4141) else Color.Transparent
 
-                             */
                             containerColor = when {
                                 playedCategories1[i] -> Color(0xFF80C0DD)
                                 (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1) -> Color(
