@@ -391,10 +391,10 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         playedCategories2 = playedCategories2,
         onCategorySelect1 = { index -> onCategoryToPlayChange(index) },
         onCategorySelect2 = { index -> onCategoryToPlayChange(index) },
-        currentPlayerColor=if(currentPlayer==1)Color.Green else Color.Yellow
+        currentPlayerColor=if(currentPlayer==1)Color.LightGray else Color.LightGray
     )
 
-    //TODO: trovare modo per evidenziare il giocatore
+
 
 }
 
@@ -410,7 +410,7 @@ fun ScoreTableM(
     playedCategories2: List<Boolean>,
     onCategorySelect1: (Int) -> Unit,
     onCategorySelect2: (Int) -> Unit,
-    currentPlayerColor:Color=Color.Green
+    currentPlayerColor:Color=Color.LightGray
 ) {
     var clickedButtonIndex by remember { mutableStateOf(-1) }
 
