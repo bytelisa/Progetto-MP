@@ -1,5 +1,8 @@
 package it.VES.yahtzee
 
+
+import android.app.Activity
+import android.content.Context
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -30,8 +33,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import it.VES.yahtzee.db.User
+import it.VES.yahtzee.db.UserViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SingleplayerActivity : ComponentActivity() {
+
+    private lateinit var userViewModel: UserViewModel
 
     private var _categoryToPlay by mutableIntStateOf(-1)
     private var scorePlaceholder = List(14) { -1 }
@@ -43,6 +54,10 @@ class SingleplayerActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Ottieni il ViewModel
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
         enableEdgeToEdge()
         setContent {
             YahtzeeTheme {
@@ -60,8 +75,14 @@ class SingleplayerActivity : ComponentActivity() {
                                 categoryToPlay = categoryToPlay,
                                 onCategoryToPlayChange = { newCategory ->
                                     categoryToPlay = newCategory
+                                },
+                                onGameFinish = { totalScore ->
+                                    // Quando il gioco finisce, salva i dati nel DB
+                                    saveGameToDB(totalScore as Int)
                                 }
                             )
+
+
                             ScoreTable(     //posiziono la tabella dei punteggi a destra
                                 scorePreviewList = scorePlaceholder,
                                 onCategorySelect = { newCategory ->
@@ -78,10 +99,50 @@ class SingleplayerActivity : ComponentActivity() {
             }
         }
     }
+
+
+    private fun saveGameToDB(score: Int) {
+
+        // Recupera il contesto e le SharedPreferences
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val userName = sharedPreferences.getString("userName", "NomeGiocatore") ?: "NomeGiocatore"
+
+
+
+
+        // per dubbug
+        Log.d("SingleplayerActivity", "Salvataggio in DB avviato")
+
+        val user = User(
+            player = userName, // Usa il nome recuperato dalle SharedPreferences
+            score = score.toString(),   // Converti il punteggio in stringa
+            mod = "Singleplayer", // Se è singleplayer, altrimenti puoi passare il mod corretto
+            date = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())  // Data e ora correnti
+        )
+
+        Log.d("SingleplayerActivity", "Dati da salvare: $user")
+
+
+        try {
+            userViewModel.insert(user)   // Salva nel database
+            Log.d("SingleplayerActivity", "Salvataggio riuscito")
+        } catch (e: Exception) {
+            Log.e("SingleplayerActivity", "Errore durante il salvataggio: ${e.message}")
+        }
+
+    }
 }
 
 @Composable
 fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
+fun SinglePlayer(
+    categoryToPlay: Int,
+    onCategoryToPlayChange: (Int) -> Unit,
+    onTurnEnd: (() -> Unit)? = null,
+    usedByMultiplayer: Boolean = false,
+    playerState: SinglePlayerState? = null,
+    onGameFinish: (Int?) -> Unit
+) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -95,6 +156,8 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
+
+
 
     Box(
         modifier = Modifier
@@ -137,6 +200,8 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
             ) {
                 Text(text = "Roll (${3 - rolls} left)")
             }
+
+
 
             Button(
                 onClick = { // play
@@ -218,9 +283,17 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
             }, scoreList, playedCategories, playPressed, previousCategory)
         }
 
-        if (gameFinished) {
-            GameFinish(score = totalScore)
-        }
+
+
+    // Quando la partita finisce
+    if (gameFinished) {
+        GameFinish(score = totalScore, onConfirm = {
+            // Quando l'utente clicca su "OK", chiama onGameFinish per salvare i dati
+            onGameFinish(totalScore)
+
+        })
+    }
+
 
         Score(totalScore)
         RoundsLeft(rounds)
@@ -232,7 +305,44 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     }
 }
 
+
+
 @Composable
+fun GameFinish(score: Int, onConfirm: () -> Unit) {
+
+    val activity = (LocalContext.current as? Activity)  // Ottieni l'activity corrente
+    var gameFinished by rememberSaveable {mutableStateOf(true)}
+
+    AlertDialog(
+        onDismissRequest = { gameFinished = false },
+        title = { Text("Game Finished") },
+        text = { Text("Your total score is $score") },
+        confirmButton = {
+            Button(onClick = {
+                onConfirm()  // Chiama la funzione che salva i dati
+                activity?.finish()  // Chiudi l'attività e torna alla schermata precedente
+            }) {
+                Text("OK")
+            }
+        }
+    )
+}
+
+
+
+
+
+
+@Composable
+fun ScoreTable(scorePreviewList: List<Int>,
+               onCategorySelect: (Int) -> Unit,
+               scoreList: List<Int>,
+               playedCategories: List<Boolean>,
+               playPressed: Boolean = false,
+               previousCategory: Int,
+               usedByMultiplayer: Boolean,
+               //disableScoreButtons: Boolean
+) {
 fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean = false, previousCategory: Int) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
@@ -294,18 +404,17 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
 }
 
 @Composable
-fun GameFinish(score: Int) {
+fun GameFinish(score: Int){
 
-    var gameFinished by rememberSaveable { mutableStateOf(true) }
+    var gameFinished by rememberSaveable {mutableStateOf(true)}
+
 
     AlertDialog(
         onDismissRequest = { gameFinished = false },
-        title = {
-            Text(
-                text = "Final Score:",
-                fontSize = 35.sp, // Big
-            )
-        },
+        title = { Text(
+            text = "Final Score:",
+            fontSize = 35.sp, // Big
+        ) },
         text = {
             Column {
                 Text("Nice game, see you next time! :)")

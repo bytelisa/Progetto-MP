@@ -2,26 +2,20 @@ package it.VES.yahtzee.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.Delete
 import androidx.room.Query
-
+import it.VES.yahtzee.db.User
 
 @Dao
 interface UserDAO {
 
-    @Query("SELECT * FROM 'user_db' ORDER BY id ASC")
-    fun getAllUserInfo(): LiveData<List<User>> // function to get the list of a user's dataset
+    @Query("SELECT * FROM user_db ORDER BY id DESC")
+    fun getAllUserInfo(): LiveData<List<User>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertUser(user: User) // function to insert datasets into the database
+    @Insert
+    fun insertUser(user: User): Long  // Restituisce l'ID dell'elemento inserito
 
     @Delete
-    fun deleteUser(user: User) // function to delete datasets from the database
-
-    @Query("SELECT * FROM 'user_db' WHERE mod LIKE :search ORDER BY id ASC")
-    fun searchByMod(search: String): MutableList<User> // query to filter by game mode
-
-
+    fun deleteUser(user: User)
 }
