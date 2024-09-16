@@ -64,8 +64,8 @@ fun Choose() {
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.White
+                    containerColor = Color.White,
+                    contentColor = Color.Blue
                 ),
                 modifier = Modifier
                     .padding(end = 16.dp) // Aumenta la distanza tra i bottoni
@@ -82,8 +82,8 @@ fun Choose() {
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.White
+                    containerColor = Color.White,
+                    contentColor = Color.Red
                 ),
                 modifier = Modifier
                     .width(150.dp)
