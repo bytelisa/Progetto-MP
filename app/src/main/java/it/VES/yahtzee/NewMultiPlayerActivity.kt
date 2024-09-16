@@ -467,7 +467,7 @@ fun ScoreTableM(
                             disabledContainerColor = when {     //per il bottone disabilitato
                                 i==6 -> Color.Transparent
                                 else -> Color(0x9C9FD8F1)
-                            }, //TODO differenziare colore in base al giocatore (blu per player1 e rosso per player 2)
+                            },
 
                             contentColor = Color.DarkGray,                 //testo del bottone attivo
                             disabledContentColor = Color.Black
