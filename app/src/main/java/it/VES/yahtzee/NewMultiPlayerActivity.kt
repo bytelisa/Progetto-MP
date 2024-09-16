@@ -266,7 +266,8 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
             PlayUtils().imageSequence(
                 rolledDice,
                 rotationValues = rotationValues,
-                context
+                context,
+                true
             )
         }
 

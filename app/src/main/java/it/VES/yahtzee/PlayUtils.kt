@@ -2,6 +2,7 @@ package it.VES.yahtzee
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.MutableBoolean
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,8 +42,9 @@ class PlayUtils {
     fun imageSequence(
         rolledDice: List<Int>,  // Lista dei dadi
         rotationValues: List<Float>,
-        context: Context
-    ): List<Int>
+        context: Context,
+        rollPressed: Boolean
+    ): List<Boolean>
     {
         var newDice by rememberSaveable { mutableStateOf(mutableListOf(*List(5) { 0 }.toTypedArray())) }
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
@@ -104,15 +106,18 @@ class PlayUtils {
             }
         }
 
-        for (i in 0..4){
-            if (clickedStates[i]){
-                newDice[i]= rolledDice[i] //se il dado è stato bloccato ricarichiamo il vecchio valore
-            } else {
-                newDice[i] = (1..6).random() //altrimenti ne generiamo un altro
+        if (rollPressed){
+            for (i in 0..4){
+                if (clickedStates[i]){
+                    newDice[i]= rolledDice[i] //se il dado è stato bloccato ricarichiamo il vecchio valore
+                } else {
+                    newDice[i] = (1..6).random() //altrimenti ne generiamo un altro
+                }
             }
         }
 
-        return newDice
+
+        return clickedStates
     }
 
 

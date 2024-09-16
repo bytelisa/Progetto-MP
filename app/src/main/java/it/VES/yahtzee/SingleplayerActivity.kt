@@ -100,7 +100,8 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     var rollPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     var newRoll by rememberSaveable {mutableStateOf<List<Int>>(emptyList()) }
-
+    //var arrayLocked by rememberSaveable { mutableStateListOf(arrayListOf(false,false,false,false,false)) }
+    var clickedStates = arrayListOf(false,false,false,false,false)
 
 
     Box(
@@ -125,7 +126,6 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                         scorePreviewList.clear()
                         scorePreviewList.addAll(scorePreview)
                         playPressed = false
-                        rollPressed = false
                     } else {
                         // finisce il turno di gioco, l'utente deve scegliere un punteggio
                         showDialog = true
@@ -198,15 +198,18 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            newRoll = PlayUtils().imageSequence(
+            clickedStates = PlayUtils().imageSequence(
                 rolledDice,
                 rotationValues = rotationValues,
-                context
+                context,
+                rollPressed
             )
 
             if (rollPressed){
                 //ImageSequence mi restituisce la lista di dadi corrente, tenendo traccia di quali sono stati bloccati
                 rolledDice = newRoll
+                rollPressed = false // Resetta rollPressed dopo aver aggiornato i dadi
+
             }
 
         }
