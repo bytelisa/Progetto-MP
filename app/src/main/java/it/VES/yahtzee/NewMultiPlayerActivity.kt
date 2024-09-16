@@ -5,12 +5,16 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,7 +25,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -50,7 +56,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                             BackgroundMultiplayer()
 
 
-                            newMultiPlayer(
+                            NewMultiPlayer(
                                 currentPlayer = currentPlayer,
                                 categoryToPlay = categoryToPlay,
                                 onCategoryToPlayChange = { newCategory ->
@@ -93,7 +99,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
 }
 
 @Composable
-fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
+fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds1 by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rounds2 by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -163,6 +169,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         Color(0xB5A5A5A5)
                     }
                 ),
+                enabled=rolls<3,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(200.dp)
@@ -177,7 +184,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         if (rounds1 < 13) {
                             if (categoryToPlay != -1) {
                                 scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
-                                scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
+                                //scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
                                 playedCategories1[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
@@ -197,6 +204,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             playPressed = true
                             totalScore1 = ScoreCalculator().totalScore(scoreList1) //così sotto al pop up viene visualizzato lo score del giocatore corrente
                             turnEndDialog = true
+
                         }
 
                     } else if (currentPlayer == 2){
@@ -205,7 +213,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                                 Log.d("MultiPlayerActivity", "Player 2 selected category: $categoryToPlay")
 
                                 scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
-                                scoreList2[6] = ScoreCalculator().bonusCheck(scoreList2)
+                                //scoreList2[6] = ScoreCalculator().bonusCheck(scoreList2)
                                 playedCategories2[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
@@ -225,7 +233,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             playPressed = true
                             totalScore2 = ScoreCalculator().totalScore(scoreList2)
                             turnEndDialog = true
-
                         }
                     }
 
@@ -241,6 +248,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         Color(0xB5A5A5A5)
                     }
                 ),
+                enabled = rolls!=0,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -308,7 +316,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         if (turnEndDialog) {
 
             AlertDialog(
-                onDismissRequest = { turnEndDialog = false },
+                onDismissRequest = { },
                 title = {
                     Text(
                         text = when {
@@ -336,13 +344,14 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                 confirmButton = {
                     Button(onClick = {
                         turnEndDialog = false
+                        onTurnEnd()
+
                     }) {
                         Text("OK")
 
                     }
                 },
             )
-            onTurnEnd()
         }
     }
 
@@ -383,16 +392,12 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         scoreList2 = scoreList2,
         playedCategories1 = playedCategories1,
         playedCategories2 = playedCategories2,
-        onCategorySelect1 = { index ->
-            onCategoryToPlayChange(index)
-        },
-        onCategorySelect2 = { index ->
-            onCategoryToPlayChange(index)
-        },
+        onCategorySelect1 = { index -> onCategoryToPlayChange(index) },
+        onCategorySelect2 = { index -> onCategoryToPlayChange(index) },
+        currentPlayerColor=if(currentPlayer==1)Color.LightGray else Color.LightGray
+    )
 
-        )
 
-    //TODO: trovare modo per evidenziare il giocatore
 
 }
 
@@ -407,7 +412,8 @@ fun ScoreTableM(
     playedCategories1: List<Boolean>,
     playedCategories2: List<Boolean>,
     onCategorySelect1: (Int) -> Unit,
-    onCategorySelect2: (Int) -> Unit
+    onCategorySelect2: (Int) -> Unit,
+    currentPlayerColor: Color = Color.LightGray
 ) {
     var clickedButtonIndex by remember { mutableStateOf(-1) }
 
@@ -427,24 +433,15 @@ fun ScoreTableM(
                     Button(
                         onClick = {
                             if (currentPlayer == 1 && !playedCategories1[i]) {
+                                onCategorySelect1(i + 1)
                                 clickedButtonIndex = i * 2 + 1
-                                onCategorySelect1(i+1) //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
                             }
                         },
-
                         colors = ButtonDefaults.buttonColors(
-                            /*containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
-                                Color(0xB5DA4141) else Color.Transparent
-
-                             */
-                            containerColor = when {
-                                playedCategories1[i] -> Color(0xFF80C0DD)
-                                (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1) -> Color(
-                                    0xB5DA4141
-                                )
-                                else -> Color.Transparent
-                            },
+                            containerColor = Color.Transparent
                         ),
+                        border = if (currentPlayer == 1) BorderStroke(2.dp, currentPlayerColor) else null,
+                        enabled = !playedCategories1[i],
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .width(80.dp)
@@ -468,29 +465,16 @@ fun ScoreTableM(
                     // Player 2 buttons
                     Button(
                         onClick = {
-                            Log.d("MultiPlayerActivity", "currentPlayer: $currentPlayer")
-
                             if (currentPlayer == 2 && !playedCategories2[i]) {
                                 clickedButtonIndex = i * 2 + 2
-                                onCategorySelect2(i+1)
+                                onCategorySelect2(i + 1)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            /*
-                            containerColor = if (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2)
-                                Color(0xB5DA4141) else Color.Transparent
-
-
-                             */
-                            containerColor = when {
-                                playedCategories2[i] -> Color(0xFF80C0DD)
-                                (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2) -> Color(
-                                    0xB5DA4141
-                                )
-                                else -> Color.Transparent
-                            },
-
+                            containerColor = Color.Transparent
                         ),
+                        border = if (currentPlayer == 2) BorderStroke(2.dp, currentPlayerColor) else null,
+                        enabled = !playedCategories2[i],
                         modifier = Modifier
                             .width(80.dp)
                             .height(30.dp)
@@ -545,6 +529,21 @@ fun WinningPlayer(winner: Int, score: Int){
     )
 }
 
+@Composable
+fun BackgroundMultiplayer(){
+    Box(
+        modifier=Modifier.fillMaxSize()
+    ){
+        Image(
+            painter=painterResource(id= R.drawable.multiplayer),
+            contentDescription="Multi player background",
+            contentScale= ContentScale.Crop,
+            modifier=Modifier.matchParentSize()
+        )
+    }
+
+}
+
 
 @Composable
 fun NamesPopup(){
@@ -573,3 +572,6 @@ fun NamesPopup(){
         },
     )
 }
+
+
+

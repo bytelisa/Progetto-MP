@@ -199,4 +199,3 @@ fun ScoreScreen(scores: List<Score>) {
     }
 }
 
-

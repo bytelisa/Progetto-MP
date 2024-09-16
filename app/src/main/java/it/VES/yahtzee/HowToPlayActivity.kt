@@ -2,7 +2,7 @@ package it.VES.yahtzee
 
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
-
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import android.os.Bundle
@@ -104,14 +104,9 @@ fun howToPlay(navController: NavController) {
     }
 
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun HTPreview() {
-    YahtzeeTheme {
-        BackgroundPictureHTP()
-        howToPlay()
-    }
-}
 
- */
+
+
+
+
+

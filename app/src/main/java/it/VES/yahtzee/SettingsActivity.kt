@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -188,7 +188,7 @@ fun Setting(navController: NavController) {
                     .size(200.dp, 60.dp) // Imposta la larghezza e l'altezza del pulsante
                     .padding(bottom = 16.dp)
             ) {
-                Text(text = "Go Back")
+                Text(text = "Save")
             }
         }
     }
@@ -205,6 +205,14 @@ fun BackgroundPictureSettings(){
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun SettingsActivityPreview() {
+    YahtzeeTheme {
+        val navController = rememberNavController()
+        Setting(navController = navController)
     }
 }
 

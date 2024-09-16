@@ -79,7 +79,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.2.0")
 
     implementation ("androidx.navigation:navigation-compose:2.7.0") // Controlla la versione più recente
-
+    implementation ("androidx.navigation:navigation-compose:2.4.0-alpha10")
+    implementation ("androidx.compose.animation:animation:1.0.5")
 
 
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")

@@ -254,3 +254,4 @@ fun AppNavigation() {
         // Aggiungi altre schermate qui
     }
 }
+
