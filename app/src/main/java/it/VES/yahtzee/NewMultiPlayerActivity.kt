@@ -576,25 +576,33 @@ fun ScoreTableM(
 }
 
 @Composable
-fun PlayersNames(player1: String, player2: String){
+fun PlayersNames(player1: String, player2: String) {
     Box(
         modifier = Modifier
-            .padding(start = 16.dp, end = 70.dp, top = 45.dp, bottom = 90.dp)
-            .fillMaxSize()
-
-    ){
+            .padding(start = 150.dp, end = 30.dp, top = 68.dp)
+    ) {
         Row(
-            modifier = Modifier.padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.End
-        ){
-            Text(text = player1,
-                modifier = Modifier.padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 90.dp))
-            Text(text = player2,
-                textAlign = TextAlign.End,
-                modifier = Modifier.padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 90.dp))
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 19.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = player1,
+                modifier = Modifier.weight(1f), // Divide lo spazio equamente tra i due Text
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = player2,
+                modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 30.dp),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
+
 
 @Composable
 fun WinningPlayer(winner: Int, score: Int){
