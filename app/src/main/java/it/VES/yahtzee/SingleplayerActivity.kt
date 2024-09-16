@@ -254,6 +254,7 @@ fun SinglePlayer(
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
+            /*
             while (rolls < 3) {
                 clickedStates = PlayUtils().imageSequence(
                     rolledDice,
@@ -262,6 +263,14 @@ fun SinglePlayer(
                 ).toMutableList() as SnapshotStateList<Boolean> //TODO questo non si può fare!!!!!!!!
 
             }
+
+             */
+
+            PlayUtils().imageSequence(
+                rolledDice,
+                rotationValues = rotationValues,
+                context
+            )
         }
 
         if (showDialog) {
@@ -386,7 +395,7 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
                             color = if (playedCategories[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
                         )
                     }
-                    if (scoreList[i] != 0) {
+                    if (playedCategories[i]) {
                         // la categoria è già stata giocata
                         Text(
                             text = scoreList[i].toString(),
@@ -400,34 +409,7 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
     }
 }
 
-@Composable
-fun GameFinish(score: Int){
 
-    var gameFinished by rememberSaveable {mutableStateOf(true)}
-
-
-    AlertDialog(
-        onDismissRequest = { gameFinished = false },
-        title = { Text(
-            text = "Final Score:",
-            fontSize = 35.sp, // Big
-        ) },
-        text = {
-            Column {
-                Text("Nice game, see you next time! :)")
-                Text(text = score.toString(), fontSize = 35.sp)
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                gameFinished = false
-
-            }) {
-                Text("OK")
-            }
-        },
-    )
-}
 
 @Composable
 fun Score(score: Int) {

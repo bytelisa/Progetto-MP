@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -46,7 +47,7 @@ class PlayUtils {
         rolledDice: List<Int>,  // Lista dei dadi
         rotationValues: List<Float>,
         context: Context
-    ): MutableList<Boolean>
+    ): List<Boolean>
     {
         var newDice by rememberSaveable { mutableStateOf(mutableListOf(*List(5) { 0 }.toTypedArray())) }
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
@@ -108,7 +109,7 @@ class PlayUtils {
             }
         }
 
-        return clickedStates.toMutableList()
+        return clickedStates
     }
 
 

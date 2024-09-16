@@ -467,7 +467,7 @@ fun ScoreTableM(
                                 color = if (playedCategories1[i]) Color.White else Color.Black
                             )
                         }
-                        if (scoreList1[i] != 0) {
+                        if (playedCategories1[i]) {
                             Text(
                                 text = scoreList1[i].toString(),
                                 color = Color.White
@@ -506,7 +506,7 @@ fun ScoreTableM(
                                 color = if (playedCategories2[i]) Color.White else Color.Black
                             )
                         }
-                        if (scoreList2[i] != 0) {
+                        if (playedCategories2[i]) {
                             Text(
                                 text = scoreList2[i].toString(),
                                 color = Color.White
