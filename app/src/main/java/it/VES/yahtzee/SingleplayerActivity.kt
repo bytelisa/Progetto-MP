@@ -1,5 +1,6 @@
 package it.VES.yahtzee
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -80,12 +81,13 @@ class SingleplayerActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
-    var rolledDice by rememberSaveable { mutableStateOf(MutableList(5) { 0 }) } // Inizializza come una MutableList
+    var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
@@ -113,7 +115,6 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                 onClick = { // roll
 
                     if (rolls < 3) {
-                        rollPressed = true
                         playPressed = false
                         rolledDice = DiceRollActivity().rollDiceStates(clickedStates).toMutableList()
                         rolls += 1
