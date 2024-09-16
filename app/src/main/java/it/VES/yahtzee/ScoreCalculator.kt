@@ -15,6 +15,10 @@ class ScoreCalculator {
 
     fun point(category: Int, myDice: ArrayList<Int>): Int {
 
+        if (myDice[0] == 0){
+            return 0
+        }
+
         if (category in 1..6) {
             return number(category,myDice)
         } else {
@@ -127,6 +131,11 @@ class ScoreCalculator {
     private fun full(myDice: ArrayList<Int>): Int  {
         val foundDice = arrayListOf(0,0,0,0,0,0)
         val full = mutableListOf(0,0)
+
+        if (myDice[0] == 0){
+            //primo lancio a vuoto per la funzione diceRollStates
+            return 0
+        }
 
         for(i in myDice){
             foundDice[i-1] += 1
