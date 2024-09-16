@@ -97,7 +97,10 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     var gameFinished by rememberSaveable { mutableStateOf(false) }
     val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
     var playPressed by rememberSaveable { mutableStateOf(false) }
+    var rollPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
+    var newRoll by rememberSaveable {mutableStateOf<List<Int>>(emptyList()) }
+
 
 
     Box(
@@ -114,6 +117,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                 onClick = { // roll
 
                     if (rolls < 3) {
+                        rollPressed = true
                         playPressed = false
                         rolledDice = DiceRollActivity().rollDice()
                         rolls += 1
@@ -121,6 +125,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                         scorePreviewList.clear()
                         scorePreviewList.addAll(scorePreview)
                         playPressed = false
+                        rollPressed = false
                     } else {
                         // finisce il turno di gioco, l'utente deve scegliere un punteggio
                         showDialog = true
@@ -193,11 +198,17 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            PlayUtils().ImageSequence(
+            newRoll = PlayUtils().imageSequence(
                 rolledDice,
                 rotationValues = rotationValues,
                 context
             )
+
+            if (rollPressed){
+                //ImageSequence mi restituisce la lista di dadi corrente, tenendo traccia di quali sono stati bloccati
+                rolledDice = newRoll
+            }
+
         }
 
         if (showDialog) {

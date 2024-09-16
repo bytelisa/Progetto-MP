@@ -261,7 +261,7 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            PlayUtils().ImageSequence(
+            PlayUtils().imageSequence(
                 rolledDice,
                 rotationValues = rotationValues,
                 context

@@ -1,5 +1,6 @@
 package it.VES.yahtzee
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,12 +36,15 @@ import androidx.compose.ui.unit.dp
 
 class PlayUtils {
 
+    @SuppressLint("MutableCollectionMutableState")
     @Composable
-    fun ImageSequence(
+    fun imageSequence(
         rolledDice: List<Int>,  // Lista dei dadi
         rotationValues: List<Float>,
         context: Context
-    ){
+    ): List<Int>
+    {
+        var newDice by rememberSaveable { mutableStateOf(mutableListOf(*List(5) { 0 }.toTypedArray())) }
         var clickedStates by rememberSaveable { mutableStateOf(List(5) { false }) }
         val oldImageIds = remember { mutableStateListOf(*List(5) { 0 }.toTypedArray()) }
         val imageIds by remember(rolledDice, clickedStates) {
@@ -70,6 +73,7 @@ class PlayUtils {
 
                     if (!clickedStates[i]){
                         oldImageIds[i]= imageIds[i] //oldImageIds viene aggiornato solo per i dadi che non sono stati cliccati
+
                     }
 
                     val isClicked = clickedStates[i]
@@ -99,6 +103,16 @@ class PlayUtils {
                 }
             }
         }
+
+        for (i in 0..4){
+            if (clickedStates[i]){
+                newDice[i]= rolledDice[i] //se il dado è stato bloccato ricarichiamo il vecchio valore
+            } else {
+                newDice[i] = (1..6).random() //altrimenti ne generiamo un altro
+            }
+        }
+
+        return newDice
     }
 
 
