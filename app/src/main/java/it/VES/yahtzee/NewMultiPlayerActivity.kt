@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -20,8 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -79,6 +84,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                                 },
 
                                 )
+                            NamesPopup()
                         }
                     }
                 )
@@ -602,21 +608,65 @@ fun BackgroundMultiplayer(){
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NamesPopup(){
 
     var open by rememberSaveable {mutableStateOf(true)}
+    var player1 by remember { mutableStateOf("") }
+    var player2 by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = { open = false },
         title = { Text(
-            text = "Multiplayer",
-            fontSize = 35.sp, // Big
+            text = "Who's playing?",
+            fontSize = 25.sp, // Big
         ) },
         text = {
             Column {
-                Text("Player 1:")
-                Text("Player 2:")
+
+                TextField(
+                    value = player1,
+                    onValueChange = {player1 = it},
+                    label = { Text(
+                                    text = "Player 1:",
+                                    color = Color(0xC80A5699)
+                    )
+                            },
+
+                    modifier = Modifier
+                        .width(250.dp) // Accorcia il TextField
+                        .clip(RoundedCornerShape(16.dp)), // Angoli più tondi
+
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color(0xD880C0DD), // Blu fumoso (Smoky Blue)
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color.White // Cambia il colore del cursore
+                    ),
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                TextField(
+                    value = player2,
+                    onValueChange = {player2 = it},
+                    label = { Text(
+                        text = "Player 2:",
+                        color = Color(0xDDC42525)
+                    )
+                    },
+
+                    modifier = Modifier
+                        .width(250.dp) // Accorcia il TextField
+                        .clip(RoundedCornerShape(16.dp)), // Angoli più tondi
+
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color(0xA6E69696), // Blu fumoso (Smoky Blue)
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color.White // Cambia il colore del cursore
+                    )
+                )
             }
         },
         confirmButton = {
