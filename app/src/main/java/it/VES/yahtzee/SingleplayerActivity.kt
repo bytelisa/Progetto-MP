@@ -71,8 +71,7 @@ class SingleplayerActivity : ComponentActivity() {
                                 scoreList = List(14){0},
                                 playedCategories = List(14){false},
                                 playPressed = false,
-                                previousCategory = -1,
-                                usedByMultiplayer = false
+                                previousCategory = -1
                             )
                         }
                     }
@@ -84,7 +83,7 @@ class SingleplayerActivity : ComponentActivity() {
 
 
 @Composable
-fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)? = null, usedByMultiplayer: Boolean = false, playerState: SinglePlayerState? = null) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
+fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -167,11 +166,6 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
                         scorePreviewList.clear()
                         playPressed = true
 
-                        if (usedByMultiplayer){
-                            if (onTurnEnd != null) {
-                                onTurnEnd()
-                            }
-                        }
 
                     } else {
                         // finisce la partita
@@ -253,7 +247,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
     if (!playPressed) {
         ScoreTable(scorePreviewList, onCategorySelect = { index ->
             onCategoryToPlayChange(index)
-        }, scoreList, playedCategories, playPressed, previousCategory, usedByMultiplayer)
+        }, scoreList, playedCategories, playPressed, previousCategory)
     }
 
     if (gameFinished) {
@@ -262,16 +256,16 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onT
 
     Score(totalScore)
     RoundsLeft(rounds)
-    if (!usedByMultiplayer){
-        ScoreTable(scorePreviewList, onCategorySelect = { index ->
-            onCategoryToPlayChange(index)
-        }, scoreList, playedCategories, playPressed, previousCategory, usedByMultiplayer)
-    }
+
+    ScoreTable(scorePreviewList, onCategorySelect = { index ->
+        onCategoryToPlayChange(index)
+    }, scoreList, playedCategories, playPressed, previousCategory)
+
 
 }
 
 @Composable
-fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean = false, previousCategory: Int, usedByMultiplayer: Boolean) {
+fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, scoreList: List<Int>, playedCategories: List<Boolean>, playPressed: Boolean = false, previousCategory: Int) {
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
     var playedCategory by remember { mutableIntStateOf(-1) }
@@ -286,47 +280,47 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
             modifier = Modifier
                 .align(Alignment.CenterEnd)
         ) {
-            if (!usedByMultiplayer){
-                for (i in 0..13) {
-                    Button(
-                        onClick = {
-                            if (!playedCategories[i]) { // se la categoria non è già stata giocata
-                                clickedButtonIndex = i
-                                onCategorySelect(clickedButtonIndex + 1) // Aggiorna la variabile globale
-                                playedCategory = i
-                                Log.d("SinglePlayerActivity", "#selected category: ${clickedButtonIndex + 1}")
-                            }
+
+            for (i in 0..13) {
+                Button(
+                    onClick = {
+                        if (!playedCategories[i]) { // se la categoria non è già stata giocata
+                            clickedButtonIndex = i
+                            onCategorySelect(clickedButtonIndex + 1) // Aggiorna la variabile globale
+                            playedCategory = i
+                            Log.d("SinglePlayerActivity", "#selected category: ${clickedButtonIndex + 1}")
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = when {
+                            playedCategories[i] -> Color(0xFF80C0DD)
+                            (clickedButtonIndex == i && !justPlayed) -> Color(0xB5DA4141)
+                            previousCategory == i -> Color(0xFF4CAF50) // New color for previously selected category
+                            else -> Color.Transparent
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = when {
-                                playedCategories[i] -> Color(0xFF80C0DD)
-                                (clickedButtonIndex == i && !justPlayed) -> Color(0xB5DA4141)
-                                previousCategory == i -> Color(0xFF4CAF50) // New color for previously selected category
-                                else -> Color.Transparent
-                            },
-                        ),
-                        modifier = Modifier
-                            .padding(bottom = 8.dp)
-                            .width(100.dp)
-                            .height(30.dp)
-                            .offset(x = 0.dp, y = (i * 2.5).dp)
-                    ) {
-                        if (scorePreviewList.isNotEmpty() && scorePreviewList[i] != -1 && !playedCategories[i]) {
-                            Text(
-                                text = scorePreviewList[i].toString(), // Mostra il punteggio se non è -1
-                                color = if (playedCategories[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
-                            )
-                        }
-                        if (scoreList[i] != 0) {
-                            // la categoria è già stata giocata
-                            Text(
-                                text = scoreList[i].toString(),
-                                color = Color.White
-                            )
-                        }
+                    ),
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .width(100.dp)
+                        .height(30.dp)
+                        .offset(x = 0.dp, y = (i * 2.5).dp)
+                ) {
+                    if (scorePreviewList.isNotEmpty() && scorePreviewList[i] != -1 && !playedCategories[i]) {
+                        Text(
+                            text = scorePreviewList[i].toString(), // Mostra il punteggio se non è -1
+                            color = if (playedCategories[i]) Color.White else Color.Black // Bianco se selezionato, nero altrimenti
+                        )
+                    }
+                    if (scoreList[i] != 0) {
+                        // la categoria è già stata giocata
+                        Text(
+                            text = scoreList[i].toString(),
+                            color = Color.White
+                        )
                     }
                 }
             }
+
         }
     }
 }
