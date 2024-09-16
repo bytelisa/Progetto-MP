@@ -16,6 +16,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Yahtzee">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,39 +26,39 @@
         </activity>
 
         <activity
-            android:name=".SettingsActivity">
-
+            android:name=".SettingsActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".SingleplayerActivity"
             android:exported="true"
-            android:theme="@style/Theme.Yahtzee">
-        </activity>
+            android:screenOrientation="portrait"
 
-        <activity
-            android:name=".MultiplayerActivity"
-            android:exported="true"
             android:theme="@style/Theme.Yahtzee">
         </activity>
 
         <activity
             android:name=".NewMultiPlayerActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Yahtzee">
         </activity>
 
         <activity
             android:name=".HowToPlayActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Yahtzee">
         </activity>
 
         <activity
             android:name=".PlayModeActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Yahtzee">
         </activity>
+
         <activity
             android:name=".ScoreActivity"
             android:exported="true"
