@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
@@ -413,7 +414,7 @@ fun ScoreTableM(
     playedCategories2: List<Boolean>,
     onCategorySelect1: (Int) -> Unit,
     onCategorySelect2: (Int) -> Unit,
-    currentPlayerColor:Color=Color.LightGray
+    currentPlayerColor: Color = Color.LightGray
 ) {
     var clickedButtonIndex by remember { mutableStateOf(-1) }
 
@@ -433,22 +434,14 @@ fun ScoreTableM(
                     Button(
                         onClick = {
                             if (currentPlayer == 1 && !playedCategories1[i]) {
-                                onCategorySelect1(i+1)
+                                onCategorySelect1(i + 1)
                                 clickedButtonIndex = i * 2 + 1
-                                //gli passo i perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            /*containerColor = if (clickedButtonIndex == i * 2 + 1 && currentPlayer == 1)
-                                Color(0xB5DA4141) else Color.Transparent
-
-                             */
-                            containerColor = when {
-                                playedCategories1[i] -> Color(0xFF80C0DD)
-                                currentPlayer==1->currentPlayerColor
-                                else -> Color.Transparent
-                            }
+                            containerColor = Color.Transparent
                         ),
+                        border = if (currentPlayer == 1) BorderStroke(2.dp, currentPlayerColor) else null,
                         enabled = !playedCategories1[i],
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -473,27 +466,15 @@ fun ScoreTableM(
                     // Player 2 buttons
                     Button(
                         onClick = {
-                            Log.d("MultiPlayerActivity", "currentPlayer: $currentPlayer")
-
                             if (currentPlayer == 2 && !playedCategories2[i]) {
                                 clickedButtonIndex = i * 2 + 2
-                                onCategorySelect2(i+1)
+                                onCategorySelect2(i + 1)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            /*
-                            containerColor = if (clickedButtonIndex == i * 2 + 2 && currentPlayer == 2)
-                                Color(0xB5DA4141) else Color.Transparent
-
-
-                             */
-                            containerColor = when {
-                                playedCategories2[i] -> Color(0xFF80C0DD)
-                                currentPlayer==2->currentPlayerColor
-                                else -> Color.Transparent
-                            }
-
+                            containerColor = Color.Transparent
                         ),
+                        border = if (currentPlayer == 2) BorderStroke(2.dp, currentPlayerColor) else null,
                         enabled = !playedCategories2[i],
                         modifier = Modifier
                             .width(80.dp)

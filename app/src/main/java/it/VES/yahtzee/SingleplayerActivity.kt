@@ -1,6 +1,5 @@
 package it.VES.yahtzee
 
-
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.graphics.Color
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -16,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -31,11 +31,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 class SingleplayerActivity : ComponentActivity() {
 
     private var _categoryToPlay by mutableIntStateOf(-1)
-    private var scorePlaceholder = List(14){-1}
+    private var scorePlaceholder = List(14) { -1 }
     private var categoryToPlay: Int
         get() = _categoryToPlay
         set(value) {
@@ -49,7 +48,7 @@ class SingleplayerActivity : ComponentActivity() {
             YahtzeeTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    content= { innerPadding ->
+                    content = { innerPadding ->
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -68,8 +67,8 @@ class SingleplayerActivity : ComponentActivity() {
                                 onCategorySelect = { newCategory ->
                                     categoryToPlay = newCategory
                                 },
-                                scoreList = List(14){0},
-                                playedCategories = List(14){false},
+                                scoreList = List(14) { 0 },
+                                playedCategories = List(14) { false },
                                 playPressed = false,
                                 previousCategory = -1
                             )
@@ -81,7 +80,6 @@ class SingleplayerActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { //i valori di default per gli ultimi due parametri servono per quando questa classe non è usata da multiplayer
 
@@ -90,7 +88,6 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     var rolledDice by rememberSaveable { mutableStateOf(MutableList(5) { 0 }) } // Inizializza come una MutableList
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
-    var showPlayDialog by remember { mutableStateOf(false) }
     val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
     val scoreList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
     var totalScore by remember { mutableIntStateOf(0) }
@@ -101,7 +98,6 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     var newRoll by rememberSaveable {mutableStateOf<List<Int>>(emptyList()) }
     var clickedStates = mutableListOf(false, false, false, false, false)
-
 
     Box(
         modifier = Modifier
@@ -137,6 +133,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                         Color(0xB5A5A5A5)
                     }
                 ),
+                enabled = rolls < 3,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(200.dp)
@@ -157,9 +154,6 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                                 "SinglePlayerActivity",
                                 "#selected score: ${scoreList[categoryToPlay - 1]}"
                             )
-
-                        } else {
-                            showPlayDialog = true
                         }
                         Log.d("SinglePlayerActivity", "New Score List: $scoreList")
                         Log.d("SinglePlayerActivity", "Round finished: ${rounds + 1}")
@@ -169,7 +163,6 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                         rounds += 1
                         scorePreviewList.clear()
                         playPressed = true
-
 
                     } else {
                         // finisce la partita
@@ -184,6 +177,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                         Color(0xB5A5A5A5)
                     }
                 ),
+                enabled = rolls != 0,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .width(100.dp)
@@ -233,50 +227,24 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
             )
         }
 
-        if (showPlayDialog) {
-            AlertDialog(
-                onDismissRequest = { showPlayDialog = false },
-                title = {
-                    Text(
-                        text = "Play",
-                        color = Color.Red
-                    )
-                },
-
-                text = {
-                    Column {
-                        Text("Select a category to play.")
-
-                    }
-                },
-                confirmButton = {
-                    Button(onClick = { showPlayDialog = false }) {
-                        Text("OK")
-                    }
-                },
-            )
+        if (!playPressed) {
+            ScoreTable(scorePreviewList, onCategorySelect = { index ->
+                onCategoryToPlayChange(index)
+            }, scoreList, playedCategories, playPressed, previousCategory)
         }
 
-    }
+        if (gameFinished) {
+            GameFinish(score = totalScore)
+        }
 
-    if (!playPressed) {
+        Score(totalScore)
+        RoundsLeft(rounds)
+
         ScoreTable(scorePreviewList, onCategorySelect = { index ->
             onCategoryToPlayChange(index)
         }, scoreList, playedCategories, playPressed, previousCategory)
+
     }
-
-    if (gameFinished) {
-        GameFinish(score = totalScore)
-    }
-
-    Score(totalScore)
-    RoundsLeft(rounds)
-
-    ScoreTable(scorePreviewList, onCategorySelect = { index ->
-        onCategoryToPlayChange(index)
-    }, scoreList, playedCategories, playPressed, previousCategory)
-
-
 }
 
 @Composable
@@ -284,7 +252,7 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
 
     var clickedButtonIndex by remember { mutableIntStateOf(-1) }
     var playedCategory by remember { mutableIntStateOf(-1) }
-    var justPlayed by remember { mutableStateOf(playPressed) }
+    val justPlayed by remember { derivedStateOf { playPressed } }
 
     Box(
         modifier = Modifier
@@ -341,17 +309,18 @@ fun ScoreTable(scorePreviewList: List<Int>, onCategorySelect: (Int) -> Unit, sco
 }
 
 @Composable
-fun GameFinish(score: Int){
+fun GameFinish(score: Int) {
 
-    var gameFinished by rememberSaveable {mutableStateOf(true)}
-
+    var gameFinished by rememberSaveable { mutableStateOf(true) }
 
     AlertDialog(
         onDismissRequest = { gameFinished = false },
-        title = { Text(
-            text = "Final Score:",
-            fontSize = 35.sp, // Big
-        ) },
+        title = {
+            Text(
+                text = "Final Score:",
+                fontSize = 35.sp, // Big
+            )
+        },
         text = {
             Column {
                 Text("Nice game, see you next time! :)")
@@ -370,12 +339,12 @@ fun GameFinish(score: Int){
 }
 
 @Composable
-fun Score(score: Int){
+fun Score(score: Int) {
 
     Box(
-        modifier= Modifier
-    ){
-        Text (
+        modifier = Modifier
+    ) {
+        Text(
             text = score.toString(),
             fontSize = 35.sp, // Big
             modifier = Modifier
@@ -386,13 +355,13 @@ fun Score(score: Int){
 }
 
 @Composable
-fun RoundsLeft(rounds: Int){
+fun RoundsLeft(rounds: Int) {
 
     Box(
-        modifier= Modifier
-    ){
-        Text (
-            text = "Rounds left: ${13-rounds}",
+        modifier = Modifier
+    ) {
+        Text(
+            text = "Rounds left: ${13 - rounds}",
             fontSize = 25.sp, // Big
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -402,17 +371,15 @@ fun RoundsLeft(rounds: Int){
 }
 
 @Composable
-fun BackgroundSingleplayer(){
+fun BackgroundSingleplayer() {
     Box(
-        modifier=Modifier.fillMaxSize()
-    ){
+        modifier = Modifier.fillMaxSize()
+    ) {
         Image(
-            painter=painterResource(id= R.drawable.singleplayer),
-            contentDescription="Single player background",
-            contentScale= ContentScale.Crop,
-            modifier=Modifier.matchParentSize()
+            painter = painterResource(id = R.drawable.singleplayer),
+            contentDescription = "Single player background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize()
         )
     }
-
 }
-
