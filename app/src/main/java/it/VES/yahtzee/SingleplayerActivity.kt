@@ -301,7 +301,7 @@ fun SinglePlayer(
 
 
         Score(totalScore)
-        RoundsLeft(rounds)
+        PlayUtils().RoundsLeft(rounds)
 
         ScoreTable(scorePreviewList, onCategorySelect = { index ->
             onCategoryToPlayChange(index)
@@ -445,21 +445,7 @@ fun Score(score: Int) {
     }
 }
 
-@Composable
-fun RoundsLeft(rounds: Int) {
 
-    Box(
-        modifier = Modifier
-    ) {
-        Text(
-            text = "Rounds left: ${13 - rounds}",
-            fontSize = 25.sp, // Big
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 15.dp, top = 15.dp)
-        )
-    }
-}
 
 @Composable
 fun BackgroundSingleplayer() {

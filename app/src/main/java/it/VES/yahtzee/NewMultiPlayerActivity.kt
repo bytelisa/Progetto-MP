@@ -125,10 +125,10 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
     if (currentPlayer == 1) {
         Score(totalScore1.toString(), "datePlayed", "gameMode")
-        RoundsLeft(rounds1)
+        PlayUtils().RoundsLeft(rounds1)
     } else {
         Score(totalScore2.toString(), "datePlayed", "gameMode")
-        RoundsLeft(rounds2)
+        PlayUtils().RoundsLeft(rounds2)
     }
 
     Box(
@@ -401,10 +401,7 @@ fun NewMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
 
 }
-@Composable
-fun RoundsLeft(rounds: Int) {
-    Text(text = "Rounds left: $rounds")
-}
+
 
 @Composable
 fun Score(score: String, datePlayed: String, gameMode: String) {

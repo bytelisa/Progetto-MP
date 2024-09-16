@@ -6,6 +6,7 @@ import android.util.MutableBoolean
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -31,6 +33,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 //questa classe contiene funzioni extra condivise dalle due modalità di gioco (singleplayer e multiplayer), ad es blocco dadi
@@ -145,6 +148,23 @@ class PlayUtils {
         //questa funzione sfrutta la classe ScoreCalculator per calcolare la preview di tutti i punteggi che poi verrà usata da ScoreTable
         return List(14) {
                 index -> ScoreCalculator().point(index+1, ArrayList(rolledDice))
+        }
+    }
+
+
+    @Composable
+    fun RoundsLeft(rounds: Int) {
+
+        Box(
+            modifier = Modifier
+        ) {
+            Text(
+                text = "Rounds left: ${13 - rounds}",
+                fontSize = 25.sp, // Big
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 15.dp, top = 15.dp)
+            )
         }
     }
 
