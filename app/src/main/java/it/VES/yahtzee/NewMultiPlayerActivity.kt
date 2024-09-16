@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -31,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -84,8 +84,21 @@ class NewMultiPlayerActivity : ComponentActivity() {
                                 },
 
                                 )
-                            NamesPopup()
-                        }
+                            var showNameDialog by remember { mutableStateOf(true) }
+                            var player1Name by remember { mutableStateOf("") }
+                            var player2Name by remember { mutableStateOf("") }
+
+                            if (showNameDialog) {
+                                NamesPopup(onDismiss = { name1, name2 ->
+                                    player1Name = name1
+                                    player2Name = name2
+                                    showNameDialog = false
+                                })
+                            }
+
+                            if (!showNameDialog) {
+                                PlayersNames(player1 = player1Name, player2 = player2Name)
+                            }                        }
                     }
                 )
             }
@@ -562,7 +575,26 @@ fun ScoreTableM(
     }
 }
 
+@Composable
+fun PlayersNames(player1: String, player2: String){
+    Box(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 70.dp, top = 45.dp, bottom = 90.dp)
+            .fillMaxSize()
 
+    ){
+        Row(
+            modifier = Modifier.padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.End
+        ){
+            Text(text = player1,
+                modifier = Modifier.padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 90.dp))
+            Text(text = player2,
+                textAlign = TextAlign.End,
+                modifier = Modifier.padding(start = 16.dp, end = 70.dp, top = 1.dp, bottom = 90.dp))
+        }
+    }
+}
 
 @Composable
 fun WinningPlayer(winner: Int, score: Int){
@@ -610,7 +642,7 @@ fun BackgroundMultiplayer(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NamesPopup(){
+fun NamesPopup(onDismiss: (String, String) -> Unit){
 
     var open by rememberSaveable {mutableStateOf(true)}
     var player1 by remember { mutableStateOf("") }
@@ -670,10 +702,7 @@ fun NamesPopup(){
             }
         },
         confirmButton = {
-            Button(onClick = {
-                open = false
-
-            }) {
+            Button(onClick = { onDismiss(player1, player2) }) {
                 Text("OK")
             }
         },
