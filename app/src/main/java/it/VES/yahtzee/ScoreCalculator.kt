@@ -19,7 +19,6 @@ class ScoreCalculator {
             return number(category,myDice)
         } else {
             when(category){
-                //TODO BONUS
                 8 -> return threeX(myDice)
                 9 -> return fourX(myDice)
                 10 -> return full(myDice)

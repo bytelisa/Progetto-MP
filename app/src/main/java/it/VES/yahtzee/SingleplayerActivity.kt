@@ -177,11 +177,11 @@ fun SinglePlayer(
                     if (rolls < 3) {
                         playPressed = false
 
-                        if (rolls == 0){
-                            rolledDice = DiceRollActivity().rollDiceStates(MutableList(5){0}, clickedStates).toMutableList()
+                        rolledDice = if (rolls == 0){
+                            DiceRollActivity().rollDiceStates(MutableList(5){0}, clickedStates).toMutableList()
 
                         } else {
-                            rolledDice = DiceRollActivity().rollDiceStates(rolledDice, clickedStates).toMutableList()
+                            DiceRollActivity().rollDiceStates(rolledDice, clickedStates).toMutableList()
                         }
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)

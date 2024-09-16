@@ -116,6 +116,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     var turnEndDialog by rememberSaveable { mutableStateOf(false) }
+    var clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
 
 
     if (currentPlayer == 1){
@@ -142,9 +143,17 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
                     if (rolls < 3) {
                         playPressed = false
-                        rolledDice = DiceRollActivity().rollDice()
+
+                        rolledDice = if (rolls == 0){
+                            DiceRollActivity().rollDiceStates(MutableList(5){0}, clickedStates).toMutableList()
+
+                        } else {
+                            DiceRollActivity().rollDiceStates(rolledDice, clickedStates).toMutableList()
+                        }
+
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
+
                         if (currentPlayer == 1){
                             scorePreviewList1.clear()
                             scorePreviewList1.addAll(scorePreview)
@@ -261,11 +270,11 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         if (rolledDice.isNotEmpty() && rolls != 0) {
             val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
 
-            PlayUtils().imageSequence(
-                rolledDice,
-                rotationValues = rotationValues,
-                context
-            )
+            val newClickedStates = PlayUtils().imageSequence(rolledDice, rotationValues = rotationValues, context)
+
+            // Aggiorna la lista clickedStates preservando lo stato reattivo
+            clickedStates.clear()
+            clickedStates.addAll(newClickedStates)
         }
 
         if (showDialog) {
