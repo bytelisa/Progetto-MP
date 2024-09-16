@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -99,8 +100,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
     var rollPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     var newRoll by rememberSaveable {mutableStateOf<List<Int>>(emptyList()) }
-    var clickedStates = mutableListOf(false, false, false, false, false)
-
+    var clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -116,7 +116,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
 
                     if (rolls < 3) {
                         playPressed = false
-                        rolledDice = DiceRollActivity().rollDiceStates(clickedStates).toMutableList()
+                        rolledDice = DiceRollActivity().rollDiceStates(clickedStates).toMutableList() //questo lancio dadi tiene conto dello stato dei dadi
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
@@ -197,7 +197,7 @@ fun SinglePlayer(categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit) { /
                     rolledDice,
                     rotationValues = rotationValues,
                     context
-                ).toMutableList()
+                ).toMutableList() as SnapshotStateList<Boolean>
 
             }
         }
