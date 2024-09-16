@@ -200,6 +200,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             playPressed = true
                             totalScore1 = ScoreCalculator().totalScore(scoreList1) //così sotto al pop up viene visualizzato lo score del giocatore corrente
                             turnEndDialog = true
+
                         }
 
                     } else if (currentPlayer == 2){
@@ -228,7 +229,6 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             playPressed = true
                             totalScore2 = ScoreCalculator().totalScore(scoreList2)
                             turnEndDialog = true
-
                         }
                     }
 
@@ -311,7 +311,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         if (turnEndDialog) {
 
             AlertDialog(
-                onDismissRequest = { turnEndDialog = false },
+                onDismissRequest = { },
                 title = {
                     Text(
                         text = when {
@@ -339,13 +339,14 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                 confirmButton = {
                     Button(onClick = {
                         turnEndDialog = false
+                        onTurnEnd()
+
                     }) {
                         Text("OK")
 
                     }
                 },
             )
-            onTurnEnd()
         }
     }
 
