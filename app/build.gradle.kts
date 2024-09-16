@@ -81,6 +81,13 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:2.7.0") // Controlla la versione più recente
 
 
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

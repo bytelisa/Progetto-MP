@@ -6,28 +6,20 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.saveable.Saver
-import androidx.compose.material3.ButtonDefaults
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mutableStateListOf
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
@@ -37,7 +29,7 @@ class MultiplayerActivity : ComponentActivity() {
     private var currentPlayer by mutableIntStateOf(1)
     private var categoryToPlay by mutableIntStateOf(-1)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+ /*   override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -88,10 +80,14 @@ class MultiplayerActivity : ComponentActivity() {
         currentPlayer = (currentPlayer + 1) % 2
     }
 
+  */
+
 }
 
 
 
+
+/*
 @Composable
 fun oldMultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
     // Usa il Saver per ricordare lo stato dei giocatori
@@ -126,7 +122,8 @@ fun oldMultiPlayer(player: Int, onTurnEnd: () -> Unit, categoryToPlay: Int) {
 @Composable
 fun SinglePlayerScreen(
     state: SinglePlayerState,
-    onTurnEnd: () -> Unit
+    onTurnEnd: () -> Unit,
+    onGameFinish: () -> Unit // Aggiungi il parametro onGameFinish
 ) {
     SinglePlayer(
         categoryToPlay = state.categoryToPlay,
@@ -135,10 +132,11 @@ fun SinglePlayerScreen(
         },
         onTurnEnd = onTurnEnd,
         usedByMultiplayer = true,
-        playerState = state
+        playerState = state,
+        onGameFinish = onGameFinish, // Passa il parametro onGameFinish
     )
 }
-
+*/
 
 
 

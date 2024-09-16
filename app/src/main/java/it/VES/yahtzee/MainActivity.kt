@@ -250,7 +250,7 @@ fun AppNavigation() {
         composable("home") { Home(navController) }
         composable("settings") { Setting(navController) }
         composable("howToPlay") { howToPlay(navController)}
-        composable("score"){ScoreScreen(scores = sampleScores)}
+        //composable("score"){ScoreScreen(scores = sampleScores)}
         // Aggiungi altre schermate qui
     }
 }

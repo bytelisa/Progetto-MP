@@ -12,34 +12,27 @@ import kotlinx.coroutines.launch
 // from view model we're going to access all our queries from DAO
 // view model provide data to the UI and survive configuration changes
 // A ViewModel acts as a communication center between the Repository and the UI
-class UserViewModel(application: Application): AndroidViewModel(application) {
+class UserViewModel(application: Application) : AndroidViewModel(application) {
 
-    val readAllData: LiveData<List<User>>
     private val repository: UserRepository
+    val allUsers: LiveData<List<User>>
 
-    // metodo che viene eseguito per prima
-    init{
-
-        // Ottieni il DAO dal database
-        val userDAO = UserDatabase.getDatabase(application).userDao()
-
-        // Inizializza il repository
-        repository = UserRepository(userDAO)
-
-        // Ottieni i dati dal repository
-        readAllData = repository.readAllData
-
-        // Log per il debugging
+    init {
+        val userDao = UserDatabase.getDatabase(application).userDao()
+        repository = UserRepository(userDao)
+        allUsers = repository.allUsers
         Log.d("UserViewModel", "UserViewModel initialized")
     }
 
+    fun insert(user: User) {
+        Log.d("UserViewModel", "Attempting to insert user: $user")
+        repository.insert(user)
+        Log.d("UserViewModel", "Insert request sent for user: $user")
 
-    // Funzione per aggiungere un utente
-    fun addUser(user: User){
-        // Esegui il codice in background
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.addUser(user)
-        }
     }
 
+    fun delete(user: User) {
+        // Eliminazione gestita dal repository
+        repository.delete(user)
+    }
 }

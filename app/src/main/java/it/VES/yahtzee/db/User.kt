@@ -13,5 +13,5 @@ data class User(
     @ColumnInfo(name = "player") val player: String,
     @ColumnInfo(name = "score") val score: String,   // punteggio partita
     @ColumnInfo(name = "mod") val mod: String,   // modalità gioco (sigle/multi)
-    @ColumnInfo(name = "date") val date: String    // data (data, ora)
+    @ColumnInfo(name = "date") val date: String   // data (data, ora)
 )
