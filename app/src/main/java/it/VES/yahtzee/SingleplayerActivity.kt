@@ -415,7 +415,12 @@ fun Score(score: Int) {
             fontSize = 35.sp, // Big
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(start = 350.dp, top = 28.dp, end = 10.dp)
+                .padding(start = when{
+                    score < 100 -> 360.dp
+                    else -> 345.dp},
+                    top = 28.dp, end = 10.dp
+                )
+
         )
     }
 }
