@@ -153,6 +153,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         }
 
                         rolls += 1
+                        onCategoryToPlayChange(-1)
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
 
                         if (currentPlayer == 1){
@@ -192,7 +193,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             if (categoryToPlay != -1 && !playedCategories1[categoryToPlay - 1]) {
 
                                 scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
-                                //scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
+                                scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1) //aggiungiamo eventuale punto bonus
                                 playedCategories1[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
