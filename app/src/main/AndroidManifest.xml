@@ -39,7 +39,7 @@
         </activity>
 
         <activity
-            android:name=".NewMultiPlayerActivity"
+            android:name=".MultiPlayerActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Yahtzee">

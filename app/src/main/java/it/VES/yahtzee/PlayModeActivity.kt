@@ -78,7 +78,7 @@ fun Choose() {
             }
             Button(
                 onClick = {
-                    val intent = Intent(context, NewMultiPlayerActivity::class.java)
+                    val intent = Intent(context, MultiPlayerActivity::class.java)
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(

@@ -159,7 +159,6 @@ class SingleplayerActivity : ComponentActivity() {
         rolledDice: List<Int>,
         diceRollLauncher: ActivityResultLauncher<Intent>,
         onDiceRolled: (List<Int>) -> Unit, // Callback che gestisce risultato
-
     ) {
         val context = LocalContext.current
         var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
@@ -185,7 +184,14 @@ class SingleplayerActivity : ComponentActivity() {
         fun handleDiceRoll(diceResults: List<Int>) {
             onDiceRolled(diceResults)
         }
+        LaunchedEffect(rolledDice) {
+            if ((rounds != 0 && !shake) || (shake && rolls>0)){
+                scorePreview = PlayUtils().getScorePreview(rolledDice)
+                scorePreviewList.clear()
+                scorePreviewList.addAll(scorePreview)
+            }
 
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -204,10 +210,10 @@ class SingleplayerActivity : ComponentActivity() {
                             playPressed = false
 
                             if (shake) {
+                                rolls += 1
                                 val intent = Intent(context, DiceRollActivity::class.java)
                                 diceRollLauncher.launch(intent)
                                 rollPressed = true
-                                rolls += 1
                                 Log.d("SinglePlayerActivity", "Roll with sensor: $rolledDice")
                                 scorePreview = PlayUtils().getScorePreview(rolledDice) //non è più di stato per singleplayer!
 

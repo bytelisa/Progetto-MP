@@ -41,10 +41,10 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
     private var lastX = 0.0f
     private var lastY = 0.0f
     private var lastZ = 0.0f
+    var overThreshold = mutableStateOf(false)
 
 
-    // Variabile di stato per memorizzare i risultati dei dadi
-    var diceResults by mutableStateOf(List(5) { 1 })
+    private var diceResults by mutableStateOf(List(5) { 1 })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,18 +96,20 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
 
                 if ((currentTime - shakeStartTime) > shakeDuration) {
                     // Lancia i dadi dopo 3 secondi di shake
-                    diceResults = rollDice() // Aggiorna i risultati dei dadi
+                    overThreshold.value = true
+                    diceResults = rollDice()
                     shakeStartTime = 0L // Reset
                 }
             } else {
                 // Reset il tempo di inizio se non si supera la soglia
                 shakeStartTime = 0L
 
-                val resultIntent = intent
-                resultIntent.putExtra("diceResults", diceResults.toIntArray())
-                setResult(RESULT_OK, resultIntent)
-                finish() // Chiude l'activity e restituisce i dati
-
+                if (overThreshold.value){
+                    val resultIntent = intent
+                    resultIntent.putExtra("diceResults", diceResults.toIntArray())
+                    setResult(RESULT_OK, resultIntent)
+                    finish() // Chiude l'activity e restituisce i dati
+                }
             }
 
             lastX = x
@@ -132,7 +134,7 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
 
     fun rollDice(): List<Int> {
         val results = List(5) { (1..6).random() }
-        Log.d("DiceRollActivity", "New Dice Results: $results")
+        //Log.d("DiceRollActivity", "New Dice Results: $results")
         return results
     }
 
@@ -147,7 +149,7 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
                 newDice[i] = rolledDice[i]
             }
         }
-        Log.d("DiceRollActivity", "New Dice Results: $rolledDice")
+        //Log.d("DiceRollActivity", "New Dice Results: $rolledDice")
         return newDice
     }
 

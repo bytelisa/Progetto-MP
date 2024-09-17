@@ -43,7 +43,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class NewMultiPlayerActivity : ComponentActivity() {
+class MultiPlayerActivity : ComponentActivity() {
 
 
 
