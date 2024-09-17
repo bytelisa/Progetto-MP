@@ -92,7 +92,7 @@ class SingleplayerActivity : ComponentActivity() {
                                     saveGameToDB(totalScore as Int)
                                 },
                                 rolledDice = rolledDice,
-                                diceRollLauncher = diceRollLauncher, // Pass the launcher here
+                                diceRollLauncher = diceRollLauncher,
                                 onDiceRolled = { rolledDiceResult ->
                                     // lambda che gestisce il risultato
                                     rolledDice = rolledDiceResult
@@ -258,7 +258,6 @@ class SingleplayerActivity : ComponentActivity() {
 
             Button(
                 onClick = { // play
-                    rollPressed = false
                     if (rounds < 13) {
                         if (categoryToPlay != -1) {
 
