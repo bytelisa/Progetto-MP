@@ -422,11 +422,12 @@ fun Score(score: Int) {
         Text(
             text = score.toString(),
             fontSize = 35.sp, // Big
+            color = Color.White, // Colore del testo
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(start = when{
-                    score < 100 -> 300.dp
-                    else -> 285.dp},
+                    score < 100 -> 320.dp
+                    else -> 300.dp},
                     top = 28.dp, end = 10.dp
                 )
 
