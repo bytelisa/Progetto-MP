@@ -28,7 +28,7 @@ import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 import java.text.SimpleDateFormat
 import java.util.*
-
+import java.util.Date
 
 @Composable
 fun SingleplayerScoreCard(scores: Scores){

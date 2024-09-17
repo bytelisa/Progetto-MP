@@ -126,6 +126,7 @@ class SingleplayerActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun SinglePlayer(
     categoryToPlay: Int,
@@ -434,11 +435,9 @@ fun Score(score: Int) {
             fontSize = 35.sp, // Big
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(
-                    start = when {
-                        score < 100 -> 360.dp
-                        else -> 345.dp
-                    },
+                .padding(start = when{
+                    score < 100 -> 300.dp
+                    else -> 285.dp},
                     top = 28.dp, end = 10.dp
                 )
 
