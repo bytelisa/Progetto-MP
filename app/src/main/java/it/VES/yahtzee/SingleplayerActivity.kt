@@ -146,7 +146,8 @@ fun SinglePlayer(
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     val clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
-
+    val sharedPreferences=context.getSharedPreferences("user_prefs",Context.MODE_PRIVATE)
+    val soundEnabled=sharedPreferences.getBoolean("soundEnabled",false)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -158,6 +159,9 @@ fun SinglePlayer(
         ) {
             Button(
                 onClick = { // roll
+                    if(soundEnabled){
+                        playDiceSound(context)
+                    }
 
                     if (rolls < 3) {
                         playPressed = false
