@@ -212,15 +212,15 @@ fun ScoreScreen(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
 
 
-    // Create a map to store multiplayer games with date as the key
+
     val multiplayerGames = userList
         .filter { it.mod == "Multiplayer" }
         .groupBy { it.date }
 
-    // Create a set to keep track of unique dates for multiplayer games
+
     val uniqueDates = mutableSetOf<String>()
 
-    // Create the list of Scores with player2 details
+
     val scoreList = remember(userList) {
         userList.mapNotNull { user ->
             val datePlayed = try {
@@ -230,7 +230,7 @@ fun ScoreScreen(navController: NavController) {
             }
 
             if (user.mod == "Singleplayer") {
-                // Keep all Singleplayer scores without filtering
+
                 Scores(
                     username = user.player,
                     gameMode = user.mod,
@@ -240,13 +240,13 @@ fun ScoreScreen(navController: NavController) {
                     opponentScore = 0
                 )
             } else if (user.mod == "Multiplayer" && datePlayed != null) {
-                // Convert datePlayed to a string representation to check uniqueness
+
                 val dateKey = datePlayed.toString()
 
                 if (!uniqueDates.contains(dateKey)) {
                     uniqueDates.add(dateKey)
 
-                    // Find the opponent details
+
                     val opponentUsername: String
                     val opponentScore: Int
 
@@ -270,7 +270,7 @@ fun ScoreScreen(navController: NavController) {
                         opponentScore = opponentScore
                     )
                 } else {
-                    null // Skip this entry as it is a duplicate
+                    null
                 }
             } else {
                 null
@@ -326,7 +326,7 @@ fun ConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
         text = { Text("Are you sure you want to delete this score?") },
         confirmButton = {
 
-            // Create a custom button with light blue color
+
             Button(
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xBE673AB7)) // Light blue color
@@ -335,7 +335,7 @@ fun ConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
             }
         },
         dismissButton = {
-            // Create a custom button with light blue color
+
             Button(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xBE673AB7)) // Light blue color

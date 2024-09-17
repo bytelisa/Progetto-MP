@@ -33,7 +33,7 @@ class SettingsActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BackgroundPictureSettings()
                     //Setting()
-                    AppNavigation() // Usa AppNavigation per gestire la navigazione
+                    AppNavigation()
                 }
             }
         }
@@ -51,7 +51,7 @@ fun Setting(navController: NavController) {
     val editor = sharedPreferences.edit()
 
 
-    // Carica le preferenze salvate
+
     LaunchedEffect(Unit) {
         userName = sharedPreferences.getString("userName", "") ?: ""
         switch1State = sharedPreferences.getBoolean("soundEnabled", false)
@@ -61,9 +61,9 @@ fun Setting(navController: NavController) {
 
     Box(
         modifier = Modifier
-            .fillMaxSize() // Riempie tutta la schermata
+            .fillMaxSize()
     ) {
-        BackgroundPictureSettings() // Aggiunge l'immagine di sfondo
+        BackgroundPictureSettings()
 
         Column(
             modifier = Modifier
@@ -80,14 +80,14 @@ fun Setting(navController: NavController) {
                 onValueChange = { userName = it },
                 label = { Text("Your username") },
                 modifier = Modifier
-                    .width(250.dp) // Accorcia il TextField
-                    .clip(RoundedCornerShape(16.dp)), // Angoli più tondi
+                    .width(250.dp)
+                    .clip(RoundedCornerShape(16.dp)),
 
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFF7B88D1), // Blu fumoso (Smoky Blue)
+                    containerColor = Color(0xFF7B88D1),
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White // Cambia il colore del cursore
+                    cursorColor = Color.White
                 )
             )
 
@@ -103,8 +103,8 @@ fun Setting(navController: NavController) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp), // Padding per evitare che il contenuto tocchi i bordi
-                    contentAlignment = Alignment.Center // Centra il contenuto all'interno della Box
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
 
                     Row(
@@ -133,7 +133,7 @@ fun Setting(navController: NavController) {
 
 
 
-            // Secondo switch con parole
+
             Spacer(modifier = Modifier.height(20.dp))
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -144,8 +144,8 @@ fun Setting(navController: NavController) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp), // Padding per evitare che il contenuto tocchi i bordi
-                    contentAlignment = Alignment.Center // Centra il contenuto all'interno della Box
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
 
 
@@ -153,7 +153,7 @@ fun Setting(navController: NavController) {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(vertical = 8.dp)
-                            .fillMaxWidth(), // Allinea al centro
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(text = "Click")
@@ -172,23 +172,23 @@ fun Setting(navController: NavController) {
 
             Spacer(modifier = Modifier.height(100.dp))
             Button(
-                onClick = { /* Azione per il bottone Go Back */
-                    // Salva le preferenze
+                onClick = {
+
                     editor.putString("userName", userName)
                     editor.putBoolean("soundEnabled", switch1State)
                     editor.putBoolean("clickMode", switch2State)
                     editor.apply()
 
 
-                    // Torna alla schermata Home
+
                     navController.popBackStack()
 
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xD03F51B5) // Cambia il colore del pulsante
+                    containerColor = Color(0xD03F51B5)
                 ),
                 modifier = Modifier
-                    .size(200.dp, 60.dp) // Imposta la larghezza e l'altezza del pulsante
+                    .size(200.dp, 60.dp)
                     .padding(bottom = 16.dp)
             ) {
                 Text(text = "Save")

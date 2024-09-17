@@ -123,7 +123,7 @@ fun Home(navController: NavController) {
         Button(
 
             onClick = {
-                navController.navigate("howToPlay") // Naviga alla schermata delle regole di gioco
+                navController.navigate("howToPlay")
             },
 
             modifier = Modifier
@@ -138,7 +138,7 @@ fun Home(navController: NavController) {
         // Third Button
         Button(
             onClick = {
-                navController.navigate("settings") // Naviga alla schermata delle impostazioni
+                navController.navigate("settings")
             },
 
             modifier = Modifier
@@ -149,7 +149,6 @@ fun Home(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(24.dp))
 
-        //fourth button
         Button(
             onClick={showDialog=true},
             modifier= Modifier
@@ -204,24 +203,24 @@ fun Home(navController: NavController) {
                                 context.startActivity(intent)
                             },
                             style = TextStyle(
-                                fontSize = 16.sp, // Ingrandisce il testo del link
+                                fontSize = 16.sp,
                                 color = Color.Blue,
                                 textDecoration = TextDecoration.Underline
                             ),
-                            modifier = Modifier.align(Alignment.CenterHorizontally) // Testo cliccabile centrato
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }
                 },
                 confirmButton = {
                     Box(
-                        modifier = Modifier.fillMaxWidth(), // Riempi la larghezza del Box
-                        contentAlignment = Alignment.Center // Centra il contenuto del Box
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
                     ) {
                         Button(
                             onClick = { showDialog = false },
-                            modifier = Modifier.width(120.dp) // Riduce la lunghezza del bottone
+                            modifier = Modifier.width(120.dp)
                         ) {
-                            Text("OK", textAlign = TextAlign.Center) // Testo del bottone centrato
+                            Text("OK", textAlign = TextAlign.Center)
                         }
                     }
                 },
@@ -258,7 +257,7 @@ fun AppNavigation() {
         composable("settings") { Setting(navController) }
         composable("howToPlay") { howToPlay(navController)}
 
-        composable("score") { ScoreScreen(navController) } // Usa ScoreScreen come composable
+        composable("score") { ScoreScreen(navController) }
     }
 }
 

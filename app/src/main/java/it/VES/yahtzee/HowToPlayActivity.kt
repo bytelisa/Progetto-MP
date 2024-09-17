@@ -42,8 +42,8 @@ class HowToPlayActivity: ComponentActivity(){
             YahtzeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BackgroundPictureHTP()
-                    //howToPlay()
-                    AppNavigation() // Usa AppNavigation per gestire la navigazione
+
+                    AppNavigation()
                 }
             }
         }
@@ -70,12 +70,12 @@ fun howToPlay(navController: NavController) {
             Button(
                 onClick = {/*Bottone Back*/
 
-                    // Torna alla schermata Home
+
                     navController.popBackStack()
 
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xD03F51B5) // Cambia il colore del pulsante qui
+                    containerColor = Color(0xD03F51B5)
                 ),
                 modifier = Modifier
                     .width(200.dp)

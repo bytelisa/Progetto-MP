@@ -45,26 +45,25 @@ import java.util.Locale
 
 class NewMultiPlayerActivity : ComponentActivity() {
 
-    // codice vale:
 
-    // ViewModel per interagire con il database
+
+
     private lateinit var userViewModel: UserViewModel
-    //var rolledDice by mutableStateOf(List(5) { 1 })
-    //private lateinit var diceRollLauncher: ActivityResultLauncher<Intent>
 
 
-    // Giocatori e punteggi della partita
+
+
     private var playerOneScore: Int = 0
     private var playerTwoScore: Int = 0
     private lateinit var playerOneName: String
     private lateinit var playerTwoName: String
 
 
-    //variabile che tiene traccia del giocatore corrente, varia tra 1 e 2  (ELI)
+
     private var currentPlayer by mutableIntStateOf(1)
     private var categoryToPlay by mutableIntStateOf(-1)
 
-    // vale
+
     private var gameFinished by mutableStateOf(false)
     private var winningPlayer: Int = 0
 
@@ -86,10 +85,10 @@ class NewMultiPlayerActivity : ComponentActivity() {
 
          */
 
-        // Ottieni il ViewModel
+
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
-        // Inizializza la partita
+
         playerOneName = intent.getStringExtra("PLAYER_ONE_NAME") ?: "Player 1"
         playerTwoName = intent.getStringExtra("PLAYER_TWO_NAME") ?: "Player 2"
 
@@ -150,7 +149,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
 
                             } else {
 
-                                // Logica di gioco multiplayer
+
                                 MultiPlayer(
                                     currentPlayer = currentPlayer,
                                     categoryToPlay = categoryToPlay,
@@ -169,7 +168,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                                 )
 
 
-                                // Mostra la tabella punteggi
+
                                 ScoreTableM(
                                     currentPlayer = currentPlayer,
                                     scorePreview1 = List(14) { -1 },
@@ -224,35 +223,35 @@ class NewMultiPlayerActivity : ComponentActivity() {
     }
 
 
-    // Funzione per salvare i punteggi dei giocatori nel database
+
     private fun saveGameResult(playerOneScore: Int, playerTwoScore: Int) {
         val currentDate = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())
 
-        // Crea l'oggetto User per Player 1
+
         val playerOne = User(
-            id = 0, // Room genererà automaticamente l'ID
+            id = 0,
             player = playerOneName,
             score = playerOneScore.toString(),
             mod = "Multiplayer",
             date = currentDate
         )
 
-        // Crea l'oggetto User per Player 2
+
         val playerTwo = User(
-            id = 0, // Room genererà automaticamente l'ID
+            id = 0,
             player = playerTwoName,
             score = playerTwoScore.toString(),
             mod = "Multiplayer",
             date = currentDate
         )
 
-        // Salva i dati nel database tramite il ViewModel
+
         userViewModel.insert(playerOne)
         userViewModel.insert(playerTwo)
 
         Log.d("MultiplayerActivity11", "Dati salvati per i giocatori: $playerOneName e $playerTwoName")
 
-        // Una volta salvati, chiudi l'activity e torna alla schermata home
+
         finish()
     }
 
@@ -269,8 +268,7 @@ fun MultiPlayer(currentPlayer: Int,
                 onTurnEnd: (() -> Unit),
                 playerOne: User,
                 playerTwo: User,
-                onGameFinish: (Int, Int) -> Unit   // Callback per eseguire azioni quando la partita finisce
-){
+                onGameFinish: (Int, Int) -> Unit){
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds1 by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rounds2 by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -344,7 +342,7 @@ fun MultiPlayer(currentPlayer: Int,
                         playPressed = false
 
                     } else {
-                        // finisce il turno di gioco, l'utente deve scegliere un punteggio
+
                         showDialog = true
                     }
                 },
@@ -377,8 +375,8 @@ fun MultiPlayer(currentPlayer: Int,
                                 //punto bonus
                                 scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
                                 if (scoreList1[6] == 35){
-                                    playedCategories1[6] = true  //la categoria viene giocata in automatico
-                                    previousCategory = categoryToPlay - 1 //triggera recompose
+                                    playedCategories1[6] = true
+                                    previousCategory = categoryToPlay - 1
                                 }
 
                                 playedCategories1[categoryToPlay - 1] = true
@@ -398,7 +396,7 @@ fun MultiPlayer(currentPlayer: Int,
                             rounds1 += 1
                             scorePreviewList1.clear()
                             playPressed = true
-                            totalScore1 = ScoreCalculator().totalScore(scoreList1) //così sotto al pop up viene visualizzato lo score del giocatore corrente
+                            totalScore1 = ScoreCalculator().totalScore(scoreList1)
                             turnEndDialog = true
 
                         }
@@ -414,7 +412,7 @@ fun MultiPlayer(currentPlayer: Int,
                                 //bonus
                                 scoreList2[6] = ScoreCalculator().bonusCheck(scoreList2)
                                 if (scoreList2[6] == 35){
-                                    playedCategories2[6] = true  //la categoria viene giocata in automatico
+                                    playedCategories2[6] = true
                                     previousCategory = categoryToPlay - 1
                                 }
 
@@ -663,11 +661,11 @@ fun ScoreTableM(
                 ) {
 
                     Button(
-                        onClick = { // Player 1 buttons
+                        onClick = {
 
                             if (currentPlayer == 1 && !playedCategories1[i]) {
                                 clickedButtonIndex = i * 2 + 1
-                                onCategorySelect1(i+1) //gli passo i+1 perché quello è l'indice con cui posso calcolare i punteggi (identifica la categoria)
+                                onCategorySelect1(i+1)
                             }
                         },
 
@@ -686,12 +684,12 @@ fun ScoreTableM(
                                 else -> Color(0x9C9FD8F1)
                             },
 
-                            contentColor = Color.DarkGray,                 //testo del bottone attivo
+                            contentColor = Color.DarkGray,
                             disabledContentColor = Color.Black
                         ),
                         enabled = when {
-                            i == 6 -> false                   //il bottone del punteggio bonus non è cliccabile
-                            else -> !playedCategories1[i]    // Disabilita il bottone se la categoria è già stata giocata
+                            i == 6 -> false
+                            else -> !playedCategories1[i]
                                        },
 
                         modifier = Modifier
@@ -705,7 +703,7 @@ fun ScoreTableM(
                                 text = scorePreview1[i].toString(),
                                 color = when {
                                     clickedButtonIndex == i -> Color.White
-                                    else -> Color.DarkGray} // Bianco se selezionato, nero altrimenti
+                                    else -> Color.DarkGray}
                             )
                         }
                         if (playedCategories1[i]) {
@@ -739,13 +737,13 @@ fun ScoreTableM(
                                 i==6 && !playedCategories2[6]-> Color.Transparent
                                 else -> Color(0xA9D39B98)
                             },
-                            contentColor = Color.DarkGray,                 //testo del bottone attivo
+                            contentColor = Color.DarkGray,
                             disabledContentColor = Color.Black
                             ),
 
                         enabled = when {
-                            i == 6 -> false //il bottone del punteggio bonus non è cliccabile
-                            else -> !playedCategories2[i]},  // Disabilitiamo il bottone se la categoria è già stata giocata
+                            i == 6 -> false
+                            else -> !playedCategories2[i]},
 
                         modifier = Modifier
                             .width(80.dp)
@@ -908,14 +906,14 @@ fun NamesPopup(onDismiss: (String, String) -> Unit){
                     },
 
                     modifier = Modifier
-                        .width(250.dp) // Accorcia il TextField
-                        .clip(RoundedCornerShape(16.dp)), // Angoli più tondi
+                        .width(250.dp)
+                        .clip(RoundedCornerShape(16.dp)),
 
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color(0xA6E69696), // Blu fumoso (Smoky Blue)
+                        containerColor = Color(0xA6E69696),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color.White // Cambia il colore del cursore
+                        cursorColor = Color.White
                     )
                 )
             }

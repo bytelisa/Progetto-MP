@@ -1,6 +1,6 @@
 package it.VES.yahtzee
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -13,7 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
+
 
 
 import androidx.compose.material3.Text
@@ -28,8 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+
 import kotlin.math.sqrt
 
 class DiceRollActivity : ComponentActivity(), SensorEventListener {
@@ -143,7 +142,7 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
 
         for (i in 0..4) {
             if (!clickedStates[i]) {
-                newDice[i] = (1..6).random() // Assegna un nuovo valore solo se il dado non è bloccato
+                newDice[i] = (1..6).random()
             } else {
                 newDice[i] = rolledDice[i]
             }

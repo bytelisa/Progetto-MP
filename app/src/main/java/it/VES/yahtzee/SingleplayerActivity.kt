@@ -222,15 +222,14 @@ class SingleplayerActivity : ComponentActivity() {
                                 handleDiceRoll(diceResults)
                                 rollPressed = true
                                 rolls += 1
-                                scorePreview = PlayUtils().getScorePreview(diceResults) //rolledDice non è più di stato per singleplayer!
-
+                                scorePreview = PlayUtils().getScorePreview(diceResults)
                             }
 
                             scorePreviewList.clear()
                             scorePreviewList.addAll(scorePreview)
                             playPressed = false
                         } else {
-                            // finisce il turno di gioco, l'utente deve scegliere un punteggio
+
                             showDialog = true
                         }
                     },
@@ -267,7 +266,7 @@ class SingleplayerActivity : ComponentActivity() {
                                 //bonus
                                 scoreList[6] = ScoreCalculator().bonusCheck(scoreList)
                                 if (scoreList[6] == 35){
-                                    playedCategories[6] = true  //la categoria viene giocata in automatico
+                                    playedCategories[6] = true
                                     previousCategory = categoryToPlay - 1
                                 }
                                 playedCategories[categoryToPlay - 1] = true
@@ -350,10 +349,10 @@ class SingleplayerActivity : ComponentActivity() {
         gameFinished = true
     }
 
-    // Quando la partita finisce
+
     if (gameFinished) {
         GameFinish(score = totalScore, onConfirm = {
-            // Quando l'utente clicca su "OK", chiama onGameFinish per salvare i dati
+
             onGameFinish(totalScore)
         })
     }
@@ -444,12 +443,12 @@ fun ScoreTable(
                         },
                         contentColor = when {
                             clickedButtonIndex == i -> Color.White
-                            else -> Color.DarkGray},                 //testo del bottone attivo
+                            else -> Color.DarkGray},
                         disabledContentColor = Color.Black
                     ),
                     enabled = when {
-                        i == 6 -> false //il bottone del punteggio bonus non è cliccabile
-                        else -> !playedCategories[i]},  // Disabilitiamo il bottone se la categoria è già stata giocata
+                        i == 6 -> false
+                        else -> !playedCategories[i]},
 
                     modifier = Modifier
                         .padding(bottom = 8.dp)
@@ -460,13 +459,13 @@ fun ScoreTable(
                     if (scorePreviewList.isNotEmpty() && scorePreviewList[i] != -1 && !playedCategories[i]) {
 
                         Text(
-                            text = scorePreviewList[i].toString(), // Mostra il punteggio se non è -1
+                            text = scorePreviewList[i].toString(),
                             color = when {
                                 clickedButtonIndex == i -> Color.White
-                                else -> Color.DarkGray} // Bianco se selezionato, nero altrimenti
+                                else -> Color.DarkGray}
                         )
                     }
-                    if (playedCategories[i]) {                          // la categoria è già stata giocata
+                    if (playedCategories[i]) {
                         Text(
                             text = scoreList[i].toString(),
                             color = Color.Black
