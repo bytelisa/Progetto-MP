@@ -27,4 +27,11 @@ class UserRepository(private val userDao: UserDAO) {
             userDao.deleteUser(user)
         }.start()
     }
+
+
+    fun getUsersByGameModeAndDate(gameMode: String, date: String): LiveData<List<User>> {
+        return userDao.getUsersByGameModeAndDate(gameMode, date)
+    }
+
+
 }

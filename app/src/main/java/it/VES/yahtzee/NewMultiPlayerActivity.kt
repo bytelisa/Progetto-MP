@@ -33,18 +33,56 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import it.VES.yahtzee.db.Scores
+import it.VES.yahtzee.db.User
+import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class NewMultiPlayerActivity : ComponentActivity() {
 
-    //variabile che tiene traccia del giocatore corrente, varia tra 1 e 2
+    // codice vale:
+
+    // ViewModel per interagire con il database
+    private lateinit var userViewModel: UserViewModel
+
+
+    // Giocatori e punteggi della partita
+    private var playerOneScore: Int = 0
+    private var playerTwoScore: Int = 0
+    private lateinit var playerOneName: String
+    private lateinit var playerTwoName: String
+
+
+    //variabile che tiene traccia del giocatore corrente, varia tra 1 e 2  (ELI)
     private var currentPlayer by mutableIntStateOf(1)
     private var categoryToPlay by mutableIntStateOf(-1)
+
+    // vale
+    private var gameFinished by mutableStateOf(false)
+    private var winningPlayer: Int = 0
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
+
+        // Ottieni il ViewModel
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+
+        // Inizializza la partita
+        playerOneName = intent.getStringExtra("PLAYER_ONE_NAME") ?: "Player 1"
+        playerTwoName = intent.getStringExtra("PLAYER_TWO_NAME") ?: "Player 2"
+
+
+
+
         enableEdgeToEdge()
         setContent {
             YahtzeeTheme {
@@ -59,46 +97,125 @@ class NewMultiPlayerActivity : ComponentActivity() {
                             BackgroundMultiplayer()
 
 
-                            newMultiPlayer(
-                                currentPlayer = currentPlayer,
-                                categoryToPlay = categoryToPlay,
-                                onCategoryToPlayChange = { newCategory ->
-                                    categoryToPlay = newCategory
-                                },
-                                onTurnEnd = {nextPlayer()}
+                            val playerOne = User(
+                                player = playerOneName,
+                                score = playerOneScore.toString(),
+                                mod = "Multiplayer",
+                                date = System.currentTimeMillis().toString()
                             )
 
-                            ScoreTableM(
-                                currentPlayer= currentPlayer,
-                                scorePreview1 = List(14){-1},
-                                scorePreview2 = List(14){-1},
-                                scoreList1 = List(14){0},
-                                scoreList2 = List(14){0},
-                                playedCategories1 = List(14){false},
-                                playedCategories2 = List(14){false},
-                                onCategorySelect1 = { newCategory ->
-                                    categoryToPlay = newCategory
-                                },
-                                onCategorySelect2 = { newCategory ->
-                                    categoryToPlay = newCategory
-                                },
+                            Log.d("GameLog11", "Punteggio di $playerOneName aggiornato: $playerOneScore")
+
+
+                            val playerTwo = User(
+                                player = playerTwoName,
+                                score = playerTwoScore.toString(),
+                                mod = "Multiplayer",
+                                date = System.currentTimeMillis().toString()
+                            )
+
+                            Log.d("GameLog11", "Punteggio di $playerTwoName aggiornato: $playerTwoScore")
+
+
+
+
+                            if (gameFinished) {
+
+
+                                /*
+                                WinningPlayer(
+                                    winner = winningPlayer,
+                                    score = if (winningPlayer == 1) playerOneScore else playerTwoScore,
+                                    playerOne = User(
+                                        player = playerOneName,
+                                        score = playerOneScore.toString(),
+                                        mod = "Multiplayer",
+                                        date = System.currentTimeMillis().toString()
+                                    ),
+                                    playerTwo = User(
+                                        player = playerTwoName,
+                                        score = playerTwoScore.toString(),
+                                        mod = "Multiplayer",
+                                        date = System.currentTimeMillis().toString()
+                                    ),
+                                    onGameFinish = { saveGameResult() }     // Salvataggio e ritorno
 
                                 )
-                            var showNameDialog by remember { mutableStateOf(true) }
-                            var player1Name by remember { mutableStateOf("") }
-                            var player2Name by remember { mutableStateOf("") }
 
-                            if (showNameDialog) {
-                                NamesPopup(onDismiss = { name1, name2 ->
-                                    player1Name = name1
-                                    player2Name = name2
-                                    showNameDialog = false
-                                })
+                                 */
+
+
+
+                                WinningPlayer(
+                                    winner = winningPlayer,
+                                    score = if (winningPlayer == 1) playerOneScore else playerTwoScore,
+                                    playerOne = playerOne,
+                                    playerTwo = playerTwo,
+                                    onDismiss = {
+                                        saveGameResult(playerOneScore, playerTwoScore)
+                                    }
+                                )
+
+
+                            } else {
+
+                                // Logica di gioco multiplayer
+                                newMultiPlayer(
+                                    currentPlayer = currentPlayer,
+                                    categoryToPlay = categoryToPlay,
+                                    onCategoryToPlayChange = { newCategory ->
+                                        categoryToPlay = newCategory
+                                    },
+                                    onTurnEnd = { nextPlayer() },
+                                    playerOne = playerOne,
+                                    playerTwo = playerTwo,
+                                    onGameFinish = { score1, score2 ->
+                                        playerOneScore = score1
+                                        playerTwoScore = score2
+                                        gameFinished = true
+                                        winningPlayer = if (score1 > score2) 1 else if (score2 > score1) 2 else 0
+                                    }
+                                )
+
+
+                                // Mostra la tabella punteggi
+                                ScoreTableM(
+                                    currentPlayer = currentPlayer,
+                                    scorePreview1 = List(14) { -1 },
+                                    scorePreview2 = List(14) { -1 },
+                                    scoreList1 = List(14) { 0 },
+                                    scoreList2 = List(14) { 0 },
+                                    playedCategories1 = List(14) { false },
+                                    playedCategories2 = List(14) { false },
+                                    onCategorySelect1 = { newCategory ->
+                                        categoryToPlay = newCategory
+
+                                    },
+                                    onCategorySelect2 = { newCategory ->
+                                        categoryToPlay = newCategory
+
+                                    },
+
+                                    )
+
+                                var showNameDialog by remember { mutableStateOf(true) }
+                                var player1Name by remember { mutableStateOf("") }
+                                var player2Name by remember { mutableStateOf("") }
+
+                                if (showNameDialog) {
+                                    NamesPopup(onDismiss = { name1, name2 ->
+                                        player1Name = name1
+                                        player2Name = name2
+                                        showNameDialog = false
+                                    })
+                                }
+
+                                if (!showNameDialog) {
+                                    PlayersNames(player1 = player1Name, player2 = player2Name)
+
+                                }
                             }
-
-                            if (!showNameDialog) {
-                                PlayersNames(player1 = player1Name, player2 = player2Name)
-                            }                        }
+                        }
                     }
                 )
             }
@@ -113,10 +230,59 @@ class NewMultiPlayerActivity : ComponentActivity() {
             1
         }
     }
+
+
+
+
+
+    // Funzione per salvare i punteggi dei giocatori nel database
+    private fun saveGameResult(playerOneScore: Int, playerTwoScore: Int) {
+        val currentDate = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())
+
+        // Crea l'oggetto User per Player 1
+        val playerOne = User(
+            id = 0, // Room genererà automaticamente l'ID
+            player = playerOneName,
+            score = playerOneScore.toString(),
+            mod = "Multiplayer",
+            date = currentDate
+        )
+
+        // Crea l'oggetto User per Player 2
+        val playerTwo = User(
+            id = 0, // Room genererà automaticamente l'ID
+            player = playerTwoName,
+            score = playerTwoScore.toString(),
+            mod = "Multiplayer",
+            date = currentDate
+        )
+
+        // Salva i dati nel database tramite il ViewModel
+        userViewModel.insert(playerOne)
+        userViewModel.insert(playerTwo)
+
+        Log.d("MultiplayerActivity11", "Dati salvati per i giocatori: $playerOneName e $playerTwoName")
+
+        // Una volta salvati, chiudi l'activity e torna alla schermata home
+        finish()
+    }
+
+
+
 }
 
+
+
+
 @Composable
-fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChange: (Int) -> Unit, onTurnEnd: (() -> Unit)){
+fun newMultiPlayer(currentPlayer: Int,
+                   categoryToPlay: Int,
+                   onCategoryToPlayChange: (Int) -> Unit,
+                   onTurnEnd: (() -> Unit),
+                   playerOne: User,  // Passa i giocatori
+                   playerTwo: User,
+                   onGameFinish: (Int, Int) -> Unit   // Callback per eseguire azioni quando la partita finisce
+){
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds1 by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rounds2 by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -160,6 +326,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
         ) {
             Button(
                 onClick = { // roll
+                    Log.d("MultiPlayerActivity11", "Roll button clicked: rolls = $rolls")
 
                     if (rolls < 3) {
                         playPressed = false
@@ -211,6 +378,8 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                         if (rounds1 < 13) {
                             if (categoryToPlay != -1 && !playedCategories1[categoryToPlay - 1]) {
 
+                                Log.d("MultiPlayerActivity11", "Player 1 selecting category $categoryToPlay")
+
                                 scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
 
                                 //punto bonus
@@ -222,12 +391,16 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
                                 playedCategories1[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
+                                Log.d(
+                                    "MultiPlayerActivity11",
+                                    "#selected score: ${scoreList2[categoryToPlay - 1]}"
+                                )
 
                             } else {
                                 showPlayDialog = true
                             }
-                            Log.d("MultiPlayerActivity", "New Score List player 1: $scoreList1")
-                            Log.d("MultiPlayerActivity", "Round finished for player 1: ${rounds1 + 1}")
+                            Log.d("MultiPlayerActivity11", "New Score List player 1: $scoreList1")
+                            Log.d("MultiPlayerActivity11", "Round finished for player 1: ${rounds1 + 1}")
 
                             rolls = 0
                             rounds1 += 1
@@ -255,12 +428,16 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
 
                                 playedCategories2[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
+                                Log.d(
+                                    "MultiPlayerActivity11",
+                                    "#selected score: ${scoreList2[categoryToPlay - 1]}"
+                                )
 
                             } else {
                                 showPlayDialog = true
                             }
-                            Log.d("MultiPlayerActivity", "New Score List player 2: $scoreList2")
-                            Log.d("MultiPlayerActivity", "Round finished for player 2: ${rounds2 + 1}")
+                            Log.d("MultiPlayerActivity11", "New Score List player 2: $scoreList2")
+                            Log.d("MultiPlayerActivity11", "Round finished for player 2: ${rounds2 + 1}")
 
                             rolls = 0
                             rounds2 += 1
@@ -272,7 +449,9 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                     }
 
                     if (rounds1 >= 13 && rounds2 >= 13) {
+                        Log.d("MultiPlayerActivity11", "Game finished: rounds1 = $rounds1, rounds2 = $rounds2")
                         gameFinished = true
+
                     }
 
                 },
@@ -351,6 +530,11 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
             )
         }
 
+
+
+
+
+
         if (turnEndDialog) {
 
             AlertDialog(
@@ -382,6 +566,7 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                 confirmButton = {
                     Button(onClick = {
                         turnEndDialog = false
+                        Log.d("MultiPlayerActivity11", "Turn end confirmed, calling onTurnEnd()")
                         onTurnEnd()
 
                     }) {
@@ -412,13 +597,48 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
             )
     }
 
+
+
     if (gameFinished) {
+
+
+        /*
         WinningPlayer(currentPlayer, score = when {
             totalScore1 > totalScore2 -> totalScore1
             totalScore2 > totalScore1 -> totalScore2
             else -> totalScore1 //pareggio
-        })
+        }, playerOne = playerOne,
+            playerTwo = playerTwo,
+            onGameFinish = onGameFinish
+        )
+
+         */
+
+
+
+        // Determina il vincitore
+        val winner = if (totalScore1 > totalScore2) 1 else if (totalScore2 > totalScore1) 2 else 0
+        val winningScore = if (winner == 1) totalScore1 else totalScore2   //pareggio
+
+        Log.d("winner11", "punteggi : player1 - player 2: $totalScore1 - $totalScore2")
+
+        WinningPlayer(
+            winner = winner,
+            score = winningScore,
+            playerOne = playerOne.copy(score = totalScore1.toString()), // Passa il punteggio aggiornato
+            playerTwo = playerTwo.copy(score = totalScore2.toString()), // Passa il punteggio aggiornato
+            onDismiss = {
+                onGameFinish(totalScore1, totalScore2)
+                gameFinished = false
+            }
+        )
+
+
+
     }
+
+
+
 
 
 
@@ -437,6 +657,8 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
             onCategoryToPlayChange(index)
         },
         )
+
+
 
     //TODO: trovare modo per evidenziare il giocatore
 
@@ -609,32 +831,46 @@ fun PlayersNames(player1: String, player2: String) {
     }
 }
 
+
 @Composable
-fun WinningPlayer(winner: Int, score: Int){
+fun WinningPlayer(winner: Int,
+                  score: Int,
+                  playerOne: User,     // Passa i giocatori
+                  playerTwo: User,
+                  onDismiss: () -> Unit // Aggiungi una funzione di callback per la chiusura
+){    //funzione di salvataggio
 
     var gameFinished by rememberSaveable {mutableStateOf(true)}
 
 
-    AlertDialog(
-        onDismissRequest = { gameFinished = false },
-        title = { Text(
-            text = "Player #$winner wins!",
-            fontSize = 35.sp, // Big
-        ) },
-        text = {
-            Column {
-                Text ("You scored $score points." )
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                gameFinished = false
+    if (gameFinished) {
+        AlertDialog(
+            onDismissRequest = { gameFinished = false
+                onDismiss()
+                },
+                title = {
+                Text(
+                    text = "Player #$winner wins!",
+                    fontSize = 35.sp, // Big
+                )
+            },
+            text = {
+                Column {
+                    Text("You scored $score points.")
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    gameFinished = false
 
-            }) {
-                Text("OK")
-            }
-        },
-    )
+                    onDismiss() // Chiama il callback quando l'utente clicca su OK
+                }) {
+                    Text("OK")
+                }
+            },
+        )
+    }
+
 }
 
 @Composable

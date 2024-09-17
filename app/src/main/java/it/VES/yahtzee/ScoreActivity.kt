@@ -93,7 +93,7 @@ fun SingleplayerScoreCard(scores: Scores){
 
 @Composable
 fun MultiplayerScoreCard(scores:Scores){
-    val dateFormat=SimpleDateFormat("dd/MM/yyyy",Locale.getDefault())
+    val dateFormat=SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault())
     val formattedDate=dateFormat.format(scores.datePlayed)
     Column{
         Text(
@@ -118,6 +118,21 @@ fun MultiplayerScoreCard(scores:Scores){
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
+
+        // Aggiungi la modalità di gioco
+        Text(
+            text = "Game Mode: ${scores.gameMode}",
+            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onPrimary,
+            textAlign = TextAlign.Left,
+            style = TextStyle(
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+
         Text(
             text = "Score: ${scores.score} - ${scores.opponentScore}",
             fontSize = 18.sp,
@@ -197,38 +212,75 @@ fun ScoreScreen(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
 
 
+    // Create a map to store multiplayer games with date as the key
+    val multiplayerGames = userList
+        .filter { it.mod == "Multiplayer" }
+        .groupBy { it.date }
+
+    // Create a set to keep track of unique dates for multiplayer games
+    val uniqueDates = mutableSetOf<String>()
+
+    // Create the list of Scores with player2 details
     val scoreList = remember(userList) {
-        userList.map { user ->
+        userList.mapNotNull { user ->
             val datePlayed = try {
-                SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).parse(user.date) ?: Date()
+                SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).parse(user.date)?.time
             } catch (e: Exception) {
-                Date()
+                null
             }
-            Scores(
-                username = user.player,
-                gameMode = user.mod,
-                score = user.score,
-                datePlayed = datePlayed,
-                opponentUsername = "", // Modifica se hai dati di avversari
-                opponentScore = 0 // Modifica se hai dati di avversari
-            )
+
+            if (user.mod == "Singleplayer") {
+                // Keep all Singleplayer scores without filtering
+                Scores(
+                    username = user.player,
+                    gameMode = user.mod,
+                    score = user.score,
+                    datePlayed = datePlayed?.let { Date(it) } ?: Date(),
+                    opponentUsername = "",
+                    opponentScore = 0
+                )
+            } else if (user.mod == "Multiplayer" && datePlayed != null) {
+                // Convert datePlayed to a string representation to check uniqueness
+                val dateKey = datePlayed.toString()
+
+                if (!uniqueDates.contains(dateKey)) {
+                    uniqueDates.add(dateKey)
+
+                    // Find the opponent details
+                    val opponentUsername: String
+                    val opponentScore: Int
+
+                    val gameDetails = multiplayerGames[user.date]
+                    if (gameDetails != null && gameDetails.size > 1) {
+                        // Find the opponent in the same game
+                        val opponent = gameDetails.find { it.player != user.player }
+                        opponentUsername = opponent?.player ?: ""
+                        opponentScore = opponent?.score?.toIntOrNull() ?: 0
+                    } else {
+                        opponentUsername = ""
+                        opponentScore = 0
+                    }
+
+                    Scores(
+                        username = user.player,
+                        gameMode = user.mod,
+                        score = user.score,
+                        datePlayed = Date(datePlayed),
+                        opponentUsername = opponentUsername,
+                        opponentScore = opponentScore
+                    )
+                } else {
+                    null // Skip this entry as it is a duplicate
+                }
+            } else {
+                null
+            }
         }
     }
 
-    YahtzeeTheme {
-        /*
-        ScoreScreenContent(
-            scores = scoreList,
-            onDelete = { score ->
-                // Convert Scores back to User if needed
-                val userToDelete = userList.find { it.player == score.username && it.score == score.score }
-                if (userToDelete != null) {
-                    userViewModel.delete(userToDelete)
-                }
-            }
-        )
 
-         */
+
+    YahtzeeTheme {
 
         ScoreScreenContent(
             scores = scoreList,

@@ -18,4 +18,11 @@ interface UserDAO {
 
     @Delete
     fun deleteUser(user: User)
+
+
+    @Query("SELECT * FROM user_db WHERE mod = :gameMode AND date = :date ORDER BY id DESC")
+    fun getUsersByGameModeAndDate(gameMode: String, date: String): LiveData<List<User>>
 }
+
+
+
