@@ -212,13 +212,16 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                             if (categoryToPlay != -1 && !playedCategories1[categoryToPlay - 1]) {
 
                                 scoreList1[categoryToPlay - 1] = scorePreviewList1[categoryToPlay - 1]
-                                scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1) //aggiungiamo eventuale punto bonus
+
+                                //punto bonus
+                                scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
+                                if (scoreList1[6] == 35){
+                                    playedCategories1[6] = true  //la categoria viene giocata in automatico
+                                    previousCategory = categoryToPlay - 1
+                                }
+
                                 playedCategories1[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
-                                Log.d(
-                                    "MultiPlayerActivity",
-                                    "#selected score: ${scoreList2[categoryToPlay - 1]}"
-                                )
 
                             } else {
                                 showPlayDialog = true
@@ -242,13 +245,16 @@ fun newMultiPlayer(currentPlayer: Int, categoryToPlay: Int, onCategoryToPlayChan
                                 Log.d("MultiPlayerActivity", "Player 2 selected category: $categoryToPlay")
 
                                 scoreList2[categoryToPlay - 1] = scorePreviewList2[categoryToPlay - 1]
-                                //scoreList2[6] = ScoreCalculator().bonusCheck(scoreList2)
+
+                                //bonus
+                                scoreList2[6] = ScoreCalculator().bonusCheck(scoreList2)
+                                if (scoreList2[6] == 35){
+                                    playedCategories2[6] = true  //la categoria viene giocata in automatico
+                                    previousCategory = categoryToPlay - 1
+                                }
+
                                 playedCategories2[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
-                                Log.d(
-                                    "MultiPlayerActivity",
-                                    "#selected score: ${scoreList2[categoryToPlay - 1]}"
-                                )
 
                             } else {
                                 showPlayDialog = true
@@ -484,7 +490,7 @@ fun ScoreTableM(
                             },
 
                             disabledContainerColor = when {     //per il bottone disabilitato
-                                i==6 -> Color.Transparent
+                                i==6 && currentPlayer==1 && !playedCategories1[6]-> Color.Transparent
                                 else -> Color(0x9C9FD8F1)
                             },
 
@@ -538,7 +544,7 @@ fun ScoreTableM(
                                 else -> Color.Transparent
                             },
                             disabledContainerColor = when {     //per il bottone disabilitato
-                                i==6 -> Color.Transparent
+                                i==6 && currentPlayer==2 && !playedCategories2[6]-> Color.Transparent
                                 else -> Color(0xA9D39B98)
                             },
                             contentColor = Color.DarkGray,                 //testo del bottone attivo
@@ -602,7 +608,6 @@ fun PlayersNames(player1: String, player2: String) {
         }
     }
 }
-
 
 @Composable
 fun WinningPlayer(winner: Int, score: Int){

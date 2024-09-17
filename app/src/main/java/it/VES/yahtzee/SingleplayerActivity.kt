@@ -203,17 +203,15 @@ fun SinglePlayer(
 
                             if (!playedCategories[categoryToPlay - 1]){
                                 scoreList[categoryToPlay - 1] = scorePreviewList[categoryToPlay - 1]
-                                scoreList[6] = ScoreCalculator().bonusCheck(scoreList) //aggiungiamo eventuale punto bonus
+
+                                //bonus
+                                scoreList[6] = ScoreCalculator().bonusCheck(scoreList)
                                 if (scoreList[6] == 35){
                                     playedCategories[6] = true  //la categoria viene giocata in automatico
                                     previousCategory = categoryToPlay - 1
                                 }
                                 playedCategories[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
-                                Log.d(
-                                    "SinglePlayerActivity",
-                                    "#selected score: ${scoreList[categoryToPlay - 1]}"
-                                )
                             }
                         }
                         Log.d("SinglePlayerActivity", "New Score List: $scoreList")
