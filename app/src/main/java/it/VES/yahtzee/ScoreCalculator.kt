@@ -156,41 +156,35 @@ class ScoreCalculator {
         return 0
     }
 
-    //Return the score obtained whit 4x
     private fun fourX(myDice: ArrayList<Int>): Int  {
+
         val foundDice = arrayListOf(0,0,0,0,0,0)
         var point = 0
 
-        for(i in myDice){
-            foundDice[i-1] += 1
-            point += i
+        for (diceValue in myDice){
+            foundDice[diceValue-1] +=1
         }
-        for(i in foundDice){
-            if(i >= 4){
-                return point
+        for (i in 0..< foundDice.size){
+            if (foundDice[i] >= 4) {
+                point = 4*(i+1)
             }
         }
-        return 0
-
-        //TODO questa restituisce chances
+        return point
     }
 
-    //Return the score obtained whit 3x
     private fun threeX(myDice: ArrayList<Int>): Int {
         val foundDice = arrayListOf(0,0,0,0,0,0)
         var point = 0
 
-        for(i in myDice){
-            foundDice[i-1] += 1
-            point += i
+        for (diceValue in myDice){ //i rappresenta il dado stesso (1..6)
+            foundDice[diceValue-1] +=1 //in foundDice conto ordinatamente quante volte si presenta ogni numero
         }
-
-        for(i in foundDice){
-            if(i >= 3){
-                return point
+        for (i in 0..<foundDice.size){
+            if (foundDice[i] >= 3) {
+                point = 3*(i+1)     //restituisco 3 volte il valore del dado corrispondente
             }
         }
-        return 0
+        return point
     }
 
     fun bonusCheck(myDice: SnapshotStateList<Int>): Int{
