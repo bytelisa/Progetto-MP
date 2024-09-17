@@ -256,7 +256,9 @@ class SingleplayerActivity : ComponentActivity() {
                         text = when {
                             shake -> "Shake! (${3 - rolls} left)"
                             else -> "Roll (${3 - rolls} left)"
-                        }
+                        },
+                        fontSize = 16.sp
+
                     )
                 }
 
@@ -314,13 +316,15 @@ class SingleplayerActivity : ComponentActivity() {
                     .width(100.dp)
                     .height(45.dp),
             ) {
-                Text(text = "Play")
+                Text(text = "Play",
+                    fontSize = 16.sp
+                )
             }
         }
 
         if (rolledDice.isNotEmpty() && rolls != 0) {
 
-            val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)    //TODO funzione che randomizza cosi cambiano ad ogni lancio
+            val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
             val newClickedStates = PlayUtils().imageSequence(rolledDice, rotationValues = rotationValues, context)
 
             clickedStates.clear()
@@ -468,13 +472,15 @@ fun ScoreTable(
                             text = scorePreviewList[i].toString(),
                             color = when {
                                 clickedButtonIndex == i -> Color.White
-                                else -> Color.DarkGray}
+                                else -> Color.DarkGray},
+                            fontSize = 16.sp
                         )
                     }
                     if (playedCategories[i]) {
                         Text(
                             text = scoreList[i].toString(),
-                            color = Color.Black
+                            color = Color.Black,
+                            fontSize = 16.sp
                         )
                     }
                 }

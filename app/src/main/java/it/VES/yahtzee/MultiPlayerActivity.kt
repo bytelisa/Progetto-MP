@@ -46,53 +46,28 @@ import java.util.Locale
 class MultiPlayerActivity : ComponentActivity() {
 
 
-
-
     private lateinit var userViewModel: UserViewModel
-
-
-
 
     private var playerOneScore: Int = 0
     private var playerTwoScore: Int = 0
     private lateinit var playerOneName: String
     private lateinit var playerTwoName: String
 
-
-
     private var currentPlayer by mutableIntStateOf(1)
     private var categoryToPlay by mutableIntStateOf(-1)
 
-
     private var gameFinished by mutableStateOf(false)
     private var winningPlayer: Int = 0
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
 
-        /*
-        diceRollLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val diceResults = result.data?.getIntArrayExtra("diceResults") //prendiamo come risultato diceResults
-                diceResults?.let {
-                    onDiceRolled(it.toList())   //usiamo questa callback per riportare i risultati alla funzione composable
-                }
-            }
-        }
-
-         */
-
-
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
-
 
         playerOneName = intent.getStringExtra("PLAYER_ONE_NAME") ?: "Player 1"
         playerTwoName = intent.getStringExtra("PLAYER_TWO_NAME") ?: "Player 2"
-
-
 
 
         enableEdgeToEdge()
@@ -251,11 +226,8 @@ class MultiPlayerActivity : ComponentActivity() {
 
         Log.d("MultiplayerActivity11", "Dati salvati per i giocatori: $playerOneName e $playerTwoName")
 
-
         finish()
     }
-
-
 }
 
 
@@ -288,7 +260,7 @@ fun MultiPlayer(currentPlayer: Int,
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     var turnEndDialog by rememberSaveable { mutableStateOf(false) }
-    var clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
+    val clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
     val sharedPreferences=context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     val soundEnabled=sharedPreferences.getBoolean("soundEnabled",false)
 
@@ -359,7 +331,9 @@ fun MultiPlayer(currentPlayer: Int,
                     .width(200.dp)
                     .height(45.dp),
             ) {
-                Text(text = "Roll (${3 - rolls} left)")
+                Text(text = "Roll (${3 - rolls} left)",
+                    fontSize = 16.sp
+                )
             }
 
             Button(
@@ -462,7 +436,9 @@ fun MultiPlayer(currentPlayer: Int,
                     .width(100.dp)
                     .height(45.dp),
             ) {
-                Text(text = "Play")
+                Text(text = "Play",
+                    fontSize = 16.sp
+                )
             }
 
         }
@@ -547,7 +523,6 @@ fun MultiPlayer(currentPlayer: Int,
                                 else -> "It's player #1's turn!"
                             }
                         )
-
                     }
                 },
                 confirmButton = {
@@ -588,7 +563,6 @@ fun MultiPlayer(currentPlayer: Int,
 
     if (gameFinished) {
 
-
         // Determina il vincitore
         val winner = if (totalScore1 > totalScore2) 1 else if (totalScore2 > totalScore1) 2 else 0
         val winningScore = if (winner == 1) totalScore1 else totalScore2   //pareggio
@@ -602,12 +576,8 @@ fun MultiPlayer(currentPlayer: Int,
             playerTwo = playerTwo.copy(score = totalScore2.toString()), // Passa il punteggio aggiornato
             onDismiss = {
                 onGameFinish(totalScore1, totalScore2)
-                //gameFinished = false
             }
         )
-
-
-
     }
 
     ScoreTableM(
@@ -625,11 +595,6 @@ fun MultiPlayer(currentPlayer: Int,
             onCategoryToPlayChange(index)
         },
         )
-
-
-
-    //TODO: trovare modo per evidenziare il giocatore
-
 }
 
 
@@ -703,13 +668,16 @@ fun ScoreTableM(
                                 text = scorePreview1[i].toString(),
                                 color = when {
                                     clickedButtonIndex == i -> Color.White
-                                    else -> Color.DarkGray}
+                                    else -> Color.DarkGray},
+                                fontSize = 16.sp
+
                             )
                         }
                         if (playedCategories1[i]) {
                             Text(
                                 text = scoreList1[i].toString(),
-                                color = Color.Black
+                                color = Color.Black,
+                                fontSize = 16.sp
                             )
                         }
                     }
@@ -755,13 +723,15 @@ fun ScoreTableM(
                                 text = scorePreview2[i].toString(),
                                 color = when {
                                     clickedButtonIndex == i -> Color.White
-                                    else -> Color.DarkGray}
+                                    else -> Color.DarkGray},
+                                fontSize = 16.sp
                             )
                         }
                         if (playedCategories2[i]) {
                             Text(
                                 text = scoreList2[i].toString(),
-                                color = Color.Black
+                                color = Color.Black,
+                                fontSize = 16.sp
                             )
                         }
                     }
@@ -786,14 +756,18 @@ fun PlayersNames(player1: String, player2: String) {
             Text(
                 text = player1,
                 modifier = Modifier.weight(1f), // Divide lo spazio equamente tra i due Text
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp
+
             )
             Text(
                 text = player2,
                 modifier = Modifier
                             .weight(1f)
                             .padding(start = 30.dp),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp
+
             )
         }
     }
