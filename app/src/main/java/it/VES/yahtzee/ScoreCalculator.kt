@@ -1,5 +1,6 @@
 package it.VES.yahtzee
 
+import android.util.Log
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
 class ScoreCalculator {
@@ -190,15 +191,19 @@ class ScoreCalculator {
         return 0
     }
 
-    public fun bonusCheck(myDice: SnapshotStateList<Int>): Int{
-        //aggiungiamo 35 punti se la somma dei primi 6 dadi è >63
+    fun bonusCheck(myDice: SnapshotStateList<Int>): Int{
+
         var sum = 0
-        for (i in 0..5){
-            sum+=myDice[5]
+        for (i in 0..5){    //somma dei primi 6 dadi
+            sum+=myDice[i]
+
         }
+        Log.d("ScoreCalculator", "Current sum: $sum")
+
         return when{
-            sum>62 -> 35
+            sum>62 -> 35    //se la somma è >=63 restituiamo il punteggio
             else -> 0
         }
+
     }
 }

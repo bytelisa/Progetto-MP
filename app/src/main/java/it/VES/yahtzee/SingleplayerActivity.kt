@@ -204,6 +204,10 @@ fun SinglePlayer(
                             if (!playedCategories[categoryToPlay - 1]){
                                 scoreList[categoryToPlay - 1] = scorePreviewList[categoryToPlay - 1]
                                 scoreList[6] = ScoreCalculator().bonusCheck(scoreList) //aggiungiamo eventuale punto bonus
+                                if (scoreList[6] == 35){
+                                    playedCategories[6] = true  //la categoria viene giocata in automatico
+                                    previousCategory = categoryToPlay - 1
+                                }
                                 playedCategories[categoryToPlay - 1] = true
                                 previousCategory = categoryToPlay - 1
                                 Log.d(
@@ -253,7 +257,7 @@ fun SinglePlayer(
 
         if (rolledDice.isNotEmpty() && rolls != 0) {
 
-            val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)
+            val rotationValues = listOf(0f, 15f, -10f, 20f, -5f)    //TODO funzione che randomizza cosi cambiano ad ogni lancio
             val newClickedStates = PlayUtils().imageSequence(rolledDice, rotationValues = rotationValues, context)
 
             clickedStates.clear()
@@ -370,7 +374,7 @@ fun ScoreTable(
                             else -> Color.Transparent
                         },
                         disabledContainerColor = when {     //per il bottone disabilitato
-                            i==6 -> Color.Transparent
+                            i==6 && !playedCategories[6]-> Color.Transparent
                             else -> Color(0x9E80C0DD)
                         },
                         contentColor = when {
