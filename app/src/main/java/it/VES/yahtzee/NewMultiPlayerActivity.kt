@@ -239,8 +239,6 @@ class NewMultiPlayerActivity : ComponentActivity() {
         userViewModel.insert(playerOne)
         userViewModel.insert(playerTwo)
 
-        Log.d("MultiplayerActivity11", "Dati salvati per i giocatori: $playerOneName e $playerTwoName")
-
         // Una volta salvati, chiudi l'activity e torna alla schermata home
         finish()
     }

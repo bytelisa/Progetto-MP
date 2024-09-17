@@ -102,22 +102,16 @@ class SingleplayerActivity : ComponentActivity() {
         val userName = sharedPreferences.getString("userName", "NomeGiocatore") ?: "NomeGiocatore"
 
 
-        // per dubbug
-        Log.d("SingleplayerActivity", "Salvataggio in DB avviato")
-
         val user = User(
             player = userName, // Usa il nome recuperato dalle SharedPreferences
             score = score.toString(),   // Converti il punteggio in stringa
-            mod = "Singleplayer", // Se è singleplayer, altrimenti puoi passare il mod corretto
+            mod = "Singleplayer",
             date = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())  // Data e ora correnti
         )
-
-        Log.d("SingleplayerActivity", "Dati da salvare: $user")
 
 
         try {
             userViewModel.insert(user)   // Salva nel database
-            Log.d("SingleplayerActivity", "Salvataggio riuscito")
         } catch (e: Exception) {
             Log.e("SingleplayerActivity", "Errore durante il salvataggio: ${e.message}")
         }
