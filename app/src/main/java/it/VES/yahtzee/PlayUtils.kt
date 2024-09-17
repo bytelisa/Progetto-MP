@@ -59,7 +59,7 @@ class PlayUtils {
         Column(
             modifier = Modifier
                 .fillMaxSize() ,
-            verticalArrangement = Arrangement.Bottom,  // Aligns children at the bottom
+            verticalArrangement = Arrangement.Bottom,
         ) {
             Spacer(modifier = Modifier.height(100.dp))
 
@@ -123,7 +123,12 @@ class PlayUtils {
     }
 
 
-    fun getImageResourceIds(diceValues: List<Int>, context: Context, clickedStates: List<Boolean>, oldImageIds: List<Int>): List<Int> {
+    private fun getImageResourceIds(
+        diceValues: List<Int>,
+        context: Context,
+        clickedStates: List<Boolean>,
+        oldImageIds: List<Int>): List<Int> {
+
         return diceValues.mapIndexed { index, currentValue ->
             if (!clickedStates[index]) {
                 val resourceName = "dice$currentValue" // Costruisce il nome dell'immagine (es. dice1, dice2...)
@@ -131,9 +136,6 @@ class PlayUtils {
                 // Se non è cliccata, aggiorna con il nuovo ID
             } else {
                 oldImageIds[index]
-                // se immagine è bloccata dobbiamo mantenere il vecchio id della sua immagine
-                //posso fare una funzione che salva gli id correnti non appena l'immagine viene cliccata, e poi qui lo accedo
-
             }
         }
 

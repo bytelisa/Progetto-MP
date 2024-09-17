@@ -107,14 +107,12 @@ fun Home(navController: NavController) {
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
-
                 val intent = Intent(context, PlayModeActivity::class.java)
                 context.startActivity(intent)
-
             },
             modifier = Modifier
-                .width(200.dp) // Set width for all buttons
-                .height(45.dp), // Set height for all buttons)
+                .width(200.dp)
+                .height(45.dp),
         ) {
             Text(text = "Play")
         }
@@ -125,7 +123,7 @@ fun Home(navController: NavController) {
         Button(
 
             onClick = {
-                navController.navigate("howToPlay") // Naviga alla schermata delle impostazioni
+                navController.navigate("howToPlay") // Naviga alla schermata delle regole di gioco
             },
 
             modifier = Modifier

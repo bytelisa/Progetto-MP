@@ -1,14 +1,11 @@
 package it.VES.yahtzee
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import it.VES.yahtzee.db.Scores
 import it.VES.yahtzee.db.User
 import it.VES.yahtzee.db.UserViewModel
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
@@ -155,7 +151,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                             } else {
 
                                 // Logica di gioco multiplayer
-                                newMultiPlayer(
+                                MultiPlayer(
                                     currentPlayer = currentPlayer,
                                     categoryToPlay = categoryToPlay,
                                     onCategoryToPlayChange = { newCategory ->
@@ -220,7 +216,6 @@ class NewMultiPlayerActivity : ComponentActivity() {
     }
 
     private fun nextPlayer() {
-
         currentPlayer = if (currentPlayer == 1) {
             2
         } else {
@@ -268,13 +263,13 @@ class NewMultiPlayerActivity : ComponentActivity() {
 
 
 @Composable
-fun newMultiPlayer(currentPlayer: Int,
-                   categoryToPlay: Int,
-                   onCategoryToPlayChange: (Int) -> Unit,
-                   onTurnEnd: (() -> Unit),
-                   playerOne: User,  // Passa i giocatori
-                   playerTwo: User,
-                   onGameFinish: (Int, Int) -> Unit   // Callback per eseguire azioni quando la partita finisce
+fun MultiPlayer(currentPlayer: Int,
+                categoryToPlay: Int,
+                onCategoryToPlayChange: (Int) -> Unit,
+                onTurnEnd: (() -> Unit),
+                playerOne: User,
+                playerTwo: User,
+                onGameFinish: (Int, Int) -> Unit   // Callback per eseguire azioni quando la partita finisce
 ){
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds1 by rememberSaveable { mutableIntStateOf(0) } // max 13
@@ -652,7 +647,7 @@ fun ScoreTableM(
     onCategorySelect1: (Int) -> Unit,
     onCategorySelect2: (Int) -> Unit
 ) {
-    var clickedButtonIndex by remember { mutableStateOf(-1) }
+    var clickedButtonIndex by remember { mutableIntStateOf(-1) }
 
     Box(
         modifier = Modifier

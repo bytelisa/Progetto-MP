@@ -37,7 +37,7 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
     private var shakeStartTime: Long = 0
-    private val shakeDuration = 1200 // 2 secondi di shake
+    private val shakeDuration = 1400 // 1.4 secondi di shake
     private val shakeThreshold = 1
     private var lastX = 0.0f
     private var lastY = 0.0f
@@ -88,9 +88,6 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
             val deltaZ = z - lastZ
 
             val shakeMagnitude = sqrt((deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ).toDouble()).toFloat()
-
-            //Log.d("DiceRollActivity", "Shake Magnitude: $shakeMagnitude") // Log per il debug
-
 
             // Se il movimento di shake supera la soglia
             if (shakeMagnitude > shakeThreshold) {

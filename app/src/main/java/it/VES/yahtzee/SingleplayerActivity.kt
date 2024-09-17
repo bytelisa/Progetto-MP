@@ -52,7 +52,7 @@ class SingleplayerActivity : ComponentActivity() {
     private lateinit var diceRollLauncher: ActivityResultLauncher<Intent>
     private var scorePlaceholder = List(14) { -1 }
     private var categoryToPlay by mutableIntStateOf(-1)
-    var rolledDice by mutableStateOf(List(5) { 1 })
+    private var rolledDice by mutableStateOf(List(5) { 1 })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,7 +118,6 @@ class SingleplayerActivity : ComponentActivity() {
 
     //funzione di callback triggerata dalla ricezione di un nuovo risultato da parte di DiceRollActivity
     private fun onDiceRolled(diceResults: List<Int>) {
-        // You can define this method to update the state or take some action
         rolledDice = diceResults
         Log.d("SinglePlayerActivity", "Dice rolled: $diceResults")
     }
@@ -165,7 +164,7 @@ class SingleplayerActivity : ComponentActivity() {
         val context = LocalContext.current
         var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
         var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
-        //var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+        var diceResults by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
         var showDialog by remember { mutableStateOf(false) }
         val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
         val scoreList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
@@ -173,14 +172,14 @@ class SingleplayerActivity : ComponentActivity() {
         var gameFinished by rememberSaveable { mutableStateOf(false) }
         val playedCategories = remember { mutableStateListOf(*List(14) { false }.toTypedArray()) }
         var playPressed by rememberSaveable { mutableStateOf(false) }
+        var rollPressed by rememberSaveable { mutableStateOf(false) }
         var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
         val sharedPreferences=context.getSharedPreferences("user_prefs",Context.MODE_PRIVATE)
         val soundEnabled=sharedPreferences.getBoolean("soundEnabled",false)
 
-        val clickedStates =
-            remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
-        val shake = shakeMode(context = context) //leggo le shared preferences per vedere la modalità di lancio dadi
-
+        val clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) }
+        val shake = shakeMode(context = context)
+        var scorePreview: List<Int>
 
         // When the dice are rolled, update the rolledDice variable
         fun handleDiceRoll(diceResults: List<Int>) {
@@ -207,23 +206,26 @@ class SingleplayerActivity : ComponentActivity() {
                             if (shake) {
                                 val intent = Intent(context, DiceRollActivity::class.java)
                                 diceRollLauncher.launch(intent)
+                                rollPressed = true
                                 rolls += 1
                                 Log.d("SinglePlayerActivity", "Roll with sensor: $rolledDice")
+                                scorePreview = PlayUtils().getScorePreview(rolledDice) //non è più di stato per singleplayer!
 
                             } else {
-                                val diceResults = if (rolls == 0) {
+                                    diceResults = if (rolls == 0) {
                                     DiceRollActivity().rollDice().toMutableList()
 
                                 } else {
-                                    DiceRollActivity().rollDiceStates(rolledDice, clickedStates)
+                                    DiceRollActivity().rollDiceStates(diceResults, clickedStates)
                                         .toMutableList()
                                 }
                                 handleDiceRoll(diceResults)
+                                rollPressed = true
                                 rolls += 1
+                                scorePreview = PlayUtils().getScorePreview(diceResults) //rolledDice non è più di stato per singleplayer!
 
                             }
 
-                            val scorePreview = PlayUtils().getScorePreview(rolledDice)
                             scorePreviewList.clear()
                             scorePreviewList.addAll(scorePreview)
                             playPressed = false
@@ -256,7 +258,7 @@ class SingleplayerActivity : ComponentActivity() {
 
             Button(
                 onClick = { // play
-
+                    rollPressed = false
                     if (rounds < 13) {
                         if (categoryToPlay != -1) {
 
@@ -360,11 +362,14 @@ class SingleplayerActivity : ComponentActivity() {
     Score(totalScore)
     PlayUtils().RoundsLeft(rounds)
 
-    ScoreTable(scorePreviewList, onCategorySelect = { index ->
-        onCategoryToPlayChange(index)
-    }, scoreList, playedCategories, playPressed)
+    if (rollPressed){
+        ScoreTable(scorePreviewList, onCategorySelect = { index ->
+            onCategoryToPlayChange(index)
+        }, scoreList, playedCategories, playPressed)
 
     }
+    }
+
 }
 
 fun shakeMode(context: Context): Boolean {
