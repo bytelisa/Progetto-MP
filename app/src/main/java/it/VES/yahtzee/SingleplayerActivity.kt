@@ -425,8 +425,8 @@ fun Score(score: Int) {
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(start = when{
-                    score < 100 -> 360.dp
-                    else -> 345.dp},
+                    score < 100 -> 300.dp
+                    else -> 285.dp},
                     top = 28.dp, end = 10.dp
                 )
 
