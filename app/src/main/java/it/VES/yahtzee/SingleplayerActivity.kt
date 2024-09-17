@@ -134,7 +134,6 @@ fun SinglePlayer(
     onGameFinish: (Int?) -> Unit
 ) {
     val context = LocalContext.current
-
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }

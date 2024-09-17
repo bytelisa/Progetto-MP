@@ -137,6 +137,13 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
             } else {
                 // Reset il tempo di inizio se non si supera la soglia
                 shakeStartTime = 0L
+
+                // Restituisci i risultati alla activity chiamante
+                val resultIntent = intent
+                resultIntent.putExtra("diceResults", diceResults.toIntArray()) // Passa i risultati
+                setResult(RESULT_OK, resultIntent)
+                finish() // Chiude l'activity e ritorna i dati
+
             }
 
             lastX = x
