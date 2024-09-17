@@ -171,6 +171,8 @@ class ScoreCalculator {
             }
         }
         return 0
+
+        //TODO questa restituisce chances
     }
 
     //Return the score obtained whit 3x
@@ -204,6 +206,5 @@ class ScoreCalculator {
             sum>62 -> 35    //se la somma è >=63 restituiamo il punteggio
             else -> 0
         }
-
     }
 }
