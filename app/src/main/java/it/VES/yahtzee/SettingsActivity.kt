@@ -1,6 +1,4 @@
 package it.VES.yahtzee
-
-
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import it.VES.yahtzee.db.UserViewModel
+import android.media.MediaPlayer
 import it.VES.yahtzee.ui.theme.YahtzeeTheme
 
 
@@ -120,7 +118,12 @@ fun Setting(navController: NavController) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Switch(
                             checked = switch1State,
-                            onCheckedChange = { switch1State = it }
+                            onCheckedChange = {
+                                switch1State = it
+                                if(it){
+                                    playDiceSound(context)
+                                }
+                            }
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = "On")
@@ -193,6 +196,8 @@ fun Setting(navController: NavController) {
         }
     }
 }
+
+
 
 @Composable
 fun BackgroundPictureSettings(){

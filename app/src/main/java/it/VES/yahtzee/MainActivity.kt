@@ -261,9 +261,6 @@ fun AppNavigation() {
         composable("howToPlay") { howToPlay(navController)}
 
         composable("score") { ScoreScreen(navController) } // Usa ScoreScreen come composable
-
-
-        // Aggiungi altre schermate qui
     }
 }
 

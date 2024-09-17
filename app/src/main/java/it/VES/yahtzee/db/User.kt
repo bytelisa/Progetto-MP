@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 
 
 // Tabella DB "user" ha 5 colonne:id(PK-AI), player, score, game mode (single/multi), date
-
 @Entity(tableName = "user_db")
 data class User(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id : Int = 0,

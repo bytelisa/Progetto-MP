@@ -1,5 +1,6 @@
 package it.VES.yahtzee
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -238,8 +239,6 @@ class NewMultiPlayerActivity : ComponentActivity() {
         userViewModel.insert(playerOne)
         userViewModel.insert(playerTwo)
 
-        Log.d("MultiplayerActivity11", "Dati salvati per i giocatori: $playerOneName e $playerTwoName")
-
         // Una volta salvati, chiudi l'activity e torna alla schermata home
         finish()
     }
@@ -279,7 +278,8 @@ fun newMultiPlayer(currentPlayer: Int,
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     var turnEndDialog by rememberSaveable { mutableStateOf(false) }
     var clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
-
+    val sharedPreferences=context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val soundEnabled=sharedPreferences.getBoolean("soundEnabled",false)
 
     if (currentPlayer == 1){
         Score(totalScore1)
@@ -302,6 +302,9 @@ fun newMultiPlayer(currentPlayer: Int,
         ) {
             Button(
                 onClick = { // roll
+                    if(soundEnabled){
+                        playDiceSound(context)
+                    }
                     Log.d("MultiPlayerActivity11", "Roll button clicked: rolls = $rolls")
 
                     if (rolls < 3) {
