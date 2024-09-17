@@ -108,7 +108,6 @@ fun Home(navController: NavController) {
         Button(
             onClick = {
 
-                // Avvia la nuova Activity per il lancio dei dadi
                 val intent = Intent(context, PlayModeActivity::class.java)
                 context.startActivity(intent)
 

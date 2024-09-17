@@ -39,7 +39,7 @@ class DiceRollActivity : ComponentActivity(), SensorEventListener {
 
 
     // Variabile di stato per memorizzare i risultati dei dadi
-    private var diceResults by mutableStateOf(List(5) { 1 })
+    var diceResults by mutableStateOf(List(5) { 1 })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -125,18 +126,17 @@ class SingleplayerActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun SinglePlayer(
     categoryToPlay: Int,
     onCategoryToPlayChange: (Int) -> Unit,
     onGameFinish: (Int?) -> Unit
 ) {
+    val context = LocalContext.current
 
     var rolls by rememberSaveable { mutableIntStateOf(0) } // max 3
     var rounds by rememberSaveable { mutableIntStateOf(0) } // max 13
     var rolledDice by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
-    val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     val scorePreviewList = remember { mutableStateListOf(*List(14) { -1 }.toTypedArray()) }
     val scoreList = remember { mutableStateListOf(*List(14) { 0 }.toTypedArray()) }
@@ -146,6 +146,7 @@ fun SinglePlayer(
     var playPressed by rememberSaveable { mutableStateOf(false) }
     var previousCategory by rememberSaveable { mutableIntStateOf(-1) }
     val clickedStates = remember { mutableStateListOf(*List(5) { false }.toTypedArray()) } //deve essere ricordabile perché va riaggiornata la schermata quando cambia
+    var shake = false
 
     Box(
         modifier = Modifier
@@ -162,12 +163,22 @@ fun SinglePlayer(
                     if (rolls < 3) {
                         playPressed = false
 
-                        rolledDice = if (rolls == 0){
-                            DiceRollActivity().rollDice().toMutableList()
+                        shake = shakeMode(context = context) //leggo le shared preferences per vedere la modalità di lancio dadi
+
+                        if (shake){
+
+                            rolledDice = DiceRollActivity().diceResults
+                            Log.d("SinglePlayerActivity", "Roll with sensor: $rolledDice")
 
                         } else {
-                            DiceRollActivity().rollDiceStates(rolledDice, clickedStates).toMutableList()
+                            rolledDice = if (rolls == 0){
+                                DiceRollActivity().rollDice().toMutableList()
+
+                            } else {
+                                DiceRollActivity().rollDiceStates(rolledDice, clickedStates).toMutableList()
+                            }
                         }
+
                         rolls += 1
                         val scorePreview = PlayUtils().getScorePreview(rolledDice)
                         scorePreviewList.clear()
@@ -191,7 +202,10 @@ fun SinglePlayer(
                     .width(200.dp)
                     .height(45.dp),
             ) {
-                Text(text = "Roll (${3 - rolls} left)")
+                Text(text = when {
+                    shake -> "Shake! (${3 - rolls} left)"
+                    else -> "Roll (${3 - rolls} left)"
+                })
             }
 
 
@@ -308,30 +322,6 @@ fun SinglePlayer(
     }
 }
 
-
-
-@Composable
-fun GameFinish(score: Int, onConfirm: () -> Unit) {
-
-    val activity = (LocalContext.current as? Activity)  // Ottieni l'activity corrente
-    var gameFinished by rememberSaveable {mutableStateOf(true)}
-
-    AlertDialog(
-        onDismissRequest = { gameFinished = false },
-        title = { Text("Game Finished") },
-        text = { Text("Your total score is $score!") },
-        confirmButton = {
-            Button(onClick = {
-                onConfirm()  // Chiama la funzione che salva i dati
-                activity?.finish()  // Chiudi l'attività e torna alla schermata precedente
-            }) {
-                Text("OK")
-            }
-        }
-    )
-}
-
-
 @Composable
 fun ScoreTable(
     scorePreviewList: List<Int>,
@@ -412,6 +402,26 @@ fun ScoreTable(
     }
 }
 
+@Composable
+fun GameFinish(score: Int, onConfirm: () -> Unit) {
+
+    val activity = (LocalContext.current as? Activity)  // Ottieni l'activity corrente
+    var gameFinished by rememberSaveable {mutableStateOf(true)}
+
+    AlertDialog(
+        onDismissRequest = { gameFinished = false },
+        title = { Text("Game Finished") },
+        text = { Text("Your total score is $score!") },
+        confirmButton = {
+            Button(onClick = {
+                onConfirm()  // Chiama la funzione che salva i dati
+                activity?.finish()  // Chiudi l'attività e torna alla schermata precedente
+            }) {
+                Text("OK")
+            }
+        }
+    )
+}
 
 @Composable
 fun Score(score: Int) {
@@ -424,9 +434,11 @@ fun Score(score: Int) {
             fontSize = 35.sp, // Big
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(start = when{
-                    score < 100 -> 360.dp
-                    else -> 345.dp},
+                .padding(
+                    start = when {
+                        score < 100 -> 360.dp
+                        else -> 345.dp
+                    },
                     top = 28.dp, end = 10.dp
                 )
 
@@ -447,3 +459,11 @@ fun BackgroundSingleplayer() {
         )
     }
 }
+
+
+fun shakeMode(context: Context): Boolean {
+    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    return sharedPreferences.getBoolean("clickMode", false)
+}
+
+    //TODO finire. True -> shake, else roll with button
