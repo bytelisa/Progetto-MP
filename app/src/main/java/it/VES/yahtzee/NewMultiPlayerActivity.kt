@@ -232,9 +232,6 @@ class NewMultiPlayerActivity : ComponentActivity() {
     }
 
 
-
-
-
     // Funzione per salvare i punteggi dei giocatori nel database
     private fun saveGameResult(playerOneScore: Int, playerTwoScore: Int) {
         val currentDate = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())
@@ -266,7 +263,6 @@ class NewMultiPlayerActivity : ComponentActivity() {
         // Una volta salvati, chiudi l'activity e torna alla schermata home
         finish()
     }
-
 
 
 }
@@ -386,7 +382,7 @@ fun newMultiPlayer(currentPlayer: Int,
                                 scoreList1[6] = ScoreCalculator().bonusCheck(scoreList1)
                                 if (scoreList1[6] == 35){
                                     playedCategories1[6] = true  //la categoria viene giocata in automatico
-                                    previousCategory = categoryToPlay - 1
+                                    previousCategory = categoryToPlay - 1 //triggera recompose
                                 }
 
                                 playedCategories1[categoryToPlay - 1] = true
@@ -532,9 +528,6 @@ fun newMultiPlayer(currentPlayer: Int,
 
 
 
-
-
-
         if (turnEndDialog) {
 
             AlertDialog(
@@ -637,11 +630,6 @@ fun newMultiPlayer(currentPlayer: Int,
 
     }
 
-
-
-
-
-
     ScoreTableM(
         currentPlayer= currentPlayer,
         scorePreview1 = scorePreviewList1,
@@ -712,7 +700,7 @@ fun ScoreTableM(
                             },
 
                             disabledContainerColor = when {     //per il bottone disabilitato
-                                i==6 && currentPlayer==1 && !playedCategories1[6]-> Color.Transparent
+                                i==6 && !playedCategories1[6]-> Color.Transparent
                                 else -> Color(0x9C9FD8F1)
                             },
 
@@ -766,7 +754,7 @@ fun ScoreTableM(
                                 else -> Color.Transparent
                             },
                             disabledContainerColor = when {     //per il bottone disabilitato
-                                i==6 && currentPlayer==2 && !playedCategories2[6]-> Color.Transparent
+                                i==6 && !playedCategories2[6]-> Color.Transparent
                                 else -> Color(0xA9D39B98)
                             },
                             contentColor = Color.DarkGray,                 //testo del bottone attivo
