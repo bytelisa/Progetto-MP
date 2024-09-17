@@ -122,29 +122,6 @@ class NewMultiPlayerActivity : ComponentActivity() {
                             if (gameFinished) {
 
 
-                                /*
-                                WinningPlayer(
-                                    winner = winningPlayer,
-                                    score = if (winningPlayer == 1) playerOneScore else playerTwoScore,
-                                    playerOne = User(
-                                        player = playerOneName,
-                                        score = playerOneScore.toString(),
-                                        mod = "Multiplayer",
-                                        date = System.currentTimeMillis().toString()
-                                    ),
-                                    playerTwo = User(
-                                        player = playerTwoName,
-                                        score = playerTwoScore.toString(),
-                                        mod = "Multiplayer",
-                                        date = System.currentTimeMillis().toString()
-                                    ),
-                                    onGameFinish = { saveGameResult() }     // Salvataggio e ritorno
-
-                                )
-
-                                 */
-
-
 
                                 WinningPlayer(
                                     winner = winningPlayer,
@@ -155,6 +132,7 @@ class NewMultiPlayerActivity : ComponentActivity() {
                                         saveGameResult(playerOneScore, playerTwoScore)
                                     }
                                 )
+
 
 
                             } else {
@@ -206,12 +184,14 @@ class NewMultiPlayerActivity : ComponentActivity() {
                                     NamesPopup(onDismiss = { name1, name2 ->
                                         player1Name = name1
                                         player2Name = name2
+                                        playerOneName = player1Name
+                                        playerTwoName = player2Name
                                         showNameDialog = false
                                     })
                                 }
 
                                 if (!showNameDialog) {
-                                    PlayersNames(player1 = player1Name, player2 = player2Name)
+                                    PlayersNames(player1 = playerOneName, player2 = playerTwoName)
 
                                 }
                             }
@@ -595,20 +575,6 @@ fun newMultiPlayer(currentPlayer: Int,
     if (gameFinished) {
 
 
-        /*
-        WinningPlayer(currentPlayer, score = when {
-            totalScore1 > totalScore2 -> totalScore1
-            totalScore2 > totalScore1 -> totalScore2
-            else -> totalScore1 //pareggio
-        }, playerOne = playerOne,
-            playerTwo = playerTwo,
-            onGameFinish = onGameFinish
-        )
-
-         */
-
-
-
         // Determina il vincitore
         val winner = if (totalScore1 > totalScore2) 1 else if (totalScore2 > totalScore1) 2 else 0
         val winningScore = if (winner == 1) totalScore1 else totalScore2   //pareggio
@@ -622,7 +588,7 @@ fun newMultiPlayer(currentPlayer: Int,
             playerTwo = playerTwo.copy(score = totalScore2.toString()), // Passa il punteggio aggiornato
             onDismiss = {
                 onGameFinish(totalScore1, totalScore2)
-                gameFinished = false
+                //gameFinished = false
             }
         )
 
