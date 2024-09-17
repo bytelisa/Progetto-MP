@@ -1,11 +1,14 @@
 package it.VES.yahtzee
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,6 +53,8 @@ class NewMultiPlayerActivity : ComponentActivity() {
 
     // ViewModel per interagire con il database
     private lateinit var userViewModel: UserViewModel
+    //var rolledDice by mutableStateOf(List(5) { 1 })
+    //private lateinit var diceRollLauncher: ActivityResultLauncher<Intent>
 
 
     // Giocatori e punteggi della partita
@@ -73,6 +78,17 @@ class NewMultiPlayerActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
+        /*
+        diceRollLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val diceResults = result.data?.getIntArrayExtra("diceResults") //prendiamo come risultato diceResults
+                diceResults?.let {
+                    onDiceRolled(it.toList())   //usiamo questa callback per riportare i risultati alla funzione composable
+                }
+            }
+        }
+
+         */
 
         // Ottieni il ViewModel
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
@@ -238,6 +254,8 @@ class NewMultiPlayerActivity : ComponentActivity() {
         // Salva i dati nel database tramite il ViewModel
         userViewModel.insert(playerOne)
         userViewModel.insert(playerTwo)
+
+        Log.d("MultiplayerActivity11", "Dati salvati per i giocatori: $playerOneName e $playerTwoName")
 
         // Una volta salvati, chiudi l'activity e torna alla schermata home
         finish()

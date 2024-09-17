@@ -148,6 +148,7 @@ class SingleplayerActivity : ComponentActivity() {
         }
 
     }
+
 }
 
     @SuppressLint("MutableCollectionMutableState")
@@ -366,6 +367,10 @@ class SingleplayerActivity : ComponentActivity() {
     }
 }
 
+fun shakeMode(context: Context): Boolean {
+    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    return sharedPreferences.getBoolean("clickMode", false)
+}
 
 
 @Composable
@@ -505,12 +510,5 @@ fun BackgroundSingleplayer() {
             modifier = Modifier.matchParentSize()
         )
     }
-
-
-    fun shakeMode(context: Context): Boolean {
-        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("clickMode", false)
-    }
-
-    //TODO finire. True -> shake, else roll with button
+}
 
