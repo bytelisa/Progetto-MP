@@ -191,14 +191,14 @@ class ScoreCalculator {
     }
 
     public fun bonusCheck(myDice: SnapshotStateList<Int>): Int{
-        var sum: Int = 0
+        //aggiungiamo 35 punti se la somma dei primi 6 dadi è >63
+        var sum = 0
         for (i in 0..5){
             sum+=myDice[5]
         }
         return when{
-            sum>63 -> sum
+            sum>62 -> 35
             else -> 0
         }
     }
-
 }
